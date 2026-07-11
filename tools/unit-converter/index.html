@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit Converter · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+            <button class="hamburger"
+                    aria-expanded="false"
+                    aria-controls="primary-nav"
+                    aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">Unit Converter</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Convert between different units across multiple categories. Select a category, choose units, and enter a value.
+                    </p>
+
+                    <form class="unit-form" id="unitForm" novalidate>
+
+                        <!-- Category -->
+                        <div class="field-group">
+                            <label for="category">Category</label>
+                            <select id="category" class="unit-select">
+                                <option value="length">Length</option>
+                                <option value="mass">Mass</option>
+                                <option value="volume">Volume</option>
+                                <option value="temperature">Temperature</option>
+                                <option value="speed">Speed</option>
+                                <option value="time">Time</option>
+                                <option value="area">Area</option>
+                            </select>
+                        </div>
+
+                        <!-- From Unit -->
+                        <div class="field-group">
+                            <label for="fromUnit">From</label>
+                            <select id="fromUnit" class="unit-select"></select>
+                        </div>
+
+                        <!-- To Unit -->
+                        <div class="field-group">
+                            <label for="toUnit">To</label>
+                            <select id="toUnit" class="unit-select"></select>
+                        </div>
+
+                        <!-- Value -->
+                        <div class="field-group">
+                            <label for="valueInput">Value</label>
+                            <input type="number" id="valueInput" step="any" min="0" placeholder="Enter a number" required />
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Convert</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </form>
+
+                    <div class="error-msg" id="errorMsg"></div>
+
+                    <div class="unit-result" id="unitResult" style="display:none;">
+                        <div class="result-row">
+                            <span class="result-label">Result:</span>
+                            <span class="result-value" id="resultValue">0</span>
+                        </div>
+                        <div class="result-detail" id="resultDetail"></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const form = document.getElementById('unitForm');
+            const categorySelect = document.getElementById('category');
+            const fromUnitSelect = document.getElementById('fromUnit');
+            const toUnitSelect = document.getElementById('toUnit');
+            const valueInput = document.getElementById('valueInput');
+            const errorMsg = document.getElementById('errorMsg');
+            const resultDiv = document.getElementById('unitResult');
+            const resultValue = document.getElementById('resultValue');
+            const resultDetail = document.getElementById('resultDetail');
+
+            // Unit definitions: each category has units with conversion factors to base unit
+            const unitData = {
+                length: {
+                    base: 'meter',
+                    units: {
+                        'millimeter': { factor: 0.001, label: 'Millimeter (mm)' },
+                        'centimeter': { factor: 0.01, label: 'Centimeter (cm)' },
+                        'meter': { factor: 1, label: 'Meter (m)' },
+                        'kilometer': { factor: 1000, label: 'Kilometer (km)' },
+                        'inch': { factor: 0.0254, label: 'Inch (in)' },
+                        'foot': { factor: 0.3048, label: 'Foot (ft)' },
+                        'yard': { factor: 0.9144, label: 'Yard (yd)' },
+                        'mile': { factor: 1609.344, label: 'Mile (mi)' }
+                    }
+                },
+                mass: {
+                    base: 'gram',
+                    units: {
+                        'milligram': { factor: 0.001, label: 'Milligram (mg)' },
+                        'gram': { factor: 1, label: 'Gram (g)' },
+                        'kilogram': { factor: 1000, label: 'Kilogram (kg)' },
+                        'tonne': { factor: 1000000, label: 'Tonne (t)' },
+                        'pound': { factor: 453.59237, label: 'Pound (lb)' },
+                        'ounce': { factor: 28.349523125, label: 'Ounce (oz)' }
+                    }
+                },
+                volume: {
+                    base: 'liter',
+                    units: {
+                        'milliliter': { factor: 0.001, label: 'Milliliter (mL)' },
+                        'liter': { factor: 1, label: 'Liter (L)' },
+                        'cubic_meter': { factor: 1000, label: 'Cubic Meter (m³)' },
+                        'gallon_us': { factor: 3.785411784, label: 'Gallon (US)' },
+                        'quart_us': { factor: 0.946352946, label: 'Quart (US)' },
+                        'pint_us': { factor: 0.473176473, label: 'Pint (US)' },
+                        'cup_us': { factor: 0.2365882365, label: 'Cup (US)' }
+                    }
+                },
+                temperature: {
+                    base: 'celsius',
+                    units: {
+                        'celsius': { label: 'Celsius (°C)', special: 'celsius' },
+                        'fahrenheit': { label: 'Fahrenheit (°F)', special: 'fahrenheit' },
+                        'kelvin': { label: 'Kelvin (K)', special: 'kelvin' }
+                    }
+                },
+                speed: {
+                    base: 'm/s',
+                    units: {
+                        'm/s': { factor: 1, label: 'Meter per second (m/s)' },
+                        'km/h': { factor: 0.2777777778, label: 'Kilometer per hour (km/h)' },
+                        'mph': { factor: 0.44704, label: 'Mile per hour (mph)' },
+                        'knot': { factor: 0.5144444444, label: 'Knot (kn)' }
+                    }
+                },
+                time: {
+                    base: 'second',
+                    units: {
+                        'millisecond': { factor: 0.001, label: 'Millisecond (ms)' },
+                        'second': { factor: 1, label: 'Second (s)' },
+                        'minute': { factor: 60, label: 'Minute (min)' },
+                        'hour': { factor: 3600, label: 'Hour (hr)' },
+                        'day': { factor: 86400, label: 'Day' },
+                        'week': { factor: 604800, label: 'Week' },
+                        'month': { factor: 2629746, label: 'Month (avg)' },
+                        'year': { factor: 31556952, label: 'Year (avg)' }
+                    }
+                },
+                area: {
+                    base: 'square_meter',
+                    units: {
+                        'sq_millimeter': { factor: 0.000001, label: 'Square Millimeter (mm²)' },
+                        'sq_centimeter': { factor: 0.0001, label: 'Square Centimeter (cm²)' },
+                        'sq_meter': { factor: 1, label: 'Square Meter (m²)' },
+                        'sq_kilometer': { factor: 1000000, label: 'Square Kilometer (km²)' },
+                        'sq_inch': { factor: 0.00064516, label: 'Square Inch (in²)' },
+                        'sq_foot': { factor: 0.09290304, label: 'Square Foot (ft²)' },
+                        'acre': { factor: 4046.8564224, label: 'Acre' },
+                        'hectare': { factor: 10000, label: 'Hectare (ha)' }
+                    }
+                }
+            };
+
+            // Special temperature conversion
+            function convertTemperature(value, from, to) {
+                let celsius;
+                // Convert from any unit to Celsius
+                if (from === 'celsius') celsius = value;
+                else if (from === 'fahrenheit') celsius = (value - 32) * 5 / 9;
+                else if (from === 'kelvin') celsius = value - 273.15;
+                else return NaN;
+
+                // Convert from Celsius to target
+                if (to === 'celsius') return celsius;
+                else if (to === 'fahrenheit') return celsius * 9 / 5 + 32;
+                else if (to === 'kelvin') return celsius + 273.15;
+                return NaN;
+            }
+
+            function populateUnits(categoryKey) {
+                const data = unitData[categoryKey];
+                if (!data) return;
+
+                const units = Object.keys(data.units);
+                const fromSelect = fromUnitSelect;
+                const toSelect = toUnitSelect;
+
+                fromSelect.innerHTML = '';
+                toSelect.innerHTML = '';
+
+                units.forEach(function(key) {
+                    const option1 = document.createElement('option');
+                    option1.value = key;
+                    option1.textContent = data.units[key].label;
+                    fromSelect.appendChild(option1);
+
+                    const option2 = document.createElement('option');
+                    option2.value = key;
+                    option2.textContent = data.units[key].label;
+                    toSelect.appendChild(option2);
+                });
+
+                // Set default selections
+                if (units.length > 1) {
+                    toSelect.selectedIndex = 1;
+                }
+            }
+
+            // Initial population
+            populateUnits(categorySelect.value);
+
+            // Update when category changes
+            categorySelect.addEventListener('change', function() {
+                populateUnits(this.value);
+                resultDiv.style.display = 'none';
+                hideError();
+            });
+
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.add('show');
+                resultDiv.style.display = 'none';
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('show');
+                errorMsg.textContent = '';
+            }
+
+            function convert() {
+                hideError();
+
+                const category = categorySelect.value;
+                const fromUnit = fromUnitSelect.value;
+                const toUnit = toUnitSelect.value;
+                const value = parseFloat(valueInput.value);
+
+                if (isNaN(value) || value < 0) {
+                    showError('Please enter a valid positive number.');
+                    return;
+                }
+
+                if (fromUnit === toUnit) {
+                    showError('Source and target units are the same. Please select different units.');
+                    return;
+                }
+
+                const data = unitData[category];
+                let result;
+
+                // Special handling for temperature
+                if (category === 'temperature') {
+                    result = convertTemperature(value, fromUnit, toUnit);
+                    if (isNaN(result)) {
+                        showError('Temperature conversion error.');
+                        return;
+                    }
+                } else {
+                    const fromFactor = data.units[fromUnit].factor;
+                    const toFactor = data.units[toUnit].factor;
+                    if (!fromFactor || !toFactor) {
+                        showError('Invalid unit selection.');
+                        return;
+                    }
+                    // Convert to base unit then to target
+                    const baseValue = value * fromFactor;
+                    result = baseValue / toFactor;
+                }
+
+                const fromLabel = data.units[fromUnit].label;
+                const toLabel = data.units[toUnit].label;
+
+                resultValue.textContent = result.toFixed(6);
+                resultDetail.textContent = `${value} ${fromLabel} = ${result.toFixed(6)} ${toLabel}`;
+                resultDiv.style.display = 'block';
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                convert();
+            });
+
+            form.addEventListener('reset', function(e) {
+                setTimeout(function() {
+                    valueInput.value = '';
+                    resultDiv.style.display = 'none';
+                    hideError();
+                    populateUnits(categorySelect.value);
+                }, 10);
+            });
+
+            // Clear error on input change
+            valueInput.addEventListener('input', hideError);
+
+        })();
+    </script>
+
+</body>
+</html>
