@@ -44,14 +44,23 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Paste or type your text below to get detailed statistics.
+                        Count characters, words, sentences, and paragraphs in your text.
                     </p>
 
-                    <form class="text-form" id="textForm" novalidate>
+                    <form class="text-counter-form" id="textCounterForm" novalidate>
 
+                        <!-- Text input -->
                         <div class="field-group">
-                            <label for="textInput">Your Text</label>
-                            <textarea id="textInput" rows="6" placeholder="Type or paste your text here..."></textarea>
+                            <label for="textInput">Enter your text</label>
+                            <textarea id="textInput" rows="5" placeholder="Type or paste your text here..." required></textarea>
+                        </div>
+
+                        <!-- Optional: exclude spaces checkbox -->
+                        <div class="field-group" style="flex-wrap:nowrap; gap: 6px;">
+                            <label style="min-width:auto; font-weight:400;">
+                                <input type="checkbox" id="excludeSpaces" />
+                                Exclude spaces from character count
+                            </label>
                         </div>
 
                         <div class="btn-group">
@@ -62,15 +71,16 @@
 
                     <div class="error-msg" id="errorMsg"></div>
 
-                    <div class="text-result" id="textResult" style="display:none;">
+                    <!-- ===== RESULTS ===== -->
+                    <div class="text-counter-result" id="textCounterResult" style="display:none;">
                         <div class="result-grid">
                             <div class="result-card">
-                                <span class="result-label">Characters (with spaces)</span>
-                                <span class="result-value" id="charWithSpaces">0</span>
+                                <span class="result-label">Characters</span>
+                                <span class="result-value" id="charCount">0</span>
                             </div>
                             <div class="result-card">
                                 <span class="result-label">Characters (no spaces)</span>
-                                <span class="result-value" id="charNoSpaces">0</span>
+                                <span class="result-value" id="charNoSpaceCount">0</span>
                             </div>
                             <div class="result-card">
                                 <span class="result-label">Words</span>
@@ -80,13 +90,9 @@
                                 <span class="result-label">Sentences</span>
                                 <span class="result-value" id="sentenceCount">0</span>
                             </div>
-                            <div class="result-card">
+                            <div class="result-card highlight">
                                 <span class="result-label">Paragraphs</span>
                                 <span class="result-value" id="paragraphCount">0</span>
-                            </div>
-                            <div class="result-card">
-                                <span class="result-label">Lines</span>
-                                <span class="result-value" id="lineCount">0</span>
                             </div>
                         </div>
                         <div class="result-detail" id="resultDetail"></div>
@@ -122,17 +128,16 @@
         (function() {
             'use strict';
 
-            const form = document.getElementById('textForm');
+            const form = document.getElementById('textCounterForm');
             const textInput = document.getElementById('textInput');
+            const excludeSpaces = document.getElementById('excludeSpaces');
             const errorMsg = document.getElementById('errorMsg');
-            const resultDiv = document.getElementById('textResult');
-
-            const charWithSpaces = document.getElementById('charWithSpaces');
-            const charNoSpaces = document.getElementById('charNoSpaces');
+            const resultDiv = document.getElementById('textCounterResult');
+            const charCount = document.getElementById('charCount');
+            const charNoSpaceCount = document.getElementById('charNoSpaceCount');
             const wordCount = document.getElementById('wordCount');
             const sentenceCount = document.getElementById('sentenceCount');
             const paragraphCount = document.getElementById('paragraphCount');
-            const lineCount = document.getElementById('lineCount');
             const resultDetail = document.getElementById('resultDetail');
 
             function showError(msg) {
@@ -146,7 +151,7 @@
                 errorMsg.textContent = '';
             }
 
-            function count() {
+            function countText() {
                 hideError();
 
                 const text = textInput.value;
@@ -155,51 +160,54 @@
                     return;
                 }
 
-                // Characters with spaces
-                const withSpaces = text.length;
-                // Characters without spaces
-                const withoutSpaces = text.replace(/\s/g, '').length;
-                // Words: split by whitespace, filter empty
-                const words = text.trim().split(/\s+/).filter(w => w.length > 0);
-                const wordCountVal = words.length;
-                // Sentences: split by . ! ? followed by space or end
-                const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
-                const sentenceCountVal = sentences.length || (text.trim().length > 0 ? 1 : 0);
-                // Paragraphs: split by newline, filter empty
-                const paragraphs = text.split(/\n+/).filter(p => p.trim().length > 0);
-                const paragraphCountVal = paragraphs.length;
-                // Lines: split by newline
-                const lines = text.split(/\n/);
-                const lineCountVal = lines.length;
+                // Character count (with spaces)
+                const chars = text.length;
 
-                // Update results
-                charWithSpaces.textContent = withSpaces;
-                charNoSpaces.textContent = withoutSpaces;
+                // Character count (without spaces)
+                const charsNoSpace = text.replace(/\s/g, '').length;
+
+                // Word count: split by whitespace, filter empty
+                const words = text.trim().split(/\s+/).filter(function(w) { return w.length > 0; });
+                const wordCountVal = words.length;
+
+                // Sentence count: split by . ? ! (with possible trailing punctuation)
+                const sentences = text.match(/[^.!?]+[.!?]+/g);
+                const sentenceCountVal = sentences ? sentences.length : 0;
+
+                // Paragraph count: split by two or more newlines
+                const paragraphs = text.split(/\n\s*\n/).filter(function(p) { return p.trim().length > 0; });
+                const paragraphCountVal = paragraphs.length || (text.trim().length > 0 ? 1 : 0);
+
+                // Display results
+                charCount.textContent = chars;
+                charNoSpaceCount.textContent = charsNoSpace;
                 wordCount.textContent = wordCountVal;
                 sentenceCount.textContent = sentenceCountVal;
                 paragraphCount.textContent = paragraphCountVal;
-                lineCount.textContent = lineCountVal;
 
                 resultDetail.textContent =
-                    `Text contains ${withSpaces} characters (${withoutSpaces} without spaces), ${wordCountVal} words, ${sentenceCountVal} sentences, ${paragraphCountVal} paragraphs, and ${lineCountVal} lines.`;
+                    `Total characters: ${chars} (${charsNoSpace} without spaces) · Words: ${wordCountVal} · Sentences: ${sentenceCountVal} · Paragraphs: ${paragraphCountVal}`;
 
                 resultDiv.style.display = 'block';
             }
 
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                count();
+                countText();
             });
 
             form.addEventListener('reset', function(e) {
                 setTimeout(function() {
                     textInput.value = '';
+                    excludeSpaces.checked = false;
                     resultDiv.style.display = 'none';
                     hideError();
                 }, 10);
             });
 
+            // Clear error on input
             textInput.addEventListener('input', hideError);
+            excludeSpaces.addEventListener('change', hideError);
 
         })();
     </script>
