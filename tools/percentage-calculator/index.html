@@ -44,26 +44,18 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Calculate percentages quickly and accurately. Choose the calculation type below.
+                        Enter the obtained value and total value to calculate the percentage.
                     </p>
 
                     <form class="perc-form" id="percForm" novalidate>
-
-                        <!-- Mode Selection -->
                         <div class="field-group">
-                            <label for="mode">Calculation type</label>
-                            <select id="mode" class="perc-select">
-                                <option value="of">X% of Y</option>
-                                <option value="what">X is what % of Y</option>
-                                <option value="change">Percentage increase/decrease</option>
-                            </select>
+                            <label for="obtained">Obtained value</label>
+                            <input type="number" id="obtained" step="any" min="0" placeholder="e.g. 75" required />
                         </div>
-
-                        <!-- Dynamic Inputs -->
-                        <div id="inputsContainer">
-                            <!-- Will be populated by JS based on mode -->
+                        <div class="field-group">
+                            <label for="total">Total value</label>
+                            <input type="number" id="total" step="any" min="0" placeholder="e.g. 100" required />
                         </div>
-
                         <div class="btn-group">
                             <button type="submit" class="btn">Calculate</button>
                             <button type="reset" class="btn btn-secondary">Reset</button>
@@ -74,8 +66,8 @@
 
                     <div class="perc-result" id="percResult" style="display:none;">
                         <div class="result-row">
-                            <span class="result-label">Result:</span>
-                            <span class="result-value" id="resultValue">0</span>
+                            <span class="result-label">Percentage:</span>
+                            <span class="result-value" id="resultValue">0%</span>
                         </div>
                         <div class="result-detail" id="resultDetail"></div>
                     </div>
@@ -111,69 +103,12 @@
             'use strict';
 
             const form = document.getElementById('percForm');
-            const modeSelect = document.getElementById('mode');
-            const inputsContainer = document.getElementById('inputsContainer');
+            const obtainedInput = document.getElementById('obtained');
+            const totalInput = document.getElementById('total');
             const errorMsg = document.getElementById('errorMsg');
             const resultDiv = document.getElementById('percResult');
             const resultValue = document.getElementById('resultValue');
             const resultDetail = document.getElementById('resultDetail');
-
-            // Define input templates for each mode
-            const templates = {
-                of: `
-                    <div class="field-group">
-                        <label for="pct">Percentage (%)</label>
-                        <input type="number" id="pct" step="any" min="0" placeholder="e.g. 25" required />
-                    </div>
-                    <div class="field-group">
-                        <label for="num">Number</label>
-                        <input type="number" id="num" step="any" min="0" placeholder="e.g. 200" required />
-                    </div>
-                    <div class="field-group" style="background:#f4f8f6;padding:10px 12px;border-radius:8px;font-size:.9rem;color:#2d4a3b;">
-                        <span>Calculates: <strong>X% of Y</strong></span>
-                    </div>
-                `,
-                what: `
-                    <div class="field-group">
-                        <label for="part">Part (X)</label>
-                        <input type="number" id="part" step="any" min="0" placeholder="e.g. 50" required />
-                    </div>
-                    <div class="field-group">
-                        <label for="whole">Whole (Y)</label>
-                        <input type="number" id="whole" step="any" min="0" placeholder="e.g. 200" required />
-                    </div>
-                    <div class="field-group" style="background:#f4f8f6;padding:10px 12px;border-radius:8px;font-size:.9rem;color:#2d4a3b;">
-                        <span>Calculates: <strong>X is what % of Y</strong></span>
-                    </div>
-                `,
-                change: `
-                    <div class="field-group">
-                        <label for="oldVal">Original value</label>
-                        <input type="number" id="oldVal" step="any" min="0" placeholder="e.g. 100" required />
-                    </div>
-                    <div class="field-group">
-                        <label for="newVal">New value</label>
-                        <input type="number" id="newVal" step="any" min="0" placeholder="e.g. 150" required />
-                    </div>
-                    <div class="field-group" style="background:#f4f8f6;padding:10px 12px;border-radius:8px;font-size:.9rem;color:#2d4a3b;">
-                        <span>Calculates: <strong>Percentage change from original to new</strong></span>
-                    </div>
-                `
-            };
-
-            function renderInputs(mode) {
-                inputsContainer.innerHTML = templates[mode] || templates.of;
-            }
-
-            // Initial render
-            renderInputs(modeSelect.value);
-
-            // Update inputs when mode changes
-            modeSelect.addEventListener('change', function() {
-                renderInputs(this.value);
-                resultDiv.style.display = 'none';
-                hideError();
-            });
 
             function showError(msg) {
                 errorMsg.textContent = msg;
@@ -186,74 +121,37 @@
                 errorMsg.textContent = '';
             }
 
-            function getVal(id) {
-                const el = document.getElementById(id);
-                if (!el) return NaN;
-                const val = parseFloat(el.value);
-                return isNaN(val) ? NaN : val;
-            }
-
-            function setResult(value, detail) {
-                resultValue.textContent = typeof value === 'number' ? value.toFixed(2) : value;
-                resultDetail.textContent = detail || '';
-                resultDiv.style.display = 'block';
-            }
-
             function calculate() {
                 hideError();
-                const mode = modeSelect.value;
 
-                if (mode === 'of') {
-                    const pct = getVal('pct');
-                    const num = getVal('num');
-                    if (isNaN(pct) || isNaN(num)) {
-                        showError('Please enter valid numbers for percentage and number.');
-                        return;
-                    }
-                    if (pct < 0 || num < 0) {
-                        showError('Please enter positive numbers.');
-                        return;
-                    }
-                    const result = (pct / 100) * num;
-                    setResult(result, `${pct}% of ${num} = ${result.toFixed(2)}`);
-                } 
-                else if (mode === 'what') {
-                    const part = getVal('part');
-                    const whole = getVal('whole');
-                    if (isNaN(part) || isNaN(whole)) {
-                        showError('Please enter valid numbers for part and whole.');
-                        return;
-                    }
-                    if (part < 0 || whole < 0) {
-                        showError('Please enter positive numbers.');
-                        return;
-                    }
-                    if (whole === 0) {
-                        showError('Whole cannot be zero.');
-                        return;
-                    }
-                    const result = (part / whole) * 100;
-                    setResult(result, `${part} is ${result.toFixed(2)}% of ${whole}`);
-                } 
-                else if (mode === 'change') {
-                    const oldVal = getVal('oldVal');
-                    const newVal = getVal('newVal');
-                    if (isNaN(oldVal) || isNaN(newVal)) {
-                        showError('Please enter valid numbers for original and new values.');
-                        return;
-                    }
-                    if (oldVal < 0 || newVal < 0) {
-                        showError('Please enter positive numbers.');
-                        return;
-                    }
-                    if (oldVal === 0) {
-                        showError('Original value cannot be zero.');
-                        return;
-                    }
-                    const change = ((newVal - oldVal) / oldVal) * 100;
-                    const direction = change >= 0 ? 'increase' : 'decrease';
-                    setResult(change, `${direction} of ${Math.abs(change).toFixed(2)}% from ${oldVal} to ${newVal}`);
+                const obtained = parseFloat(obtainedInput.value);
+                const total = parseFloat(totalInput.value);
+
+                if (isNaN(obtained) || isNaN(total)) {
+                    showError('Please enter valid numbers for both fields.');
+                    return;
                 }
+
+                if (obtained < 0 || total < 0) {
+                    showError('Please enter positive numbers.');
+                    return;
+                }
+
+                if (total === 0) {
+                    showError('Total value cannot be zero.');
+                    return;
+                }
+
+                if (obtained > total) {
+                    showError('Obtained value cannot be greater than total value.');
+                    return;
+                }
+
+                const percentage = (obtained / total) * 100;
+
+                resultValue.textContent = percentage.toFixed(2) + '%';
+                resultDetail.textContent = `${obtained} out of ${total} = ${percentage.toFixed(2)}%`;
+                resultDiv.style.display = 'block';
             }
 
             form.addEventListener('submit', function(e) {
@@ -263,17 +161,15 @@
 
             form.addEventListener('reset', function(e) {
                 setTimeout(function() {
-                    // Reset all inputs to empty
-                    const inputs = form.querySelectorAll('input[type="number"]');
-                    inputs.forEach(inp => inp.value = '');
+                    obtainedInput.value = '';
+                    totalInput.value = '';
                     resultDiv.style.display = 'none';
                     hideError();
-                    renderInputs(modeSelect.value);
                 }, 10);
             });
 
-            // Clear error on input change
-            inputsContainer.addEventListener('input', hideError);
+            obtainedInput.addEventListener('input', hideError);
+            totalInput.addEventListener('input', hideError);
 
         })();
     </script>
