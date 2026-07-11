@@ -44,12 +44,11 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Convert between different units across multiple categories. Select a category, choose units, and enter a value.
+                        Convert between different units across multiple categories.
                     </p>
 
                     <form class="unit-form" id="unitForm" novalidate>
 
-                        <!-- Category -->
                         <div class="field-group">
                             <label for="category">Category</label>
                             <select id="category" class="unit-select">
@@ -63,19 +62,16 @@
                             </select>
                         </div>
 
-                        <!-- From Unit -->
                         <div class="field-group">
                             <label for="fromUnit">From</label>
                             <select id="fromUnit" class="unit-select"></select>
                         </div>
 
-                        <!-- To Unit -->
                         <div class="field-group">
                             <label for="toUnit">To</label>
                             <select id="toUnit" class="unit-select"></select>
                         </div>
 
-                        <!-- Value -->
                         <div class="field-group">
                             <label for="valueInput">Value</label>
                             <input type="number" id="valueInput" step="any" min="0" placeholder="Enter a number" required />
@@ -137,7 +133,6 @@
             const resultValue = document.getElementById('resultValue');
             const resultDetail = document.getElementById('resultDetail');
 
-            // Unit definitions: each category has units with conversion factors to base unit
             const unitData = {
                 length: {
                     base: 'meter',
@@ -220,16 +215,13 @@
                 }
             };
 
-            // Special temperature conversion
             function convertTemperature(value, from, to) {
                 let celsius;
-                // Convert from any unit to Celsius
                 if (from === 'celsius') celsius = value;
                 else if (from === 'fahrenheit') celsius = (value - 32) * 5 / 9;
                 else if (from === 'kelvin') celsius = value - 273.15;
                 else return NaN;
 
-                // Convert from Celsius to target
                 if (to === 'celsius') return celsius;
                 else if (to === 'fahrenheit') return celsius * 9 / 5 + 32;
                 else if (to === 'kelvin') return celsius + 273.15;
@@ -241,34 +233,28 @@
                 if (!data) return;
 
                 const units = Object.keys(data.units);
-                const fromSelect = fromUnitSelect;
-                const toSelect = toUnitSelect;
-
-                fromSelect.innerHTML = '';
-                toSelect.innerHTML = '';
+                fromUnitSelect.innerHTML = '';
+                toUnitSelect.innerHTML = '';
 
                 units.forEach(function(key) {
-                    const option1 = document.createElement('option');
-                    option1.value = key;
-                    option1.textContent = data.units[key].label;
-                    fromSelect.appendChild(option1);
+                    const opt1 = document.createElement('option');
+                    opt1.value = key;
+                    opt1.textContent = data.units[key].label;
+                    fromUnitSelect.appendChild(opt1);
 
-                    const option2 = document.createElement('option');
-                    option2.value = key;
-                    option2.textContent = data.units[key].label;
-                    toSelect.appendChild(option2);
+                    const opt2 = document.createElement('option');
+                    opt2.value = key;
+                    opt2.textContent = data.units[key].label;
+                    toUnitSelect.appendChild(opt2);
                 });
 
-                // Set default selections
                 if (units.length > 1) {
-                    toSelect.selectedIndex = 1;
+                    toUnitSelect.selectedIndex = 1;
                 }
             }
 
-            // Initial population
             populateUnits(categorySelect.value);
 
-            // Update when category changes
             categorySelect.addEventListener('change', function() {
                 populateUnits(this.value);
                 resultDiv.style.display = 'none';
@@ -307,7 +293,6 @@
                 const data = unitData[category];
                 let result;
 
-                // Special handling for temperature
                 if (category === 'temperature') {
                     result = convertTemperature(value, fromUnit, toUnit);
                     if (isNaN(result)) {
@@ -321,7 +306,6 @@
                         showError('Invalid unit selection.');
                         return;
                     }
-                    // Convert to base unit then to target
                     const baseValue = value * fromFactor;
                     result = baseValue / toFactor;
                 }
@@ -348,7 +332,6 @@
                 }, 10);
             });
 
-            // Clear error on input change
             valueInput.addEventListener('input', hideError);
 
         })();
