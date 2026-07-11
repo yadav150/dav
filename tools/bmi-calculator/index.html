@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BMI Calculator · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+            <button class="hamburger"
+                    aria-expanded="false"
+                    aria-controls="primary-nav"
+                    aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">BMI Calculator</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Calculate your Body Mass Index (BMI) from height and weight. Select the unit system below.
+                    </p>
+
+                    <form class="bmi-form" id="bmiForm" novalidate>
+
+                        <!-- Unit selection -->
+                        <div class="field-group">
+                            <label for="unitSystem">Unit system</label>
+                            <select id="unitSystem" class="bmi-select">
+                                <option value="metric">Metric (cm / kg)</option>
+                                <option value="imperial">Imperial (ft / lbs)</option>
+                            </select>
+                        </div>
+
+                        <!-- Height -->
+                        <div class="field-group" id="heightGroup">
+                            <label for="height">Height (cm)</label>
+                            <input type="number" id="height" step="any" min="0" placeholder="e.g. 175" required />
+                        </div>
+
+                        <!-- Weight -->
+                        <div class="field-group" id="weightGroup">
+                            <label for="weight">Weight (kg)</label>
+                            <input type="number" id="weight" step="any" min="0" placeholder="e.g. 70" required />
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Calculate BMI</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </form>
+
+                    <div class="error-msg" id="errorMsg"></div>
+
+                    <div class="bmi-result" id="bmiResult" style="display:none;">
+                        <div class="result-row">
+                            <span class="result-label">Your BMI:</span>
+                            <span class="result-value" id="bmiValue">0</span>
+                        </div>
+                        <div class="result-detail" id="bmiCategory"></div>
+                        <div class="result-range" id="bmiRange"></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const form = document.getElementById('bmiForm');
+            const unitSystem = document.getElementById('unitSystem');
+            const heightInput = document.getElementById('height');
+            const weightInput = document.getElementById('weight');
+            const heightGroup = document.getElementById('heightGroup');
+            const weightGroup = document.getElementById('weightGroup');
+            const errorMsg = document.getElementById('errorMsg');
+            const resultDiv = document.getElementById('bmiResult');
+            const bmiValue = document.getElementById('bmiValue');
+            const bmiCategory = document.getElementById('bmiCategory');
+            const bmiRange = document.getElementById('bmiRange');
+
+            // Update labels based on unit system
+            function updateLabels() {
+                const system = unitSystem.value;
+                if (system === 'metric') {
+                    heightGroup.querySelector('label').textContent = 'Height (cm)';
+                    heightInput.placeholder = 'e.g. 175';
+                    weightGroup.querySelector('label').textContent = 'Weight (kg)';
+                    weightInput.placeholder = 'e.g. 70';
+                } else {
+                    heightGroup.querySelector('label').textContent = 'Height (feet)';
+                    heightInput.placeholder = 'e.g. 5.8';
+                    weightGroup.querySelector('label').textContent = 'Weight (lbs)';
+                    weightInput.placeholder = 'e.g. 154';
+                }
+            }
+
+            unitSystem.addEventListener('change', updateLabels);
+            updateLabels();
+
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.add('show');
+                resultDiv.style.display = 'none';
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('show');
+                errorMsg.textContent = '';
+            }
+
+            function getCategory(bmi) {
+                if (bmi < 16) return { label: 'Severe Thinness', color: '#e74c3c' };
+                if (bmi < 17) return { label: 'Moderate Thinness', color: '#e67e22' };
+                if (bmi < 18.5) return { label: 'Mild Thinness', color: '#f39c12' };
+                if (bmi < 25) return { label: 'Normal', color: '#27ae60' };
+                if (bmi < 30) return { label: 'Overweight', color: '#f1c40f' };
+                if (bmi < 35) return { label: 'Obese Class I', color: '#e67e22' };
+                if (bmi < 40) return { label: 'Obese Class II', color: '#d35400' };
+                return { label: 'Obese Class III', color: '#c0392b' };
+            }
+
+            function calculate() {
+                hideError();
+
+                const system = unitSystem.value;
+                const height = parseFloat(heightInput.value);
+                const weight = parseFloat(weightInput.value);
+
+                if (isNaN(height) || isNaN(weight) || height <= 0 || weight <= 0) {
+                    showError('Please enter valid positive numbers for height and weight.');
+                    return;
+                }
+
+                let bmi;
+                if (system === 'metric') {
+                    // Height in cm, weight in kg
+                    const heightM = height / 100;
+                    bmi = weight / (heightM * heightM);
+                } else {
+                    // Height in feet, weight in lbs
+                    const heightInches = height * 12;
+                    bmi = (weight / (heightInches * heightInches)) * 703;
+                }
+
+                if (!isFinite(bmi) || bmi <= 0) {
+                    showError('Please check your inputs. BMI calculation resulted in an invalid value.');
+                    return;
+                }
+
+                const category = getCategory(bmi);
+                bmiValue.textContent = bmi.toFixed(2);
+                bmiCategory.textContent = category.label;
+                bmiCategory.style.color = category.color;
+                bmiCategory.style.fontWeight = '600';
+                bmiRange.innerHTML = `
+                    <span style="display:inline-block;width:100%;max-width:400px;height:8px;background:linear-gradient(to right, #e74c3c, #e67e22, #f39c12, #27ae60, #f1c40f, #e67e22, #d35400, #c0392b);border-radius:4px;margin-top:6px;"></span>
+                    <span style="display:flex;justify-content:space-between;font-size:.7rem;color:#4a6b5a;max-width:400px;margin-top:2px;">
+                        <span>16</span>
+                        <span>18.5</span>
+                        <span>25</span>
+                        <span>30</span>
+                        <span>35</span>
+                        <span>40</span>
+                    </span>
+                `;
+                resultDiv.style.display = 'block';
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculate();
+            });
+
+            form.addEventListener('reset', function(e) {
+                setTimeout(function() {
+                    heightInput.value = '';
+                    weightInput.value = '';
+                    resultDiv.style.display = 'none';
+                    hideError();
+                    updateLabels();
+                }, 10);
+            });
+
+            heightInput.addEventListener('input', hideError);
+            weightInput.addEventListener('input', hideError);
+
+        })();
+    </script>
+
+</body>
+</html>
