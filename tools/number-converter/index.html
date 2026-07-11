@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Number Converter · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+            <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">Number Converter</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Convert between units across multiple categories with real-time bi-directional sync.
+                    </p>
+
+                    <form class="num-converter-form" id="numConverterForm" novalidate>
+
+                        <!-- ===== CATEGORY DROPDOWN ===== -->
+                        <div class="field-group">
+                            <label for="categorySelect">Category</label>
+                            <select id="categorySelect" class="num-select">
+                                <option value="length">Length (Meters ↔ Feet)</option>
+                                <option value="weight">Weight (Kilograms ↔ Pounds)</option>
+                                <option value="temperature">Temperature (Celsius ↔ Fahrenheit)</option>
+                                <option value="storage">Digital Storage (MB ↔ GB)</option>
+                            </select>
+                        </div>
+
+                        <!-- ===== DYNAMIC CONVERTER ROWS ===== -->
+                        <div id="converterRows">
+                            <!-- Rendered by JS -->
+                        </div>
+
+                        <!-- ===== CLEAR BUTTON ===== -->
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary" id="clearFieldsBtn">Clear All Fields</button>
+                        </div>
+                    </form>
+
+                    <div class="error-msg" id="errorMsg"></div>
+
+                    <!-- ===== RESULT / STATUS ===== -->
+                    <div class="num-result" id="numResult" style="display:none;">
+                        <div class="result-detail" id="conversionStatus">Ready</div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ===== DOM REFS =====
+            const categorySelect = document.getElementById('categorySelect');
+            const converterRows = document.getElementById('converterRows');
+            const clearFieldsBtn = document.getElementById('clearFieldsBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            const numResult = document.getElementById('numResult');
+            const conversionStatus = document.getElementById('conversionStatus');
+
+            // ===== CONFIGURATIONS =====
+            const configs = {
+                length: {
+                    label1: 'Meters (m)',
+                    label2: 'Feet (ft)',
+                    min1: 0,
+                    max1: 1000,
+                    step1: 0.1,
+                    min2: 0,
+                    max2: 3280.84,
+                    step2: 0.1,
+                    allowNegative: false,
+                    convert1to2: function(val) { return val * 3.28084; },
+                    convert2to1: function(val) { return val / 3.28084; },
+                    format: function(v) { return v.toFixed(4); }
+                },
+                weight: {
+                    label1: 'Kilograms (kg)',
+                    label2: 'Pounds (lbs)',
+                    min1: 0,
+                    max1: 500,
+                    step1: 0.1,
+                    min2: 0,
+                    max2: 1102.31,
+                    step2: 0.1,
+                    allowNegative: false,
+                    convert1to2: function(val) { return val * 2.20462; },
+                    convert2to1: function(val) { return val / 2.20462; },
+                    format: function(v) { return v.toFixed(4); }
+                },
+                temperature: {
+                    label1: 'Celsius (°C)',
+                    label2: 'Fahrenheit (°F)',
+                    min1: -50,
+                    max1: 150,
+                    step1: 0.1,
+                    min2: -58,
+                    max2: 302,
+                    step2: 0.1,
+                    allowNegative: true,
+                    convert1to2: function(val) { return val * 9 / 5 + 32; },
+                    convert2to1: function(val) { return (val - 32) * 5 / 9; },
+                    format: function(v) { return v.toFixed(2); }
+                },
+                storage: {
+                    label1: 'Megabytes (MB)',
+                    label2: 'Gigabytes (GB)',
+                    min1: 0,
+                    max1: 10240,
+                    step1: 1,
+                    min2: 0,
+                    max2: 10,
+                    step2: 0.01,
+                    allowNegative: false,
+                    convert1to2: function(val) { return val / 1024; },
+                    convert2to1: function(val) { return val * 1024; },
+                    format: function(v) { return v.toFixed(4); }
+                }
+            };
+
+            let currentCategory = 'length';
+            let isUpdating = false;
+
+            // ===== HELPERS =====
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.add('show');
+                numResult.style.display = 'none';
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('show');
+                errorMsg.textContent = '';
+            }
+
+            function showStatus(msg) {
+                conversionStatus.textContent = msg;
+                numResult.style.display = 'block';
+            }
+
+            function formatCurrency(val) {
+                return '₹' + Number(val).toFixed(2);
+            }
+
+            // ===== COPY TO CLIPBOARD =====
+            function setupCopyButton(btn, inputId) {
+                btn.addEventListener('click', function() {
+                    const input = document.getElementById(inputId);
+                    if (!input) return;
+                    const val = input.value;
+                    if (!val || val === '') {
+                        showError('Nothing to copy. Enter a value first.');
+                        return;
+                    }
+                    navigator.clipboard.writeText(val).then(function() {
+                        const orig = btn.textContent;
+                        btn.textContent = '✓';
+                        btn.style.background = '#27ae60';
+                        setTimeout(function() {
+                            btn.textContent = orig;
+                            btn.style.background = '';
+                        }, 1500);
+                    }).catch(function() {
+                        // Fallback
+                        input.select();
+                        document.execCommand('copy');
+                        const orig = btn.textContent;
+                        btn.textContent = '✓';
+                        btn.style.background = '#27ae60';
+                        setTimeout(function() {
+                            btn.textContent = orig;
+                            btn.style.background = '';
+                        }, 1500);
+                    });
+                });
+            }
+
+            // ===== RENDER CONVERTER ROWS =====
+            function renderCategory(category) {
+                const config = configs[category];
+                if (!config) return;
+
+                currentCategory = category;
+                hideError();
+
+                const html = `
+                    <!-- Row 1 -->
+                    <div class="converter-row">
+                        <div class="field-group">
+                            <label for="input1">${config.label1}</label>
+                            <div class="input-with-copy">
+                                <input type="number" id="input1" step="${config.step1}" min="${config.min1}" max="${config.max1}" value="" placeholder="Enter value" />
+                                <button type="button" class="copy-btn" data-target="input1">📋</button>
+                            </div>
+                            <input type="range" id="slider1" min="${config.min1}" max="${config.max1}" step="${config.step1}" value="0" class="num-range" />
+                            <span class="range-value" id="sliderVal1">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="converter-row">
+                        <div class="field-group">
+                            <label for="input2">${config.label2}</label>
+                            <div class="input-with-copy">
+                                <input type="number" id="input2" step="${config.step2}" min="${config.min2}" max="${config.max2}" value="" placeholder="Enter value" />
+                                <button type="button" class="copy-btn" data-target="input2">📋</button>
+                            </div>
+                            <input type="range" id="slider2" min="${config.min2}" max="${config.max2}" step="${config.step2}" value="0" class="num-range" />
+                            <span class="range-value" id="sliderVal2">0</span>
+                        </div>
+                    </div>
+                `;
+
+                converterRows.innerHTML = html;
+
+                // Get refs
+                const input1 = document.getElementById('input1');
+                const input2 = document.getElementById('input2');
+                const slider1 = document.getElementById('slider1');
+                const slider2 = document.getElementById('slider2');
+                const sliderVal1 = document.getElementById('sliderVal1');
+                const sliderVal2 = document.getElementById('sliderVal2');
+
+                // ===== BI-DIRECTIONAL SYNC =====
+
+                // Input 1 → Slider 1 + Input 2 + Slider 2
+                input1.addEventListener('input', function() {
+                    if (isUpdating) return;
+                    const val = parseFloat(this.value);
+                    if (isNaN(val)) {
+                        input2.value = '';
+                        slider2.value = slider2.min;
+                        sliderVal2.textContent = slider2.min;
+                        return;
+                    }
+                    // Clamp
+                    const clamped = Math.max(config.min1, Math.min(config.max1, val));
+                    if (clamped !== val) {
+                        this.value = clamped;
+                    }
+                    slider1.value = clamped;
+                    sliderVal1.textContent = config.format ? config.format(clamped) : clamped;
+
+                    // Convert to target
+                    const converted = config.convert1to2(clamped);
+                    // Clamp target
+                    const clamped2 = Math.max(config.min2, Math.min(config.max2, converted));
+                    isUpdating = true;
+                    input2.value = config.format ? config.format(clamped2) : clamped2;
+                    slider2.value = clamped2;
+                    sliderVal2.textContent = config.format ? config.format(clamped2) : clamped2;
+                    isUpdating = false;
+
+                    showStatus(`${config.label1}: ${config.format ? config.format(clamped) : clamped} → ${config.label2}: ${config.format ? config.format(clamped2) : clamped2}`);
+                });
+
+                // Slider 1 → Input 1 + Input 2 + Slider 2
+                slider1.addEventListener('input', function() {
+                    if (isUpdating) return;
+                    const val = parseFloat(this.value);
+                    input1.value = config.format ? config.format(val) : val;
+                    sliderVal1.textContent = config.format ? config.format(val) : val;
+
+                    const converted = config.convert1to2(val);
+                    const clamped2 = Math.max(config.min2, Math.min(config.max2, converted));
+                    isUpdating = true;
+                    input2.value = config.format ? config.format(clamped2) : clamped2;
+                    slider2.value = clamped2;
+                    sliderVal2.textContent = config.format ? config.format(clamped2) : clamped2;
+                    isUpdating = false;
+
+                    showStatus(`${config.label1}: ${config.format ? config.format(val) : val} → ${config.label2}: ${config.format ? config.format(clamped2) : clamped2}`);
+                });
+
+                // Input 2 → Slider 2 + Input 1 + Slider 1
+                input2.addEventListener('input', function() {
+                    if (isUpdating) return;
+                    const val = parseFloat(this.value);
+                    if (isNaN(val)) {
+                        input1.value = '';
+                        slider1.value = slider1.min;
+                        sliderVal1.textContent = slider1.min;
+                        return;
+                    }
+                    const clamped = Math.max(config.min2, Math.min(config.max2, val));
+                    if (clamped !== val) {
+                        this.value = clamped;
+                    }
+                    slider2.value = clamped;
+                    sliderVal2.textContent = config.format ? config.format(clamped) : clamped;
+
+                    const converted = config.convert2to1(clamped);
+                    const clamped1 = Math.max(config.min1, Math.min(config.max1, converted));
+                    isUpdating = true;
+                    input1.value = config.format ? config.format(clamped1) : clamped1;
+                    slider1.value = clamped1;
+                    sliderVal1.textContent = config.format ? config.format(clamped1) : clamped1;
+                    isUpdating = false;
+
+                    showStatus(`${config.label2}: ${config.format ? config.format(clamped) : clamped} → ${config.label1}: ${config.format ? config.format(clamped1) : clamped1}`);
+                });
+
+                // Slider 2 → Input 2 + Input 1 + Slider 1
+                slider2.addEventListener('input', function() {
+                    if (isUpdating) return;
+                    const val = parseFloat(this.value);
+                    input2.value = config.format ? config.format(val) : val;
+                    sliderVal2.textContent = config.format ? config.format(val) : val;
+
+                    const converted = config.convert2to1(val);
+                    const clamped1 = Math.max(config.min1, Math.min(config.max1, converted));
+                    isUpdating = true;
+                    input1.value = config.format ? config.format(clamped1) : clamped1;
+                    slider1.value = clamped1;
+                    sliderVal1.textContent = config.format ? config.format(clamped1) : clamped1;
+                    isUpdating = false;
+
+                    showStatus(`${config.label2}: ${config.format ? config.format(val) : val} → ${config.label1}: ${config.format ? config.format(clamped1) : clamped1}`);
+                });
+
+                // ===== SETUP COPY BUTTONS =====
+                document.querySelectorAll('.copy-btn').forEach(function(btn) {
+                    const target = btn.dataset.target;
+                    setupCopyButton(btn, target);
+                });
+
+                // ===== SET INITIAL VALUES =====
+                // Set a default example value
+                if (category === 'length') {
+                    input1.value = 10;
+                    slider1.value = 10;
+                    sliderVal1.textContent = '10.0000';
+                    const converted = config.convert1to2(10);
+                    input2.value = config.format(converted);
+                    slider2.value = converted;
+                    sliderVal2.textContent = config.format(converted);
+                    showStatus('10 meters = 32.8084 feet');
+                } else if (category === 'weight') {
+                    input1.value = 50;
+                    slider1.value = 50;
+                    sliderVal1.textContent = '50.0000';
+                    const converted = config.convert1to2(50);
+                    input2.value = config.format(converted);
+                    slider2.value = converted;
+                    sliderVal2.textContent = config.format(converted);
+                    showStatus('50 kilograms = 110.2310 pounds');
+                } else if (category === 'temperature') {
+                    input1.value = 25;
+                    slider1.value = 25;
+                    sliderVal1.textContent = '25.00';
+                    const converted = config.convert1to2(25);
+                    input2.value = config.format(converted);
+                    slider2.value = converted;
+                    sliderVal2.textContent = config.format(converted);
+                    showStatus('25°C = 77.00°F');
+                } else if (category === 'storage') {
+                    input1.value = 2048;
+                    slider1.value = 2048;
+                    sliderVal1.textContent = '2048.0000';
+                    const converted = config.convert1to2(2048);
+                    input2.value = config.format(converted);
+                    slider2.value = converted;
+                    sliderVal2.textContent = config.format(converted);
+                    showStatus('2048 MB = 2.0000 GB');
+                }
+            }
+
+            // ===== CATEGORY CHANGE =====
+            categorySelect.addEventListener('change', function() {
+                renderCategory(this.value);
+                hideError();
+            });
+
+            // ===== CLEAR ALL FIELDS =====
+            clearFieldsBtn.addEventListener('click', function() {
+                const inputs = document.querySelectorAll('#converterRows input[type="number"]');
+                inputs.forEach(function(inp) {
+                    inp.value = '';
+                });
+                const sliders = document.querySelectorAll('#converterRows input[type="range"]');
+                sliders.forEach(function(sld) {
+                    sld.value = sld.min;
+                });
+                const valSpans = document.querySelectorAll('#converterRows .range-value');
+                valSpans.forEach(function(span, idx) {
+                    const slider = document.getElementById('slider' + (idx + 1));
+                    span.textContent = slider ? slider.min : '0';
+                });
+                numResult.style.display = 'none';
+                hideError();
+            });
+
+            // ===== INITIAL RENDER =====
+            renderCategory('length');
+
+            // ===== KEYBOARD SHORTCUT: Escape to clear =====
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    clearFieldsBtn.click();
+                }
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
