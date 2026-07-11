@@ -11,7 +11,7 @@
     <!-- ===== HEADER ===== -->
     <header class="site-header" role="banner">
         <div class="header-inner">
-            <a href="../../index.html" class="site-title" style="text-decoration:none;">Yadav Web Tools</a>
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
             <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
@@ -40,7 +40,7 @@
             <div class="section-body">
                 <div class="content-box">
 
-                    <p style="margin-bottom:16px;font-size:.95rem;color:#2d4a3b;">
+                    <p class="tool-intro">
                         Enter your date of birth and optionally a target date to calculate your exact age.
                     </p>
 
@@ -52,13 +52,15 @@
                         <div class="field-group">
                             <label for="asof">As of date</label>
                             <input type="date" id="asof" />
-                            <span style="font-size:.8rem;color:#4a6b5a;">(defaults to today)</span>
+                            <span class="helper-text">(defaults to today)</span>
                         </div>
                         <div class="btn-group">
                             <button type="submit" class="btn">Calculate Age</button>
-                            <button type="reset" class="btn" style="background:#5f7a6b;">Reset</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
                         </div>
                     </form>
+
+                    <div class="error-msg" id="errorMsg"></div>
 
                     <div class="age-result" id="ageResult" style="display:none;">
                         <div class="stat"><span class="num" id="years">0</span><span class="lbl">Years</span></div>
@@ -71,7 +73,7 @@
             </div>
         </section>
 
-        <div style="max-width:1200px;margin:0 auto;height:8px;"></div>
+        <div class="spacer"></div>
 
     </main>
 
@@ -89,8 +91,10 @@
         </div>
     </footer>
 
+    <!-- ===== GLOBAL SCRIPTS ===== -->
     <script src="../../script.js"></script>
 
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
     <script>
         (function() {
             'use strict';
@@ -103,17 +107,33 @@
             const monthsSpan = document.getElementById('months');
             const daysSpan = document.getElementById('days');
             const totalDaysSpan = document.getElementById('totalDays');
+            const errorMsg = document.getElementById('errorMsg');
 
+            // Set default "as of" to today
             const today = new Date();
             const y = today.getFullYear();
             const m = String(today.getMonth() + 1).padStart(2, '0');
             const d = String(today.getDate()).padStart(2, '0');
             asofInput.value = y + '-' + m + '-' + d;
 
+            // Helper to show error
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.add('show');
+                resultDiv.style.display = 'none';
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('show');
+                errorMsg.textContent = '';
+            }
+
             function calcAge() {
+                hideError();
+
                 const dobVal = dobInput.value;
                 if (!dobVal) {
-                    alert('Please select your date of birth.');
+                    showError('Please select your date of birth.');
                     return;
                 }
 
@@ -125,12 +145,12 @@
                 const asofDate = new Date(asofParts[0], asofParts[1] - 1, asofParts[2]);
 
                 if (isNaN(dobDate.getTime()) || isNaN(asofDate.getTime())) {
-                    alert('Please enter valid dates.');
+                    showError('Please enter valid dates.');
                     return;
                 }
 
                 if (dobDate > asofDate) {
-                    alert('Date of birth must be earlier than the "as of" date.');
+                    showError('Date of birth must be earlier than the "as of" date.');
                     return;
                 }
 
@@ -166,11 +186,17 @@
             });
 
             form.addEventListener('reset', function(e) {
+                // Reset asof to today after reset
                 setTimeout(function() {
                     asofInput.value = y + '-' + m + '-' + d;
                     resultDiv.style.display = 'none';
+                    hideError();
                 }, 10);
             });
+
+            // Clear error when user starts typing
+            dobInput.addEventListener('input', hideError);
+            asofInput.addEventListener('input', hideError);
 
         })();
     </script>
