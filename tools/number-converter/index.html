@@ -41,39 +41,132 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Convert between units across multiple categories with real-time bi-directional sync.
+                        Convert between Indian and Western number formats, time zones, fractions, and calculate age intervals.
                     </p>
 
-                    <form class="num-converter-form" id="numConverterForm" novalidate>
+                    <form class="number-form" id="numberForm" novalidate>
 
-                        <!-- ===== CATEGORY DROPDOWN ===== -->
+                        <!-- ===== MODE DROPDOWN ===== -->
                         <div class="field-group">
-                            <label for="categorySelect">Category</label>
-                            <select id="categorySelect" class="num-select">
-                                <option value="length">Length (Meters ↔ Feet)</option>
-                                <option value="weight">Weight (Kilograms ↔ Pounds)</option>
-                                <option value="temperature">Temperature (Celsius ↔ Fahrenheit)</option>
-                                <option value="storage">Digital Storage (MB ↔ GB)</option>
+                            <label for="modeSelect">Mode</label>
+                            <select id="modeSelect" class="number-select">
+                                <option value="format">Format Converter (Lakhs/Crores ↔ Millions/Billions)</option>
+                                <option value="timezone">Time Zone Converter</option>
+                                <option value="fraction">Fraction ↔ Decimal</option>
+                                <option value="age">Age & Date Interval</option>
                             </select>
                         </div>
 
-                        <!-- ===== DYNAMIC CONVERTER ROWS ===== -->
-                        <div id="converterRows">
-                            <!-- Rendered by JS -->
+                        <!-- ===== MODE A: FORMAT CONVERTER ===== -->
+                        <div id="modeFormat" class="mode-section">
+                            <div class="field-group">
+                                <label for="indianInput">Indian Notation</label>
+                                <div class="input-with-copy">
+                                    <input type="text" id="indianInput" placeholder="e.g. 1,00,000" />
+                                    <button type="button" class="btn-copy-sm" data-target="indianInput">Copy</button>
+                                </div>
+                            </div>
+                            <div class="field-group">
+                                <label for="westernInput">International Notation</label>
+                                <div class="input-with-copy">
+                                    <input type="text" id="westernInput" placeholder="e.g. 100,000" />
+                                    <button type="button" class="btn-copy-sm" data-target="westernInput">Copy</button>
+                                </div>
+                            </div>
+                            <div class="helper-text">Type in either field — both update in real-time.</div>
+                        </div>
+
+                        <!-- ===== MODE B: TIME ZONE ===== -->
+                        <div id="modeTimezone" class="mode-section" style="display:none;">
+                            <div class="field-group">
+                                <label for="istTime">IST Time</label>
+                                <input type="time" id="istTime" value="12:00" />
+                            </div>
+                            <div class="field-group">
+                                <label for="targetZone">Target Zone</label>
+                                <select id="targetZone" class="number-select">
+                                    <option value="UTC">UTC (GMT+0)</option>
+                                    <option value="EST">EST (GMT-5)</option>
+                                    <option value="CST">CST (GMT-6)</option>
+                                    <option value="PST">PST (GMT-8)</option>
+                                    <option value="GMT">GMT (GMT+0)</option>
+                                    <option value="Dubai">Dubai (GMT+4)</option>
+                                    <option value="Singapore">Singapore (GMT+8)</option>
+                                    <option value="Sydney">Sydney (GMT+11)</option>
+                                    <option value="London">London (GMT+1)</option>
+                                    <option value="NewYork">New York (GMT-4)</option>
+                                </select>
+                            </div>
+                            <div class="field-group">
+                                <label for="targetTime">Target Time</label>
+                                <div class="input-with-copy">
+                                    <input type="text" id="targetTime" readonly />
+                                    <button type="button" class="btn-copy-sm" data-target="targetTime">Copy</button>
+                                </div>
+                            </div>
+                            <div id="dayOffsetBadge" class="day-offset-badge"></div>
+                            <div class="helper-text">Time zone conversion with day offset detection.</div>
+                        </div>
+
+                        <!-- ===== MODE C: FRACTION ↔ DECIMAL ===== -->
+                        <div id="modeFraction" class="mode-section" style="display:none;">
+                            <div class="field-group">
+                                <label for="numerator">Numerator</label>
+                                <input type="number" id="numerator" step="1" min="0" value="1" />
+                            </div>
+                            <div class="field-group">
+                                <label for="denominator">Denominator</label>
+                                <input type="number" id="denominator" step="1" min="1" value="4" />
+                                <span class="helper-text" id="denomWarning" style="color:#e74c3c;display:none;">Denominator cannot be zero!</span>
+                            </div>
+                            <div class="field-group">
+                                <label for="decimalInput">Decimal Value</label>
+                                <div class="input-with-copy">
+                                    <input type="number" id="decimalInput" step="0.01" min="0" max="1" value="0.25" />
+                                    <button type="button" class="btn-copy-sm" data-target="decimalInput">Copy</button>
+                                </div>
+                            </div>
+                            <div class="field-group">
+                                <label for="precisionSlider">Precision</label>
+                                <input type="range" id="precisionSlider" min="0.01" max="1" step="0.01" value="0.01" class="number-range" />
+                                <span class="range-value" id="precisionVal">0.01</span>
+                            </div>
+                            <div class="helper-text">Fraction and decimal are synced. Adjust precision slider for decimal rounding.</div>
+                        </div>
+
+                        <!-- ===== MODE D: AGE & DATE INTERVAL ===== -->
+                        <div id="modeAge" class="mode-section" style="display:none;">
+                            <div class="field-group">
+                                <label for="datePicker">Select Date of Birth / Event Date</label>
+                                <input type="date" id="datePicker" />
+                            </div>
+                            <div class="age-breakdown">
+                                <div class="age-item">
+                                    <span class="age-label">Age in Years</span>
+                                    <span class="age-value" id="ageYears">0</span>
+                                </div>
+                                <div class="age-item">
+                                    <span class="age-label">Age in Months</span>
+                                    <span class="age-value" id="ageMonths">0</span>
+                                </div>
+                                <div class="age-item">
+                                    <span class="age-label">Age in Days</span>
+                                    <span class="age-value" id="ageDays">0</span>
+                                </div>
+                            </div>
+                            <div class="btn-group" style="margin-top:10px;">
+                                <button type="button" class="btn btn-secondary" id="copyAgeBtn">Copy Age Summary</button>
+                            </div>
                         </div>
 
                         <!-- ===== CLEAR BUTTON ===== -->
-                        <div class="btn-group">
+                        <div class="btn-group" style="margin-top:14px;border-top:1px solid #e6e6e6;padding-top:14px;">
                             <button type="button" class="btn btn-secondary" id="clearFieldsBtn">Clear All Fields</button>
                         </div>
+
                     </form>
 
                     <div class="error-msg" id="errorMsg"></div>
-
-                    <!-- ===== RESULT / STATUS ===== -->
-                    <div class="num-result" id="numResult" style="display:none;">
-                        <div class="result-detail" id="conversionStatus">Ready</div>
-                    </div>
 
                 </div>
             </div>
@@ -106,81 +199,362 @@
             'use strict';
 
             // ===== DOM REFS =====
-            const categorySelect = document.getElementById('categorySelect');
-            const converterRows = document.getElementById('converterRows');
+            const modeSelect = document.getElementById('modeSelect');
+            const modeFormat = document.getElementById('modeFormat');
+            const modeTimezone = document.getElementById('modeTimezone');
+            const modeFraction = document.getElementById('modeFraction');
+            const modeAge = document.getElementById('modeAge');
+
+            const indianInput = document.getElementById('indianInput');
+            const westernInput = document.getElementById('westernInput');
+
+            const istTime = document.getElementById('istTime');
+            const targetZone = document.getElementById('targetZone');
+            const targetTime = document.getElementById('targetTime');
+            const dayOffsetBadge = document.getElementById('dayOffsetBadge');
+
+            const numerator = document.getElementById('numerator');
+            const denominator = document.getElementById('denominator');
+            const denomWarning = document.getElementById('denomWarning');
+            const decimalInput = document.getElementById('decimalInput');
+            const precisionSlider = document.getElementById('precisionSlider');
+            const precisionVal = document.getElementById('precisionVal');
+
+            const datePicker = document.getElementById('datePicker');
+            const ageYears = document.getElementById('ageYears');
+            const ageMonths = document.getElementById('ageMonths');
+            const ageDays = document.getElementById('ageDays');
+            const copyAgeBtn = document.getElementById('copyAgeBtn');
+
             const clearFieldsBtn = document.getElementById('clearFieldsBtn');
             const errorMsg = document.getElementById('errorMsg');
-            const numResult = document.getElementById('numResult');
-            const conversionStatus = document.getElementById('conversionStatus');
 
-            // ===== CONFIGURATIONS =====
-            const configs = {
-                length: {
-                    label1: 'Meters (m)',
-                    label2: 'Feet (ft)',
-                    min1: 0,
-                    max1: 1000,
-                    step1: 0.1,
-                    min2: 0,
-                    max2: 3280.84,
-                    step2: 0.1,
-                    allowNegative: false,
-                    convert1to2: function(val) { return val * 3.28084; },
-                    convert2to1: function(val) { return val / 3.28084; },
-                    format: function(v) { return v.toFixed(4); }
-                },
-                weight: {
-                    label1: 'Kilograms (kg)',
-                    label2: 'Pounds (lbs)',
-                    min1: 0,
-                    max1: 500,
-                    step1: 0.1,
-                    min2: 0,
-                    max2: 1102.31,
-                    step2: 0.1,
-                    allowNegative: false,
-                    convert1to2: function(val) { return val * 2.20462; },
-                    convert2to1: function(val) { return val / 2.20462; },
-                    format: function(v) { return v.toFixed(4); }
-                },
-                temperature: {
-                    label1: 'Celsius (°C)',
-                    label2: 'Fahrenheit (°F)',
-                    min1: -50,
-                    max1: 150,
-                    step1: 0.1,
-                    min2: -58,
-                    max2: 302,
-                    step2: 0.1,
-                    allowNegative: true,
-                    convert1to2: function(val) { return val * 9 / 5 + 32; },
-                    convert2to1: function(val) { return (val - 32) * 5 / 9; },
-                    format: function(v) { return v.toFixed(2); }
-                },
-                storage: {
-                    label1: 'Megabytes (MB)',
-                    label2: 'Gigabytes (GB)',
-                    min1: 0,
-                    max1: 10240,
-                    step1: 1,
-                    min2: 0,
-                    max2: 10,
-                    step2: 0.01,
-                    allowNegative: false,
-                    convert1to2: function(val) { return val / 1024; },
-                    convert2to1: function(val) { return val * 1024; },
-                    format: function(v) { return v.toFixed(4); }
-                }
+            // ===== TIME ZONE OFFSETS (in hours from IST = GMT+5:30) =====
+            const timezoneOffsets = {
+                'UTC': 5.5,
+                'EST': 10.5,
+                'CST': 11.5,
+                'PST': 13.5,
+                'GMT': 5.5,
+                'Dubai': 1.5,
+                'Singapore': -2.5,
+                'Sydney': -5.5,
+                'London': 4.5,
+                'NewYork': 9.5
             };
 
-            let currentCategory = 'length';
-            let isUpdating = false;
+            // ===== MODE SWITCHING =====
+            function switchMode(mode) {
+                const sections = {
+                    'format': modeFormat,
+                    'timezone': modeTimezone,
+                    'fraction': modeFraction,
+                    'age': modeAge
+                };
+                Object.keys(sections).forEach(function(key) {
+                    sections[key].style.display = (key === mode) ? 'block' : 'none';
+                });
+                hideError();
+            }
 
-            // ===== HELPERS =====
+            modeSelect.addEventListener('change', function() {
+                switchMode(this.value);
+            });
+
+            // ===== MODE A: FORMAT CONVERTER =====
+            function formatIndian(numStr) {
+                // Remove existing commas and non-digits
+                const clean = numStr.replace(/[^0-9]/g, '');
+                if (!clean) return '';
+                const num = parseInt(clean, 10);
+                if (isNaN(num)) return '';
+                // Indian format: first group of 3, then groups of 2
+                const str = num.toString();
+                const lastThree = str.slice(-3);
+                const other = str.slice(0, -3);
+                if (other !== '') {
+                    return other.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + lastThree;
+                }
+                return lastThree;
+            }
+
+            function formatWestern(numStr) {
+                const clean = numStr.replace(/[^0-9]/g, '');
+                if (!clean) return '';
+                const num = parseInt(clean, 10);
+                if (isNaN(num)) return '';
+                return num.toLocaleString('en-US');
+            }
+
+            function syncFormatting(source, target, formatter) {
+                const raw = source.value;
+                const formatted = formatter(raw);
+                if (formatted !== target.value) {
+                    target.value = formatted;
+                }
+            }
+
+            indianInput.addEventListener('input', function() {
+                syncFormatting(this, westernInput, formatWestern);
+            });
+
+            westernInput.addEventListener('input', function() {
+                syncFormatting(this, indianInput, formatIndian);
+            });
+
+            // ===== MODE B: TIME ZONE =====
+            function convertTime() {
+                const istVal = istTime.value;
+                if (!istVal) return;
+                const [hours, minutes] = istVal.split(':').map(Number);
+                const totalMinutes = hours * 60 + minutes;
+                const offsetHours = timezoneOffsets[targetZone.value] || 5.5;
+                const offsetMinutes = Math.round(offsetHours * 60);
+                let targetMinutes = totalMinutes - offsetMinutes;
+                let dayOffset = 0;
+
+                if (targetMinutes < 0) {
+                    targetMinutes += 1440;
+                    dayOffset = -1;
+                } else if (targetMinutes >= 1440) {
+                    targetMinutes -= 1440;
+                    dayOffset = 1;
+                }
+
+                const tHours = Math.floor(targetMinutes / 60);
+                const tMins = Math.round(targetMinutes % 60);
+                const ampm = tHours >= 12 ? 'PM' : 'AM';
+                const displayHours = tHours % 12 || 12;
+                const timeStr = String(displayHours).padStart(2, ' ') + ':' + String(tMins).padStart(2, '0') + ' ' + ampm;
+                targetTime.value = timeStr;
+
+                // Day offset badge
+                if (dayOffset === 1) {
+                    dayOffsetBadge.textContent = '(+1 Day)';
+                    dayOffsetBadge.style.display = 'inline-block';
+                    dayOffsetBadge.style.background = '#f39c12';
+                } else if (dayOffset === -1) {
+                    dayOffsetBadge.textContent = '(-1 Day)';
+                    dayOffsetBadge.style.display = 'inline-block';
+                    dayOffsetBadge.style.background = '#e74c3c';
+                } else {
+                    dayOffsetBadge.style.display = 'none';
+                }
+            }
+
+            istTime.addEventListener('change', convertTime);
+            targetZone.addEventListener('change', convertTime);
+            // Initial conversion
+            setTimeout(convertTime, 100);
+
+            // ===== MODE C: FRACTION ↔ DECIMAL =====
+            function updateFractionFromDecimal() {
+                const dec = parseFloat(decimalInput.value);
+                if (isNaN(dec) || dec < 0 || dec > 1) return;
+                // Find fraction using precision slider
+                const precision = parseFloat(precisionSlider.value) || 0.01;
+                const maxDenom = Math.round(1 / precision);
+                let bestNum = 1,
+                    bestDen = 1,
+                    bestDiff = Infinity;
+                for (let d = 1; d <= maxDenom; d++) {
+                    const n = Math.round(dec * d);
+                    if (n === 0) continue;
+                    const diff = Math.abs(dec - n / d);
+                    if (diff < bestDiff) {
+                        bestDiff = diff;
+                        bestNum = n;
+                        bestDen = d;
+                    }
+                }
+                numerator.value = bestNum;
+                denominator.value = bestDen;
+                denomWarning.style.display = 'none';
+            }
+
+            function updateDecimalFromFraction() {
+                const num = parseInt(numerator.value);
+                const den = parseInt(denominator.value);
+                if (isNaN(num) || isNaN(den)) return;
+                if (den === 0) {
+                    denomWarning.style.display = 'inline';
+                    return;
+                }
+                denomWarning.style.display = 'none';
+                const dec = num / den;
+                if (dec >= 0 && dec <= 1) {
+                    decimalInput.value = dec.toFixed(4);
+                }
+            }
+
+            numerator.addEventListener('input', updateDecimalFromFraction);
+            denominator.addEventListener('input', updateDecimalFromFraction);
+
+            decimalInput.addEventListener('input', function() {
+                const val = parseFloat(this.value);
+                if (!isNaN(val) && val >= 0 && val <= 1) {
+                    updateFractionFromDecimal();
+                }
+            });
+
+            precisionSlider.addEventListener('input', function() {
+                precisionVal.textContent = parseFloat(this.value).toFixed(2);
+                if (decimalInput.value) {
+                    updateFractionFromDecimal();
+                }
+            });
+
+            // Initial sync
+            setTimeout(function() {
+                updateDecimalFromFraction();
+                precisionVal.textContent = '0.01';
+            }, 100);
+
+            // ===== MODE D: AGE & DATE INTERVAL =====
+            function calculateAge() {
+                const dateVal = datePicker.value;
+                if (!dateVal) {
+                    ageYears.textContent = '0';
+                    ageMonths.textContent = '0';
+                    ageDays.textContent = '0';
+                    return;
+                }
+                const parts = dateVal.split('-').map(Number);
+                const birthDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                let years = today.getFullYear() - birthDate.getFullYear();
+                let months = today.getMonth() - birthDate.getMonth();
+                let days = today.getDate() - birthDate.getDate();
+
+                if (days < 0) {
+                    const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                    days += prevMonth.getDate();
+                    months -= 1;
+                }
+                if (months < 0) {
+                    months += 12;
+                    years -= 1;
+                }
+
+                const diffMs = today.getTime() - birthDate.getTime();
+                const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                ageYears.textContent = years < 0 ? 0 : years;
+                ageMonths.textContent = months < 0 ? 0 : months;
+                ageDays.textContent = totalDays < 0 ? 0 : totalDays;
+            }
+
+            datePicker.addEventListener('change', calculateAge);
+            // Set default date to 18 years ago
+            const defaultDate = new Date();
+            defaultDate.setFullYear(defaultDate.getFullYear() - 18);
+            datePicker.value = defaultDate.toISOString().split('T')[0];
+            setTimeout(calculateAge, 100);
+
+            // ===== COPY FUNCTIONS =====
+            function setupCopyButtons() {
+                document.querySelectorAll('.btn-copy-sm').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        const targetId = this.dataset.target;
+                        const input = document.getElementById(targetId);
+                        if (!input) return;
+                        const text = input.value;
+                        if (!text) {
+                            showError('Nothing to copy.');
+                            return;
+                        }
+                        navigator.clipboard.writeText(text).then(function() {
+                            const orig = btn.textContent;
+                            btn.textContent = '✓';
+                            btn.style.background = '#27ae60';
+                            btn.style.color = '#fff';
+                            setTimeout(function() {
+                                btn.textContent = orig;
+                                btn.style.background = '';
+                                btn.style.color = '';
+                            }, 1500);
+                        }).catch(function() {
+                            input.select();
+                            document.execCommand('copy');
+                            const orig = btn.textContent;
+                            btn.textContent = '✓';
+                            btn.style.background = '#27ae60';
+                            btn.style.color = '#fff';
+                            setTimeout(function() {
+                                btn.textContent = orig;
+                                btn.style.background = '';
+                                btn.style.color = '';
+                            }, 1500);
+                        });
+                    });
+                });
+            }
+            setupCopyButtons();
+
+            // ===== COPY AGE SUMMARY =====
+            copyAgeBtn.addEventListener('click', function() {
+                const years = ageYears.textContent;
+                const months = ageMonths.textContent;
+                const days = ageDays.textContent;
+                const date = datePicker.value || 'Not selected';
+                const summary = `Age Summary:\nDate of Birth/Event: ${date}\nAge in Years: ${years}\nAge in Months: ${months}\nAge in Days: ${days}`;
+                navigator.clipboard.writeText(summary).then(function() {
+                    const orig = copyAgeBtn.textContent;
+                    copyAgeBtn.textContent = '✓ Copied!';
+                    copyAgeBtn.style.background = '#27ae60';
+                    setTimeout(function() {
+                        copyAgeBtn.textContent = orig;
+                        copyAgeBtn.style.background = '';
+                    }, 1500);
+                }).catch(function() {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = summary;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    textarea.remove();
+                    const orig = copyAgeBtn.textContent;
+                    copyAgeBtn.textContent = '✓ Copied!';
+                    copyAgeBtn.style.background = '#27ae60';
+                    setTimeout(function() {
+                        copyAgeBtn.textContent = orig;
+                        copyAgeBtn.style.background = '';
+                    }, 1500);
+                });
+            });
+
+            // ===== CLEAR FIELDS =====
+            clearFieldsBtn.addEventListener('click', function() {
+                // Format
+                indianInput.value = '';
+                westernInput.value = '';
+                // Timezone
+                istTime.value = '12:00';
+                targetZone.value = 'UTC';
+                targetTime.value = '';
+                dayOffsetBadge.style.display = 'none';
+                // Fraction
+                numerator.value = '1';
+                denominator.value = '4';
+                decimalInput.value = '0.25';
+                denomWarning.style.display = 'none';
+                precisionSlider.value = '0.01';
+                precisionVal.textContent = '0.01';
+                // Age
+                const today = new Date();
+                today.setFullYear(today.getFullYear() - 18);
+                datePicker.value = today.toISOString().split('T')[0];
+                setTimeout(calculateAge, 50);
+                // Errors
+                hideError();
+            });
+
+            // ===== SHOW/HIDE ERROR =====
             function showError(msg) {
                 errorMsg.textContent = msg;
                 errorMsg.classList.add('show');
-                numResult.style.display = 'none';
             }
 
             function hideError() {
@@ -188,272 +562,8 @@
                 errorMsg.textContent = '';
             }
 
-            function showStatus(msg) {
-                conversionStatus.textContent = msg;
-                numResult.style.display = 'block';
-            }
-
-            function formatCurrency(val) {
-                return '₹' + Number(val).toFixed(2);
-            }
-
-            // ===== COPY TO CLIPBOARD =====
-            function setupCopyButton(btn, inputId) {
-                btn.addEventListener('click', function() {
-                    const input = document.getElementById(inputId);
-                    if (!input) return;
-                    const val = input.value;
-                    if (!val || val === '') {
-                        showError('Nothing to copy. Enter a value first.');
-                        return;
-                    }
-                    navigator.clipboard.writeText(val).then(function() {
-                        const orig = btn.textContent;
-                        btn.textContent = '✓';
-                        btn.style.background = '#27ae60';
-                        setTimeout(function() {
-                            btn.textContent = orig;
-                            btn.style.background = '';
-                        }, 1500);
-                    }).catch(function() {
-                        // Fallback
-                        input.select();
-                        document.execCommand('copy');
-                        const orig = btn.textContent;
-                        btn.textContent = '✓';
-                        btn.style.background = '#27ae60';
-                        setTimeout(function() {
-                            btn.textContent = orig;
-                            btn.style.background = '';
-                        }, 1500);
-                    });
-                });
-            }
-
-            // ===== RENDER CONVERTER ROWS =====
-            function renderCategory(category) {
-                const config = configs[category];
-                if (!config) return;
-
-                currentCategory = category;
-                hideError();
-
-                const html = `
-                    <!-- Row 1 -->
-                    <div class="converter-row">
-                        <div class="field-group">
-                            <label for="input1">${config.label1}</label>
-                            <div class="input-with-copy">
-                                <input type="number" id="input1" step="${config.step1}" min="${config.min1}" max="${config.max1}" value="" placeholder="Enter value" />
-                                <button type="button" class="copy-btn" data-target="input1">📋</button>
-                            </div>
-                            <input type="range" id="slider1" min="${config.min1}" max="${config.max1}" step="${config.step1}" value="0" class="num-range" />
-                            <span class="range-value" id="sliderVal1">0</span>
-                        </div>
-                    </div>
-
-                    <!-- Row 2 -->
-                    <div class="converter-row">
-                        <div class="field-group">
-                            <label for="input2">${config.label2}</label>
-                            <div class="input-with-copy">
-                                <input type="number" id="input2" step="${config.step2}" min="${config.min2}" max="${config.max2}" value="" placeholder="Enter value" />
-                                <button type="button" class="copy-btn" data-target="input2">📋</button>
-                            </div>
-                            <input type="range" id="slider2" min="${config.min2}" max="${config.max2}" step="${config.step2}" value="0" class="num-range" />
-                            <span class="range-value" id="sliderVal2">0</span>
-                        </div>
-                    </div>
-                `;
-
-                converterRows.innerHTML = html;
-
-                // Get refs
-                const input1 = document.getElementById('input1');
-                const input2 = document.getElementById('input2');
-                const slider1 = document.getElementById('slider1');
-                const slider2 = document.getElementById('slider2');
-                const sliderVal1 = document.getElementById('sliderVal1');
-                const sliderVal2 = document.getElementById('sliderVal2');
-
-                // ===== BI-DIRECTIONAL SYNC =====
-
-                // Input 1 → Slider 1 + Input 2 + Slider 2
-                input1.addEventListener('input', function() {
-                    if (isUpdating) return;
-                    const val = parseFloat(this.value);
-                    if (isNaN(val)) {
-                        input2.value = '';
-                        slider2.value = slider2.min;
-                        sliderVal2.textContent = slider2.min;
-                        return;
-                    }
-                    // Clamp
-                    const clamped = Math.max(config.min1, Math.min(config.max1, val));
-                    if (clamped !== val) {
-                        this.value = clamped;
-                    }
-                    slider1.value = clamped;
-                    sliderVal1.textContent = config.format ? config.format(clamped) : clamped;
-
-                    // Convert to target
-                    const converted = config.convert1to2(clamped);
-                    // Clamp target
-                    const clamped2 = Math.max(config.min2, Math.min(config.max2, converted));
-                    isUpdating = true;
-                    input2.value = config.format ? config.format(clamped2) : clamped2;
-                    slider2.value = clamped2;
-                    sliderVal2.textContent = config.format ? config.format(clamped2) : clamped2;
-                    isUpdating = false;
-
-                    showStatus(`${config.label1}: ${config.format ? config.format(clamped) : clamped} → ${config.label2}: ${config.format ? config.format(clamped2) : clamped2}`);
-                });
-
-                // Slider 1 → Input 1 + Input 2 + Slider 2
-                slider1.addEventListener('input', function() {
-                    if (isUpdating) return;
-                    const val = parseFloat(this.value);
-                    input1.value = config.format ? config.format(val) : val;
-                    sliderVal1.textContent = config.format ? config.format(val) : val;
-
-                    const converted = config.convert1to2(val);
-                    const clamped2 = Math.max(config.min2, Math.min(config.max2, converted));
-                    isUpdating = true;
-                    input2.value = config.format ? config.format(clamped2) : clamped2;
-                    slider2.value = clamped2;
-                    sliderVal2.textContent = config.format ? config.format(clamped2) : clamped2;
-                    isUpdating = false;
-
-                    showStatus(`${config.label1}: ${config.format ? config.format(val) : val} → ${config.label2}: ${config.format ? config.format(clamped2) : clamped2}`);
-                });
-
-                // Input 2 → Slider 2 + Input 1 + Slider 1
-                input2.addEventListener('input', function() {
-                    if (isUpdating) return;
-                    const val = parseFloat(this.value);
-                    if (isNaN(val)) {
-                        input1.value = '';
-                        slider1.value = slider1.min;
-                        sliderVal1.textContent = slider1.min;
-                        return;
-                    }
-                    const clamped = Math.max(config.min2, Math.min(config.max2, val));
-                    if (clamped !== val) {
-                        this.value = clamped;
-                    }
-                    slider2.value = clamped;
-                    sliderVal2.textContent = config.format ? config.format(clamped) : clamped;
-
-                    const converted = config.convert2to1(clamped);
-                    const clamped1 = Math.max(config.min1, Math.min(config.max1, converted));
-                    isUpdating = true;
-                    input1.value = config.format ? config.format(clamped1) : clamped1;
-                    slider1.value = clamped1;
-                    sliderVal1.textContent = config.format ? config.format(clamped1) : clamped1;
-                    isUpdating = false;
-
-                    showStatus(`${config.label2}: ${config.format ? config.format(clamped) : clamped} → ${config.label1}: ${config.format ? config.format(clamped1) : clamped1}`);
-                });
-
-                // Slider 2 → Input 2 + Input 1 + Slider 1
-                slider2.addEventListener('input', function() {
-                    if (isUpdating) return;
-                    const val = parseFloat(this.value);
-                    input2.value = config.format ? config.format(val) : val;
-                    sliderVal2.textContent = config.format ? config.format(val) : val;
-
-                    const converted = config.convert2to1(val);
-                    const clamped1 = Math.max(config.min1, Math.min(config.max1, converted));
-                    isUpdating = true;
-                    input1.value = config.format ? config.format(clamped1) : clamped1;
-                    slider1.value = clamped1;
-                    sliderVal1.textContent = config.format ? config.format(clamped1) : clamped1;
-                    isUpdating = false;
-
-                    showStatus(`${config.label2}: ${config.format ? config.format(val) : val} → ${config.label1}: ${config.format ? config.format(clamped1) : clamped1}`);
-                });
-
-                // ===== SETUP COPY BUTTONS =====
-                document.querySelectorAll('.copy-btn').forEach(function(btn) {
-                    const target = btn.dataset.target;
-                    setupCopyButton(btn, target);
-                });
-
-                // ===== SET INITIAL VALUES =====
-                // Set a default example value
-                if (category === 'length') {
-                    input1.value = 10;
-                    slider1.value = 10;
-                    sliderVal1.textContent = '10.0000';
-                    const converted = config.convert1to2(10);
-                    input2.value = config.format(converted);
-                    slider2.value = converted;
-                    sliderVal2.textContent = config.format(converted);
-                    showStatus('10 meters = 32.8084 feet');
-                } else if (category === 'weight') {
-                    input1.value = 50;
-                    slider1.value = 50;
-                    sliderVal1.textContent = '50.0000';
-                    const converted = config.convert1to2(50);
-                    input2.value = config.format(converted);
-                    slider2.value = converted;
-                    sliderVal2.textContent = config.format(converted);
-                    showStatus('50 kilograms = 110.2310 pounds');
-                } else if (category === 'temperature') {
-                    input1.value = 25;
-                    slider1.value = 25;
-                    sliderVal1.textContent = '25.00';
-                    const converted = config.convert1to2(25);
-                    input2.value = config.format(converted);
-                    slider2.value = converted;
-                    sliderVal2.textContent = config.format(converted);
-                    showStatus('25°C = 77.00°F');
-                } else if (category === 'storage') {
-                    input1.value = 2048;
-                    slider1.value = 2048;
-                    sliderVal1.textContent = '2048.0000';
-                    const converted = config.convert1to2(2048);
-                    input2.value = config.format(converted);
-                    slider2.value = converted;
-                    sliderVal2.textContent = config.format(converted);
-                    showStatus('2048 MB = 2.0000 GB');
-                }
-            }
-
-            // ===== CATEGORY CHANGE =====
-            categorySelect.addEventListener('change', function() {
-                renderCategory(this.value);
-                hideError();
-            });
-
-            // ===== CLEAR ALL FIELDS =====
-            clearFieldsBtn.addEventListener('click', function() {
-                const inputs = document.querySelectorAll('#converterRows input[type="number"]');
-                inputs.forEach(function(inp) {
-                    inp.value = '';
-                });
-                const sliders = document.querySelectorAll('#converterRows input[type="range"]');
-                sliders.forEach(function(sld) {
-                    sld.value = sld.min;
-                });
-                const valSpans = document.querySelectorAll('#converterRows .range-value');
-                valSpans.forEach(function(span, idx) {
-                    const slider = document.getElementById('slider' + (idx + 1));
-                    span.textContent = slider ? slider.min : '0';
-                });
-                numResult.style.display = 'none';
-                hideError();
-            });
-
-            // ===== INITIAL RENDER =====
-            renderCategory('length');
-
-            // ===== KEYBOARD SHORTCUT: Escape to clear =====
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    clearFieldsBtn.click();
-                }
-            });
+            // Initial mode
+            switchMode('format');
 
         })();
     </script>
