@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Counter · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+            <button class="hamburger"
+                    aria-expanded="false"
+                    aria-controls="primary-nav"
+                    aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">Text Counter</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Paste or type your text below to get detailed statistics.
+                    </p>
+
+                    <form class="text-form" id="textForm" novalidate>
+
+                        <div class="field-group">
+                            <label for="textInput">Your Text</label>
+                            <textarea id="textInput" rows="6" placeholder="Type or paste your text here..."></textarea>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Count</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </form>
+
+                    <div class="error-msg" id="errorMsg"></div>
+
+                    <div class="text-result" id="textResult" style="display:none;">
+                        <div class="result-grid">
+                            <div class="result-card">
+                                <span class="result-label">Characters (with spaces)</span>
+                                <span class="result-value" id="charWithSpaces">0</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Characters (no spaces)</span>
+                                <span class="result-value" id="charNoSpaces">0</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Words</span>
+                                <span class="result-value" id="wordCount">0</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Sentences</span>
+                                <span class="result-value" id="sentenceCount">0</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Paragraphs</span>
+                                <span class="result-value" id="paragraphCount">0</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Lines</span>
+                                <span class="result-value" id="lineCount">0</span>
+                            </div>
+                        </div>
+                        <div class="result-detail" id="resultDetail"></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const form = document.getElementById('textForm');
+            const textInput = document.getElementById('textInput');
+            const errorMsg = document.getElementById('errorMsg');
+            const resultDiv = document.getElementById('textResult');
+
+            const charWithSpaces = document.getElementById('charWithSpaces');
+            const charNoSpaces = document.getElementById('charNoSpaces');
+            const wordCount = document.getElementById('wordCount');
+            const sentenceCount = document.getElementById('sentenceCount');
+            const paragraphCount = document.getElementById('paragraphCount');
+            const lineCount = document.getElementById('lineCount');
+            const resultDetail = document.getElementById('resultDetail');
+
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.add('show');
+                resultDiv.style.display = 'none';
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('show');
+                errorMsg.textContent = '';
+            }
+
+            function count() {
+                hideError();
+
+                const text = textInput.value;
+                if (!text || text.trim().length === 0) {
+                    showError('Please enter some text to count.');
+                    return;
+                }
+
+                // Characters with spaces
+                const withSpaces = text.length;
+                // Characters without spaces
+                const withoutSpaces = text.replace(/\s/g, '').length;
+                // Words: split by whitespace, filter empty
+                const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+                const wordCountVal = words.length;
+                // Sentences: split by . ! ? followed by space or end
+                const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
+                const sentenceCountVal = sentences.length || (text.trim().length > 0 ? 1 : 0);
+                // Paragraphs: split by newline, filter empty
+                const paragraphs = text.split(/\n+/).filter(p => p.trim().length > 0);
+                const paragraphCountVal = paragraphs.length;
+                // Lines: split by newline
+                const lines = text.split(/\n/);
+                const lineCountVal = lines.length;
+
+                // Update results
+                charWithSpaces.textContent = withSpaces;
+                charNoSpaces.textContent = withoutSpaces;
+                wordCount.textContent = wordCountVal;
+                sentenceCount.textContent = sentenceCountVal;
+                paragraphCount.textContent = paragraphCountVal;
+                lineCount.textContent = lineCountVal;
+
+                resultDetail.textContent =
+                    `Text contains ${withSpaces} characters (${withoutSpaces} without spaces), ${wordCountVal} words, ${sentenceCountVal} sentences, ${paragraphCountVal} paragraphs, and ${lineCountVal} lines.`;
+
+                resultDiv.style.display = 'block';
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                count();
+            });
+
+            form.addEventListener('reset', function(e) {
+                setTimeout(function() {
+                    textInput.value = '';
+                    resultDiv.style.display = 'none';
+                    hideError();
+                }, 10);
+            });
+
+            textInput.addEventListener('input', hideError);
+
+        })();
+    </script>
+
+</body>
+</html>
