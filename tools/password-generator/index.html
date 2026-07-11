@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Password Generator · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+            <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">Password Generator</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Generate strong, secure passwords with customisable options. All processing happens locally in your browser.
+                    </p>
+
+                    <form class="password-form" id="passwordForm" novalidate>
+
+                        <!-- ===== PASSWORD DISPLAY ===== -->
+                        <div class="field-group password-display-group">
+                            <label for="passwordDisplay">Generated Password</label>
+                            <div class="password-display-wrapper">
+                                <input type="text" id="passwordDisplay" readonly class="password-display" />
+                                <button type="button" class="btn-copy" id="copyBtn" title="Copy to clipboard">Copy</button>
+                                <button type="button" class="btn-regenerate" id="regenerateBtn" title="Generate new password">↻</button>
+                            </div>
+                        </div>
+
+                        <!-- ===== STRENGTH METER ===== -->
+                        <div class="field-group strength-group">
+                            <label>Password Strength</label>
+                            <div class="strength-meter">
+                                <div class="strength-bar" id="strengthBar"></div>
+                            </div>
+                            <span class="strength-text" id="strengthText">Medium</span>
+                        </div>
+
+                        <!-- ===== PASSWORD LENGTH ===== -->
+                        <div class="field-group">
+                            <label for="passwordLength">Password Length</label>
+                            <input type="number" id="passwordLength" min="8" max="64" value="16" required />
+                            <input type="range" id="lengthRange" min="8" max="64" value="16" class="password-range" />
+                            <span class="range-value" id="lengthVal">16</span>
+                        </div>
+
+                        <!-- ===== CHARACTER SETS ===== -->
+                        <div class="field-group">
+                            <label>Character Sets</label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="useUppercase" checked />
+                                    Uppercase (A-Z)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="useLowercase" checked />
+                                    Lowercase (a-z)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="useNumbers" checked />
+                                    Numbers (0-9)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="useSymbols" checked />
+                                    Symbols (!@#$%^&*)
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- ===== ADVANCED OPTIONS ===== -->
+                        <div class="field-group">
+                            <label>Advanced Options</label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="excludeSimilar" />
+                                    Exclude similar characters (i, l, 1, I, o, 0, O)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="pronounceable" />
+                                    Easy to say (pronounceable)
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="passphrase" />
+                                    Passphrase (4-5 random words)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Generate</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </form>
+
+                    <div class="error-msg" id="errorMsg"></div>
+
+                    <!-- ===== ZERO-KNOWLEDGE DISCLAIMER ===== -->
+                    <div class="security-notice">
+                        <p>
+                            <strong>Zero-Knowledge Security:</strong> This tool runs entirely in your local browser.
+                            Your passwords are never transmitted, stored, or visible to our servers.
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ===== DOM REFS =====
+            const form = document.getElementById('passwordForm');
+            const passwordDisplay = document.getElementById('passwordDisplay');
+            const passwordLength = document.getElementById('passwordLength');
+            const lengthRange = document.getElementById('lengthRange');
+            const lengthVal = document.getElementById('lengthVal');
+            const useUppercase = document.getElementById('useUppercase');
+            const useLowercase = document.getElementById('useLowercase');
+            const useNumbers = document.getElementById('useNumbers');
+            const useSymbols = document.getElementById('useSymbols');
+            const excludeSimilar = document.getElementById('excludeSimilar');
+            const pronounceable = document.getElementById('pronounceable');
+            const passphrase = document.getElementById('passphrase');
+            const copyBtn = document.getElementById('copyBtn');
+            const regenerateBtn = document.getElementById('regenerateBtn');
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            const errorMsg = document.getElementById('errorMsg');
+
+            // ===== SYNC LENGTH SLIDER =====
+            passwordLength.addEventListener('input', function() {
+                const val = parseInt(this.value) || 16;
+                if (val < 8) this.value = 8;
+                if (val > 64) this.value = 64;
+                lengthRange.value = this.value;
+                lengthVal.textContent = this.value;
+            });
+
+            lengthRange.addEventListener('input', function() {
+                const val = parseInt(this.value);
+                passwordLength.value = val;
+                lengthVal.textContent = val;
+            });
+
+            // ===== CHARACTER SETS =====
+            const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const lowerChars = 'abcdefghijklmnopqrstuvwxyz';
+            const numberChars = '0123456789';
+            const symbolChars = '!@#$%^&*';
+            const similarChars = 'iIl1o0O';
+
+            // ===== PRONOUNCEABLE WORD LIST =====
+            const pronounceableWords = [
+                'vomas', 'tudin', 'kolar', 'fesim', 'nopar', 'lupin', 'goton', 'miret',
+                'solin', 'baret', 'tener', 'lomar', 'paxin', 'ronet', 'tiral', 'mosen',
+                'jolin', 'peran', 'nolas', 'tuson', 'viren', 'sotar', 'lumen', 'poren',
+                'kiran', 'tovan', 'selar', 'moten', 'lirik', 'tusar', 'bolan', 'niten'
+            ];
+
+            // ===== PASSPHRASE WORD LIST =====
+            const passphraseWords = [
+                'apple', 'river', 'guitar', 'window', 'forest', 'tiger', 'mountain', 'ocean',
+                'thunder', 'silver', 'golden', 'cherry', 'breeze', 'crystal', 'dragon', 'eagle',
+                'flame', 'garden', 'harbor', 'island', 'jade', 'kingdom', 'lily', 'mirror',
+                'night', 'orchid', 'pearl', 'quartz', 'rain', 'star', 'temple', 'unity',
+                'valley', 'water', 'xenon', 'youth', 'zenith', 'bloom', 'cloud', 'dawn',
+                'ember', 'frost', 'glade', 'haven', 'ivory', 'jewel', 'knight', 'lunar'
+            ];
+
+            // ===== SIMILAR CHARACTERS FILTER =====
+            function filterSimilar(chars) {
+                if (!excludeSimilar.checked) return chars;
+                const filtered = chars.split('').filter(function(c) {
+                    return !similarChars.includes(c);
+                }).join('');
+                return filtered || chars;
+            }
+
+            // ===== GENERATE PASSWORD =====
+            function generatePassword() {
+                const length = parseInt(passwordLength.value) || 16;
+                let chars = '';
+                if (useUppercase.checked) chars += upperChars;
+                if (useLowercase.checked) chars += lowerChars;
+                if (useNumbers.checked) chars += numberChars;
+                if (useSymbols.checked) chars += symbolChars;
+
+                // Filter similar characters if enabled
+                chars = filterSimilar(chars);
+
+                if (!chars) {
+                    showError('Please select at least one character set.');
+                    return '';
+                }
+
+                // ===== PRONOUNCEABLE =====
+                if (pronounceable.checked) {
+                    const words = [];
+                    const numWords = Math.max(2, Math.min(4, Math.floor(length / 5)));
+                    for (let i = 0; i < numWords; i++) {
+                        const word = pronounceableWords[Math.floor(Math.random() * pronounceableWords.length)];
+                        words.push(word);
+                    }
+                    // Add a number suffix
+                    const numSuffix = Math.floor(Math.random() * 100);
+                    const result = words.join('-') + '-' + String(numSuffix).padStart(2, '0');
+                    return result.slice(0, length);
+                }
+
+                // ===== PASSPHRASE =====
+                if (passphrase.checked) {
+                    const words = [];
+                    const numWords = 4 + Math.floor(Math.random() * 2); // 4-5 words
+                    const shuffled = [...passphraseWords].sort(function() { return 0.5 - Math.random(); });
+                    for (let i = 0; i < numWords && i < shuffled.length; i++) {
+                        words.push(shuffled[i]);
+                    }
+                    // Add a number suffix
+                    const numSuffix = Math.floor(Math.random() * 1000);
+                    const result = words.join('-') + '-' + String(numSuffix).padStart(3, '0');
+                    return result.slice(0, Math.min(length, 64));
+                }
+
+                // ===== STANDARD RANDOM =====
+                let password = '';
+                for (let i = 0; i < length; i++) {
+                    const randomIndex = Math.floor(Math.random() * chars.length);
+                    password += chars[randomIndex];
+                }
+                return password;
+            }
+
+            // ===== STRENGTH METER =====
+            function updateStrength(password) {
+                const length = password.length;
+                let sets = 0;
+                if (/[A-Z]/.test(password)) sets++;
+                if (/[a-z]/.test(password)) sets++;
+                if (/[0-9]/.test(password)) sets++;
+                if (/[^A-Za-z0-9]/.test(password)) sets++;
+
+                let score = 0;
+                if (length >= 8) score += 1;
+                if (length >= 12) score += 1;
+                if (length >= 16) score += 1;
+                if (sets >= 2) score += 1;
+                if (sets >= 3) score += 1;
+                if (sets >= 4) score += 1;
+
+                // Bonus for pronounceable or passphrase
+                if (pronounceable.checked || passphrase.checked) score += 1;
+
+                let level, color, text;
+                if (score <= 2) {
+                    level = 'weak';
+                    color = '#e74c3c';
+                    text = 'Weak';
+                } else if (score <= 4) {
+                    level = 'medium';
+                    color = '#f39c12';
+                    text = 'Medium';
+                } else {
+                    level = 'strong';
+                    color = '#27ae60';
+                    text = 'Strong';
+                }
+
+                strengthBar.style.width = (score / 6) * 100 + '%';
+                strengthBar.style.background = color;
+                strengthText.textContent = text;
+                strengthText.style.color = color;
+            }
+
+            // ===== SHOW/HIDE ERROR =====
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.add('show');
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('show');
+                errorMsg.textContent = '';
+            }
+
+            // ===== GENERATE AND DISPLAY =====
+            function generateAndDisplay() {
+                hideError();
+                const password = generatePassword();
+                if (password) {
+                    passwordDisplay.value = password;
+                    updateStrength(password);
+                }
+            }
+
+            // ===== COPY TO CLIPBOARD =====
+            function copyPassword() {
+                const password = passwordDisplay.value;
+                if (!password) {
+                    showError('No password to copy. Generate one first.');
+                    return;
+                }
+                navigator.clipboard.writeText(password).then(function() {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = '✓ Copied!';
+                    copyBtn.style.background = '#27ae60';
+                    setTimeout(function() {
+                        copyBtn.textContent = originalText;
+                        copyBtn.style.background = '';
+                    }, 2000);
+                }).catch(function() {
+                    // Fallback
+                    passwordDisplay.select();
+                    document.execCommand('copy');
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = '✓ Copied!';
+                    copyBtn.style.background = '#27ae60';
+                    setTimeout(function() {
+                        copyBtn.textContent = originalText;
+                        copyBtn.style.background = '';
+                    }, 2000);
+                });
+            }
+
+            // ===== EVENT LISTENERS =====
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                generateAndDisplay();
+            });
+
+            form.addEventListener('reset', function(e) {
+                setTimeout(function() {
+                    passwordLength.value = 16;
+                    lengthRange.value = 16;
+                    lengthVal.textContent = '16';
+                    useUppercase.checked = true;
+                    useLowercase.checked = true;
+                    useNumbers.checked = true;
+                    useSymbols.checked = true;
+                    excludeSimilar.checked = false;
+                    pronounceable.checked = false;
+                    passphrase.checked = false;
+                    passwordDisplay.value = '';
+                    strengthBar.style.width = '0%';
+                    strengthText.textContent = '';
+                    hideError();
+                }, 10);
+            });
+
+            copyBtn.addEventListener('click', copyPassword);
+
+            regenerateBtn.addEventListener('click', function() {
+                generateAndDisplay();
+            });
+
+            // Auto-generate on checkbox or option change
+            document.querySelectorAll('#passwordForm input[type="checkbox"]').forEach(function(el) {
+                el.addEventListener('change', function() {
+                    // Auto-generate when options change, but only if we have a password already
+                    if (passwordDisplay.value) {
+                        generateAndDisplay();
+                    }
+                });
+            });
+
+            // Auto-generate on length change
+            passwordLength.addEventListener('input', function() {
+                if (passwordDisplay.value) {
+                    generateAndDisplay();
+                }
+            });
+            lengthRange.addEventListener('input', function() {
+                if (passwordDisplay.value) {
+                    generateAndDisplay();
+                }
+            });
+
+            // ===== INITIAL GENERATION =====
+            generateAndDisplay();
+
+        })();
+    </script>
+
+</body>
+</html>
