@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GST Calculator · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+            <button class="hamburger"
+                    aria-expanded="false"
+                    aria-controls="primary-nav"
+                    aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">GST Calculator</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Calculate GST amounts, tax breakdown (CGST/SGST or IGST), and final price with ease.
+                    </p>
+
+                    <form class="gst-form" id="gstForm" novalidate>
+
+                        <!-- Base Amount -->
+                        <div class="field-group">
+                            <label for="baseAmount">Base Amount (₹)</label>
+                            <input type="number" id="baseAmount" step="0.01" min="0" placeholder="e.g. 1000" required />
+                        </div>
+
+                        <!-- GST Rate Slab – Preset Buttons -->
+                        <div class="field-group rate-group">
+                            <label>GST Rate</label>
+                            <div class="rate-buttons">
+                                <button type="button" class="rate-btn" data-rate="0">0%</button>
+                                <button type="button" class="rate-btn" data-rate="5">5%</button>
+                                <button type="button" class="rate-btn active" data-rate="12">12%</button>
+                                <button type="button" class="rate-btn" data-rate="18">18%</button>
+                                <button type="button" class="rate-btn" data-rate="28">28%</button>
+                            </div>
+                        </div>
+
+                        <!-- Custom Rate (optional) -->
+                        <div class="field-group">
+                            <label for="customRate">Custom Rate (%)</label>
+                            <input type="number" id="customRate" step="0.1" min="0" placeholder="e.g. 15" />
+                            <span class="helper-text">Leave blank to use preset rate</span>
+                        </div>
+
+                        <!-- Tax Type -->
+                        <div class="field-group">
+                            <label>Tax Type</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="taxType" value="exclusive" checked />
+                                    Add GST (Exclusive)
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="taxType" value="inclusive" />
+                                    Remove GST (Inclusive)
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Supply Type -->
+                        <div class="field-group">
+                            <label>Supply Type</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="supplyType" value="intra" checked />
+                                    Intra-state (CGST + SGST)
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="supplyType" value="inter" />
+                                    Inter-state (IGST)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Calculate</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </form>
+
+                    <div class="error-msg" id="errorMsg"></div>
+
+                    <!-- ===== RESULTS ===== -->
+                    <div class="gst-result" id="gstResult" style="display:none;">
+                        <div class="result-grid">
+                            <div class="result-card">
+                                <span class="result-label">GST Amount</span>
+                                <span class="result-value" id="gstAmount">₹0</span>
+                            </div>
+                            <div class="result-card highlight">
+                                <span class="result-label">Final Amount</span>
+                                <span class="result-value" id="finalAmount">₹0</span>
+                            </div>
+                        </div>
+
+                        <div class="result-breakdown" id="resultBreakdown">
+                            <div class="breakdown-title">Tax Breakdown</div>
+                            <div class="breakdown-grid">
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label" id="taxLabel1">CGST (50%)</span>
+                                    <span class="breakdown-value" id="taxValue1">₹0</span>
+                                </div>
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label" id="taxLabel2">SGST (50%)</span>
+                                    <span class="breakdown-value" id="taxValue2">₹0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-detail" id="resultDetail"></div>
+
+                        <button class="btn btn-copy" id="copyBtn">Copy Results</button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const form = document.getElementById('gstForm');
+            const baseAmount = document.getElementById('baseAmount');
+            const customRate = document.getElementById('customRate');
+            const rateBtns = document.querySelectorAll('.rate-btn');
+            const taxTypeRadios = document.querySelectorAll('input[name="taxType"]');
+            const supplyTypeRadios = document.querySelectorAll('input[name="supplyType"]');
+            const errorMsg = document.getElementById('errorMsg');
+            const resultDiv = document.getElementById('gstResult');
+            const gstAmount = document.getElementById('gstAmount');
+            const finalAmount = document.getElementById('finalAmount');
+            const taxLabel1 = document.getElementById('taxLabel1');
+            const taxLabel2 = document.getElementById('taxLabel2');
+            const taxValue1 = document.getElementById('taxValue1');
+            const taxValue2 = document.getElementById('taxValue2');
+            const resultDetail = document.getElementById('resultDetail');
+            const copyBtn = document.getElementById('copyBtn');
+
+            let selectedRate = 12;
+
+            // Rate button handler
+            rateBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    rateBtns.forEach(function(b) { b.classList.remove('active'); });
+                    this.classList.add('active');
+                    selectedRate = parseFloat(this.dataset.rate);
+                    customRate.value = '';
+                });
+            });
+
+            // Custom rate overrides preset
+            customRate.addEventListener('input', function() {
+                const val = parseFloat(this.value);
+                if (!isNaN(val) && val >= 0) {
+                    rateBtns.forEach(function(b) { b.classList.remove('active'); });
+                    selectedRate = val;
+                }
+            });
+
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.add('show');
+                resultDiv.style.display = 'none';
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('show');
+                errorMsg.textContent = '';
+            }
+
+            function formatCurrency(val) {
+                return '₹' + Number(val).toFixed(2);
+            }
+
+            function getTaxType() {
+                for (let r of taxTypeRadios) {
+                    if (r.checked) return r.value;
+                }
+                return 'exclusive';
+            }
+
+            function getSupplyType() {
+                for (let r of supplyTypeRadios) {
+                    if (r.checked) return r.value;
+                }
+                return 'intra';
+            }
+
+            function calculate() {
+                hideError();
+
+                const amount = parseFloat(baseAmount.value);
+                if (isNaN(amount) || amount <= 0) {
+                    showError('Please enter a valid positive amount.');
+                    return;
+                }
+
+                let rate = selectedRate;
+                const custom = parseFloat(customRate.value);
+                if (!isNaN(custom) && custom >= 0) {
+                    rate = custom;
+                }
+
+                if (rate < 0) {
+                    showError('GST rate cannot be negative.');
+                    return;
+                }
+
+                const taxType = getTaxType();
+                const supplyType = getSupplyType();
+                const rateDecimal = rate / 100;
+
+                let gstAmountVal, finalAmountVal, baseAmountVal;
+
+                if (taxType === 'exclusive') {
+                    // Add GST to base amount
+                    baseAmountVal = amount;
+                    gstAmountVal = amount * rateDecimal;
+                    finalAmountVal = amount + gstAmountVal;
+                } else {
+                    // Remove GST from inclusive amount
+                    baseAmountVal = amount / (1 + rateDecimal);
+                    gstAmountVal = amount - baseAmountVal;
+                    finalAmountVal = amount;
+                }
+
+                // Determine tax split
+                let isInterstate = supplyType === 'inter';
+                let tax1Label, tax2Label, tax1ValueVal, tax2ValueVal;
+
+                if (isInterstate) {
+                    tax1Label = 'IGST (100%)';
+                    tax2Label = '';
+                    tax1ValueVal = gstAmountVal;
+                    tax2ValueVal = null;
+                } else {
+                    tax1Label = 'CGST (50%)';
+                    tax2Label = 'SGST (50%)';
+                    tax1ValueVal = gstAmountVal / 2;
+                    tax2ValueVal = gstAmountVal / 2;
+                }
+
+                // Display results
+                gstAmount.textContent = formatCurrency(gstAmountVal);
+                finalAmount.textContent = formatCurrency(finalAmountVal);
+
+                taxLabel1.textContent = tax1Label;
+                taxValue1.textContent = formatCurrency(tax1ValueVal);
+
+                if (tax2Label) {
+                    taxLabel2.textContent = tax2Label;
+                    taxValue2.textContent = formatCurrency(tax2ValueVal);
+                    taxLabel2.style.display = '';
+                    taxValue2.style.display = '';
+                } else {
+                    taxLabel2.style.display = 'none';
+                    taxValue2.style.display = 'none';
+                }
+
+                const taxTypeLabel = taxType === 'exclusive' ? 'Exclusive (Add GST)' : 'Inclusive (Remove GST)';
+                const supplyTypeLabel = isInterstate ? 'Inter-state (IGST)' : 'Intra-state (CGST + SGST)';
+                resultDetail.textContent =
+                    `Rate: ${rate}% · Tax Type: ${taxTypeLabel} · Supply: ${supplyTypeLabel} · Base: ${formatCurrency(baseAmountVal)}`;
+
+                resultDiv.style.display = 'block';
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculate();
+            });
+
+            form.addEventListener('reset', function(e) {
+                setTimeout(function() {
+                    baseAmount.value = '';
+                    customRate.value = '';
+                    rateBtns.forEach(function(b) { b.classList.remove('active'); });
+                    document.querySelector('.rate-btn[data-rate="12"]').classList.add('active');
+                    selectedRate = 12;
+                    document.querySelector('input[name="taxType"][value="exclusive"]').checked = true;
+                    document.querySelector('input[name="supplyType"][value="intra"]').checked = true;
+                    resultDiv.style.display = 'none';
+                    hideError();
+                }, 10);
+            });
+
+            // Copy results
+            copyBtn.addEventListener('click', function() {
+                const gst = gstAmount.textContent;
+                const final = finalAmount.textContent;
+                const detail = resultDetail.textContent;
+                const text = `GST Calculator Results:\n${detail}\nGST Amount: ${gst}\nFinal Amount: ${final}`;
+                navigator.clipboard.writeText(text).then(function() {
+                    const origText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(function() {
+                        copyBtn.textContent = origText;
+                    }, 2000);
+                }).catch(function() {
+                    // Fallback
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    textarea.remove();
+                    const origText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(function() {
+                        copyBtn.textContent = origText;
+                    }, 2000);
+                });
+            });
+
+            // Auto-hide error on input change
+            baseAmount.addEventListener('input', hideError);
+            customRate.addEventListener('input', hideError);
+
+        })();
+    </script>
+
+</body>
+</html>
