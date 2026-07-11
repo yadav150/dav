@@ -56,7 +56,7 @@
                         </div>
 
                         <!-- GST Rate Slab – Preset Buttons -->
-                        <div class="field-group rate-group">
+                        <div class="field-group">
                             <label>GST Rate</label>
                             <div class="rate-buttons">
                                 <button type="button" class="rate-btn" data-rate="0">0%</button>
@@ -67,11 +67,11 @@
                             </div>
                         </div>
 
-                        <!-- Custom Rate -->
+                        <!-- Custom Rate (optional) -->
                         <div class="field-group">
                             <label for="customRate">Custom Rate (%)</label>
                             <input type="number" id="customRate" step="0.1" min="0" placeholder="e.g. 15" />
-                            <span class="helper-text">Leave blank to use preset</span>
+                            <span class="helper-text">Leave blank to use preset rate</span>
                         </div>
 
                         <!-- Tax Type -->
@@ -193,7 +193,6 @@
 
             let selectedRate = 12;
 
-            // Rate button handler
             rateBtns.forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     rateBtns.forEach(function(b) { b.classList.remove('active'); });
@@ -203,7 +202,6 @@
                 });
             });
 
-            // Custom rate overrides preset
             customRate.addEventListener('input', function() {
                 const val = parseFloat(this.value);
                 if (!isNaN(val) && val >= 0) {
@@ -310,7 +308,8 @@
 
                 const taxTypeLabel = taxType === 'exclusive' ? 'Exclusive (Add GST)' : 'Inclusive (Remove GST)';
                 const supplyTypeLabel = isInterstate ? 'Inter-state (IGST)' : 'Intra-state (CGST + SGST)';
-                resultDetail.textContent = `Rate: ${rate}% · Tax Type: ${taxTypeLabel} · Supply: ${supplyTypeLabel} · Base: ${formatCurrency(baseAmountVal)}`;
+                resultDetail.textContent =
+                    `Rate: ${rate}% · Tax Type: ${taxTypeLabel} · Supply: ${supplyTypeLabel} · Base: ${formatCurrency(baseAmountVal)}`;
 
                 resultDiv.style.display = 'block';
             }
@@ -342,7 +341,9 @@
                 navigator.clipboard.writeText(text).then(function() {
                     const origText = copyBtn.textContent;
                     copyBtn.textContent = 'Copied!';
-                    setTimeout(function() { copyBtn.textContent = origText; }, 2000);
+                    setTimeout(function() {
+                        copyBtn.textContent = origText;
+                    }, 2000);
                 }).catch(function() {
                     const textarea = document.createElement('textarea');
                     textarea.value = text;
@@ -352,7 +353,9 @@
                     textarea.remove();
                     const origText = copyBtn.textContent;
                     copyBtn.textContent = 'Copied!';
-                    setTimeout(function() { copyBtn.textContent = origText; }, 2000);
+                    setTimeout(function() {
+                        copyBtn.textContent = origText;
+                    }, 2000);
                 });
             });
 
