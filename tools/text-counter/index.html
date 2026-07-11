@@ -56,8 +56,8 @@
                         </div>
 
                         <!-- Optional: exclude spaces checkbox -->
-                        <div class="field-group" style="flex-wrap:nowrap; gap: 6px;">
-                            <label style="min-width:auto; font-weight:400;">
+                        <div class="field-group" style="flex-wrap:wrap; gap:6px 16px;">
+                            <label style="min-width:auto; font-weight:400; display:flex; align-items:center; gap:6px;">
                                 <input type="checkbox" id="excludeSpaces" />
                                 Exclude spaces from character count
                             </label>
@@ -160,25 +160,15 @@
                     return;
                 }
 
-                // Character count (with spaces)
                 const chars = text.length;
-
-                // Character count (without spaces)
                 const charsNoSpace = text.replace(/\s/g, '').length;
-
-                // Word count: split by whitespace, filter empty
                 const words = text.trim().split(/\s+/).filter(function(w) { return w.length > 0; });
                 const wordCountVal = words.length;
-
-                // Sentence count: split by . ? ! (with possible trailing punctuation)
                 const sentences = text.match(/[^.!?]+[.!?]+/g);
                 const sentenceCountVal = sentences ? sentences.length : 0;
-
-                // Paragraph count: split by two or more newlines
                 const paragraphs = text.split(/\n\s*\n/).filter(function(p) { return p.trim().length > 0; });
                 const paragraphCountVal = paragraphs.length || (text.trim().length > 0 ? 1 : 0);
 
-                // Display results
                 charCount.textContent = chars;
                 charNoSpaceCount.textContent = charsNoSpace;
                 wordCount.textContent = wordCountVal;
@@ -205,7 +195,6 @@
                 }, 10);
             });
 
-            // Clear error on input
             textInput.addEventListener('input', hideError);
             excludeSpaces.addEventListener('change', hideError);
 
