@@ -12,7 +12,10 @@
     <header class="site-header" role="banner">
         <div class="header-inner">
             <a href="../../index.html" class="site-title">Yadav Web Tools</a>
-            <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+            <button class="hamburger"
+                    aria-expanded="false"
+                    aria-controls="primary-nav"
+                    aria-label="Toggle navigation menu">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
@@ -41,19 +44,22 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Enter your date of birth and optionally a target date to calculate your exact age.
+                        Enter your date of birth and optionally a target date to calculate your exact age in years, months, and days.
                     </p>
 
                     <form class="age-form" id="ageForm" novalidate>
+
                         <div class="field-group">
                             <label for="dob">Date of birth *</label>
                             <input type="date" id="dob" required />
                         </div>
+
                         <div class="field-group">
                             <label for="asof">As of date</label>
                             <input type="date" id="asof" />
                             <span class="helper-text">(defaults to today)</span>
                         </div>
+
                         <div class="btn-group">
                             <button type="submit" class="btn">Calculate Age</button>
                             <button type="reset" class="btn btn-secondary">Reset</button>
@@ -63,10 +69,21 @@
                     <div class="error-msg" id="errorMsg"></div>
 
                     <div class="age-result" id="ageResult" style="display:none;">
-                        <div class="stat"><span class="num" id="years">0</span><span class="lbl">Years</span></div>
-                        <div class="stat"><span class="num" id="months">0</span><span class="lbl">Months</span></div>
-                        <div class="stat"><span class="num" id="days">0</span><span class="lbl">Days</span></div>
-                        <div class="age-total"><strong>Total days alive:</strong> <span id="totalDays">0</span></div>
+                        <div class="result-grid">
+                            <div class="result-card">
+                                <span class="result-label">Years</span>
+                                <span class="result-value" id="years">0</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Months</span>
+                                <span class="result-value" id="months">0</span>
+                            </div>
+                            <div class="result-card highlight">
+                                <span class="result-label">Days</span>
+                                <span class="result-value" id="days">0</span>
+                            </div>
+                        </div>
+                        <div class="result-detail" id="resultDetail"></div>
                     </div>
 
                 </div>
@@ -102,12 +119,12 @@
             const form = document.getElementById('ageForm');
             const dobInput = document.getElementById('dob');
             const asofInput = document.getElementById('asof');
+            const errorMsg = document.getElementById('errorMsg');
             const resultDiv = document.getElementById('ageResult');
             const yearsSpan = document.getElementById('years');
             const monthsSpan = document.getElementById('months');
             const daysSpan = document.getElementById('days');
-            const totalDaysSpan = document.getElementById('totalDays');
-            const errorMsg = document.getElementById('errorMsg');
+            const resultDetail = document.getElementById('resultDetail');
 
             // Set default "as of" to today
             const today = new Date();
@@ -116,7 +133,6 @@
             const d = String(today.getDate()).padStart(2, '0');
             asofInput.value = y + '-' + m + '-' + d;
 
-            // Helper to show error
             function showError(msg) {
                 errorMsg.textContent = msg;
                 errorMsg.classList.add('show');
@@ -128,7 +144,11 @@
                 errorMsg.textContent = '';
             }
 
-            function calcAge() {
+            function formatDate(date) {
+                return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            }
+
+            function calculateAge() {
                 hideError();
 
                 const dobVal = dobInput.value;
@@ -154,6 +174,7 @@
                     return;
                 }
 
+                // Calculate years, months, days
                 let years = asofDate.getFullYear() - dobDate.getFullYear();
                 let months = asofDate.getMonth() - dobDate.getMonth();
                 let days = asofDate.getDate() - dobDate.getDate();
@@ -170,23 +191,26 @@
                     years -= 1;
                 }
 
+                // Total days alive
                 const diffMs = asofDate.getTime() - dobDate.getTime();
                 const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
                 yearsSpan.textContent = years;
                 monthsSpan.textContent = months;
                 daysSpan.textContent = days;
-                totalDaysSpan.textContent = totalDays.toLocaleString();
-                resultDiv.style.display = 'grid';
+
+                resultDetail.textContent =
+                    `Born: ${formatDate(dobDate)} · As of: ${formatDate(asofDate)} · Total days alive: ${totalDays.toLocaleString()}`;
+
+                resultDiv.style.display = 'block';
             }
 
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                calcAge();
+                calculateAge();
             });
 
             form.addEventListener('reset', function(e) {
-                // Reset asof to today after reset
                 setTimeout(function() {
                     asofInput.value = y + '-' + m + '-' + d;
                     resultDiv.style.display = 'none';
@@ -194,7 +218,6 @@
                 }, 10);
             });
 
-            // Clear error when user starts typing
             dobInput.addEventListener('input', hideError);
             asofInput.addEventListener('input', hideError);
 
