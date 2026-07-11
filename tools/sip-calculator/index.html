@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIP Calculator · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+            <button class="hamburger"
+                    aria-expanded="false"
+                    aria-controls="primary-nav"
+                    aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">SIP Calculator</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Plan your investments with our comprehensive SIP calculator. Adjust the sliders or enter values manually.
+                    </p>
+
+                    <form class="sip-form" id="sipForm" novalidate>
+
+                        <!-- ===== ESSENTIAL INPUTS ===== -->
+                        <div class="form-section-title">Essential Inputs</div>
+
+                        <div class="field-group">
+                            <label for="monthlySip">Monthly SIP (₹)</label>
+                            <input type="number" id="monthlySip" step="100" min="100" value="5000" required />
+                            <input type="range" id="monthlySipRange" min="100" max="100000" step="100" value="5000" class="sip-range" />
+                            <span class="range-value" id="monthlySipVal">₹5,000</span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="tenure">Tenure (Years)</label>
+                            <input type="number" id="tenure" step="1" min="1" max="50" value="10" required />
+                            <input type="range" id="tenureRange" min="1" max="50" step="1" value="10" class="sip-range" />
+                            <span class="range-value" id="tenureVal">10 yrs</span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="returnRate">Expected Return (%)</label>
+                            <input type="number" id="returnRate" step="0.5" min="1" max="30" value="12" required />
+                            <input type="range" id="returnRange" min="1" max="30" step="0.5" value="12" class="sip-range" />
+                            <span class="range-value" id="returnVal">12%</span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="sipFrequency">SIP Frequency</label>
+                            <select id="sipFrequency" class="sip-select">
+                                <option value="monthly">Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="yearly">Yearly</option>
+                            </select>
+                        </div>
+
+                        <!-- ===== ADVANCED INPUTS ===== -->
+                        <div class="form-section-title">Advanced Inputs</div>
+
+                        <div class="field-group">
+                            <label for="stepUpRate">Step-up SIP Rate (%)</label>
+                            <input type="number" id="stepUpRate" step="1" min="0" max="50" value="0" />
+                            <span class="helper-text">Annual increase in SIP amount</span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="lumpsum">Initial Lumpsum (₹)</label>
+                            <input type="number" id="lumpsum" step="1000" min="0" value="0" />
+                            <span class="helper-text">One-time initial investment</span>
+                        </div>
+
+                        <div class="field-group">
+                            <label for="targetAmount">Target Amount (₹)</label>
+                            <input type="number" id="targetAmount" step="1000" min="0" value="0" />
+                            <span class="helper-text">Enter goal to calculate required monthly SIP</span>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Calculate</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </form>
+
+                    <div class="error-msg" id="errorMsg"></div>
+
+                    <!-- ===== RESULTS ===== -->
+                    <div class="sip-result" id="sipResult" style="display:none;">
+                        <div class="result-grid">
+                            <div class="result-card">
+                                <span class="result-label">Total Invested</span>
+                                <span class="result-value" id="totalInvested">₹0</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Estimated Returns</span>
+                                <span class="result-value" id="estimatedReturns">₹0</span>
+                            </div>
+                            <div class="result-card highlight">
+                                <span class="result-label">Maturity Value</span>
+                                <span class="result-value" id="maturityValue">₹0</span>
+                            </div>
+                        </div>
+                        <div class="result-detail" id="resultDetail"></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // DOM Elements
+            const form = document.getElementById('sipForm');
+            const monthlySip = document.getElementById('monthlySip');
+            const tenure = document.getElementById('tenure');
+            const returnRate = document.getElementById('returnRate');
+            const sipFrequency = document.getElementById('sipFrequency');
+            const stepUpRate = document.getElementById('stepUpRate');
+            const lumpsum = document.getElementById('lumpsum');
+            const targetAmount = document.getElementById('targetAmount');
+
+            const monthlySipRange = document.getElementById('monthlySipRange');
+            const tenureRange = document.getElementById('tenureRange');
+            const returnRange = document.getElementById('returnRange');
+            const monthlySipVal = document.getElementById('monthlySipVal');
+            const tenureVal = document.getElementById('tenureVal');
+            const returnVal = document.getElementById('returnVal');
+
+            const errorMsg = document.getElementById('errorMsg');
+            const resultDiv = document.getElementById('sipResult');
+            const totalInvested = document.getElementById('totalInvested');
+            const estimatedReturns = document.getElementById('estimatedReturns');
+            const maturityValue = document.getElementById('maturityValue');
+            const resultDetail = document.getElementById('resultDetail');
+
+            // Sync range sliders with inputs
+            function syncRange(input, range, display, formatFn) {
+                input.addEventListener('input', function() {
+                    const val = parseFloat(this.value) || 0;
+                    range.value = val;
+                    if (display) {
+                        display.textContent = formatFn ? formatFn(val) : val;
+                    }
+                });
+                range.addEventListener('input', function() {
+                    const val = parseFloat(this.value) || 0;
+                    input.value = val;
+                    if (display) {
+                        display.textContent = formatFn ? formatFn(val) : val;
+                    }
+                });
+            }
+
+            syncRange(monthlySip, monthlySipRange, monthlySipVal, function(v) { return '₹' + Number(v).toLocaleString(); });
+            syncRange(tenure, tenureRange, tenureVal, function(v) { return v + ' yrs'; });
+            syncRange(returnRate, returnRange, returnVal, function(v) { return v + '%'; });
+
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.add('show');
+                resultDiv.style.display = 'none';
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('show');
+                errorMsg.textContent = '';
+            }
+
+            function formatCurrency(val) {
+                return '₹' + Math.round(val).toLocaleString();
+            }
+
+            function calculateSIP() {
+                hideError();
+
+                // Get values
+                let sip = parseFloat(monthlySip.value);
+                let years = parseFloat(tenure.value);
+                let rate = parseFloat(returnRate.value);
+                let frequency = sipFrequency.value;
+                let stepUp = parseFloat(stepUpRate.value) || 0;
+                let lump = parseFloat(lumpsum.value) || 0;
+                let target = parseFloat(targetAmount.value) || 0;
+
+                // Validation
+                if (isNaN(sip) || sip <= 0) {
+                    showError('Please enter a valid monthly SIP amount.');
+                    return;
+                }
+                if (isNaN(years) || years <= 0) {
+                    showError('Please enter a valid tenure.');
+                    return;
+                }
+                if (isNaN(rate) || rate <= 0) {
+                    showError('Please enter a valid expected return rate.');
+                    return;
+                }
+                if (isNaN(stepUp) || stepUp < 0) {
+                    showError('Please enter a valid step-up rate.');
+                    return;
+                }
+                if (isNaN(lump) || lump < 0) {
+                    showError('Please enter a valid lumpsum amount.');
+                    return;
+                }
+                if (isNaN(target) || target < 0) {
+                    showError('Please enter a valid target amount.');
+                    return;
+                }
+
+                // If target is set, calculate required SIP
+                let calculatedSip = sip;
+                let isGoalBased = false;
+                if (target > 0) {
+                    isGoalBased = true;
+                    // Estimate required SIP to reach target
+                    // Using iterative approximation
+                    const monthlyRate = rate / 12 / 100;
+                    const totalMonths = years * 12;
+                    let estimatedSip = target / ((Math.pow(1 + monthlyRate, totalMonths) - 1) / monthlyRate * (1 + monthlyRate));
+                    // Add step-up approximation
+                    if (stepUp > 0) {
+                        // Simple approximation: reduce required SIP by roughly (1 + stepUp/2) factor
+                        const stepFactor = 1 + (stepUp / 100) * (years / 2);
+                        estimatedSip = estimatedSip / stepFactor;
+                    }
+                    calculatedSip = Math.max(100, Math.round(estimatedSip / 100) * 100);
+                    // Clamp to reasonable range
+                    if (calculatedSip > 1000000) {
+                        showError('Target amount is too high for the given tenure and return rate.');
+                        return;
+                    }
+                    sip = calculatedSip;
+                }
+
+                // SIP frequency multiplier
+                let frequencyMultiplier = 1;
+                let periodsPerYear = 12;
+                if (frequency === 'quarterly') {
+                    frequencyMultiplier = 3;
+                    periodsPerYear = 4;
+                } else if (frequency === 'yearly') {
+                    frequencyMultiplier = 12;
+                    periodsPerYear = 1;
+                }
+
+                // Convert annual rate to per-period rate
+                const monthlyRate = rate / 12 / 100;
+                const totalMonths = years * 12;
+
+                // Calculate SIP maturity with step-up
+                let totalInvestedAmount = 0;
+                let maturityValueSip = 0;
+                let currentSip = sip;
+
+                // Monthly SIP with step-up
+                for (let month = 1; month <= totalMonths; month++) {
+                    // Apply step-up annually
+                    if (month > 1 && month % 12 === 1 && stepUp > 0) {
+                        currentSip = currentSip * (1 + stepUp / 100);
+                    }
+                    totalInvestedAmount += currentSip;
+                    // Each SIP grows at monthly rate until end
+                    const monthsRemaining = totalMonths - month;
+                    maturityValueSip += currentSip * Math.pow(1 + monthlyRate, monthsRemaining + 1);
+                }
+
+                // Add lumpsum growth
+                let maturityValueLumpsum = 0;
+                if (lump > 0) {
+                    maturityValueLumpsum = lump * Math.pow(1 + monthlyRate, totalMonths);
+                    totalInvestedAmount += lump;
+                }
+
+                const totalMaturity = maturityValueSip + maturityValueLumpsum;
+                const totalReturns = totalMaturity - totalInvestedAmount;
+
+                // Display results
+                if (isGoalBased) {
+                    resultDetail.textContent = `Required monthly SIP to reach target of ${formatCurrency(target)}: ${formatCurrency(sip)} per month`;
+                } else {
+                    resultDetail.textContent = `Based on ${formatCurrency(sip)} monthly SIP for ${years} years at ${rate}% annual return`;
+                    if (stepUp > 0) {
+                        resultDetail.textContent += ` with ${stepUp}% annual step-up`;
+                    }
+                    if (lump > 0) {
+                        resultDetail.textContent += ` and lumpsum of ${formatCurrency(lump)}`;
+                    }
+                }
+
+                totalInvested.textContent = formatCurrency(totalInvestedAmount);
+                estimatedReturns.textContent = formatCurrency(totalReturns);
+                maturityValue.textContent = formatCurrency(totalMaturity);
+
+                resultDiv.style.display = 'block';
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateSIP();
+            });
+
+            form.addEventListener('reset', function(e) {
+                setTimeout(function() {
+                    // Reset all fields to defaults
+                    monthlySip.value = 5000;
+                    tenure.value = 10;
+                    returnRate.value = 12;
+                    stepUpRate.value = 0;
+                    lumpsum.value = 0;
+                    targetAmount.value = 0;
+                    sipFrequency.value = 'monthly';
+
+                    monthlySipRange.value = 5000;
+                    tenureRange.value = 10;
+                    returnRange.value = 12;
+
+                    monthlySipVal.textContent = '₹5,000';
+                    tenureVal.textContent = '10 yrs';
+                    returnVal.textContent = '12%';
+
+                    resultDiv.style.display = 'none';
+                    hideError();
+                }, 10);
+            });
+
+            // Auto-calculate on slider change (optional real-time)
+            // We'll keep it manual via Calculate button
+
+        })();
+    </script>
+
+</body>
+</html>
