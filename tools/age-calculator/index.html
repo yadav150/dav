@@ -5,15 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Age Calculator · Yadav Web Tools</title>
     <link rel="stylesheet" href="../../style.css" />
-    <!-- tool-specific CSS (minified) – append to style.css -->
-    <style>
-        /* Age Calculator additions – minified, merge into style.css */
-        .age-form{display:flex;flex-direction:column;gap:16px;margin:6px 0 10px}.age-form .field-group{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}.age-form label{font-weight:500;min-width:70px}.age-form input[type="date"]{padding:8px 10px;border:1px solid #ccc;border-radius:8px;font-size:.95rem;background:#fff;flex:1 1 180px}.age-form .btn-group{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}.age-result{margin-top:14px;padding:14px 16px;background:#f4f8f6;border:1px solid #d4e4dc;border-radius:8px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center}.age-result .stat{display:flex;flex-direction:column}.age-result .stat .num{font-size:1.7rem;font-weight:700;color:#1a5c3a;line-height:1.2}.age-result .stat .lbl{font-size:.8rem;color:#3d5a4e;text-transform:uppercase;letter-spacing:.3px}.age-total{grid-column:1/-1;border-top:1px solid #d4e4dc;padding-top:12px;margin-top:4px;font-size:.95rem;color:#1e3d2f}.age-total strong{font-weight:600;color:#1a5c3a}@media(max-width:480px){.age-result{grid-template-columns:1fr 1fr;gap:8px}.age-result .stat .num{font-size:1.4rem}.age-form .field-group{flex-direction:column;align-items:stretch}.age-form label{min-width:auto}}
-    </style>
 </head>
 <body>
 
-    <!-- ===== HEADER (identical to main) ===== -->
+    <!-- ===== HEADER ===== -->
     <header class="site-header" role="banner">
         <div class="header-inner">
             <a href="../../index.html" class="site-title" style="text-decoration:none;">Yadav Web Tools</a>
@@ -38,7 +33,6 @@
     <!-- ===== MAIN ===== -->
     <main id="main-content">
 
-        <!-- ===== TOOL SECTION ===== -->
         <section class="section tools-section" aria-labelledby="tool-heading">
             <div class="section-title-bar">
                 <h2 id="tool-heading">Age Calculator</h2>
@@ -77,12 +71,11 @@
             </div>
         </section>
 
-        <!-- ===== optional extra spacing ===== -->
         <div style="max-width:1200px;margin:0 auto;height:8px;"></div>
 
     </main>
 
-    <!-- ===== FOOTER (identical) ===== -->
+    <!-- ===== FOOTER ===== -->
     <footer class="site-footer" role="contentinfo">
         <div class="footer-inner">
             <div class="footer-links">
@@ -96,10 +89,8 @@
         </div>
     </footer>
 
-    <!-- ===== GLOBAL SCRIPTS ===== -->
     <script src="../../script.js"></script>
 
-    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
     <script>
         (function() {
             'use strict';
@@ -113,7 +104,6 @@
             const daysSpan = document.getElementById('days');
             const totalDaysSpan = document.getElementById('totalDays');
 
-            // set default asof to today
             const today = new Date();
             const y = today.getFullYear();
             const m = String(today.getMonth() + 1).padStart(2, '0');
@@ -144,13 +134,11 @@
                     return;
                 }
 
-                // Calculate years, months, days
                 let years = asofDate.getFullYear() - dobDate.getFullYear();
                 let months = asofDate.getMonth() - dobDate.getMonth();
                 let days = asofDate.getDate() - dobDate.getDate();
 
                 if (days < 0) {
-                    // borrow days from previous month
                     const prevMonth = new Date(asofDate.getFullYear(), asofDate.getMonth(), 0);
                     const daysInPrevMonth = prevMonth.getDate();
                     days += daysInPrevMonth;
@@ -162,11 +150,9 @@
                     years -= 1;
                 }
 
-                // total days alive (difference in ms)
                 const diffMs = asofDate.getTime() - dobDate.getTime();
                 const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-                // display
                 yearsSpan.textContent = years;
                 monthsSpan.textContent = months;
                 daysSpan.textContent = days;
@@ -180,17 +166,11 @@
             });
 
             form.addEventListener('reset', function(e) {
-                // reset asof to today after reset
                 setTimeout(function() {
                     asofInput.value = y + '-' + m + '-' + d;
                     resultDiv.style.display = 'none';
                 }, 10);
             });
-
-            // auto-calculate on page load if dob is set (optional)
-            // but we keep it empty initially.
-
-            // Also recalculate when asof changes? we keep manual.
 
         })();
     </script>
