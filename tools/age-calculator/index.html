@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Age Calculator · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+    <!-- tool-specific CSS (minified) – append to style.css -->
+    <style>
+        /* Age Calculator additions – minified, merge into style.css */
+        .age-form{display:flex;flex-direction:column;gap:16px;margin:6px 0 10px}.age-form .field-group{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}.age-form label{font-weight:500;min-width:70px}.age-form input[type="date"]{padding:8px 10px;border:1px solid #ccc;border-radius:8px;font-size:.95rem;background:#fff;flex:1 1 180px}.age-form .btn-group{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}.age-result{margin-top:14px;padding:14px 16px;background:#f4f8f6;border:1px solid #d4e4dc;border-radius:8px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center}.age-result .stat{display:flex;flex-direction:column}.age-result .stat .num{font-size:1.7rem;font-weight:700;color:#1a5c3a;line-height:1.2}.age-result .stat .lbl{font-size:.8rem;color:#3d5a4e;text-transform:uppercase;letter-spacing:.3px}.age-total{grid-column:1/-1;border-top:1px solid #d4e4dc;padding-top:12px;margin-top:4px;font-size:.95rem;color:#1e3d2f}.age-total strong{font-weight:600;color:#1a5c3a}@media(max-width:480px){.age-result{grid-template-columns:1fr 1fr;gap:8px}.age-result .stat .num{font-size:1.4rem}.age-form .field-group{flex-direction:column;align-items:stretch}.age-form label{min-width:auto}}
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER (identical to main) ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title" style="text-decoration:none;">Yadav Web Tools</a>
+            <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <!-- ===== TOOL SECTION ===== -->
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">Age Calculator</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p style="margin-bottom:16px;font-size:.95rem;color:#2d4a3b;">
+                        Enter your date of birth and optionally a target date to calculate your exact age.
+                    </p>
+
+                    <form class="age-form" id="ageForm" novalidate>
+                        <div class="field-group">
+                            <label for="dob">Date of birth *</label>
+                            <input type="date" id="dob" required />
+                        </div>
+                        <div class="field-group">
+                            <label for="asof">As of date</label>
+                            <input type="date" id="asof" />
+                            <span style="font-size:.8rem;color:#4a6b5a;">(defaults to today)</span>
+                        </div>
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Calculate Age</button>
+                            <button type="reset" class="btn" style="background:#5f7a6b;">Reset</button>
+                        </div>
+                    </form>
+
+                    <div class="age-result" id="ageResult" style="display:none;">
+                        <div class="stat"><span class="num" id="years">0</span><span class="lbl">Years</span></div>
+                        <div class="stat"><span class="num" id="months">0</span><span class="lbl">Months</span></div>
+                        <div class="stat"><span class="num" id="days">0</span><span class="lbl">Days</span></div>
+                        <div class="age-total"><strong>Total days alive:</strong> <span id="totalDays">0</span></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== optional extra spacing ===== -->
+        <div style="max-width:1200px;margin:0 auto;height:8px;"></div>
+
+    </main>
+
+    <!-- ===== FOOTER (identical) ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const form = document.getElementById('ageForm');
+            const dobInput = document.getElementById('dob');
+            const asofInput = document.getElementById('asof');
+            const resultDiv = document.getElementById('ageResult');
+            const yearsSpan = document.getElementById('years');
+            const monthsSpan = document.getElementById('months');
+            const daysSpan = document.getElementById('days');
+            const totalDaysSpan = document.getElementById('totalDays');
+
+            // set default asof to today
+            const today = new Date();
+            const y = today.getFullYear();
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const d = String(today.getDate()).padStart(2, '0');
+            asofInput.value = y + '-' + m + '-' + d;
+
+            function calcAge() {
+                const dobVal = dobInput.value;
+                if (!dobVal) {
+                    alert('Please select your date of birth.');
+                    return;
+                }
+
+                const asofVal = asofInput.value || asofInput.defaultValue;
+                const dobParts = dobVal.split('-').map(Number);
+                const asofParts = asofVal.split('-').map(Number);
+
+                const dobDate = new Date(dobParts[0], dobParts[1] - 1, dobParts[2]);
+                const asofDate = new Date(asofParts[0], asofParts[1] - 1, asofParts[2]);
+
+                if (isNaN(dobDate.getTime()) || isNaN(asofDate.getTime())) {
+                    alert('Please enter valid dates.');
+                    return;
+                }
+
+                if (dobDate > asofDate) {
+                    alert('Date of birth must be earlier than the "as of" date.');
+                    return;
+                }
+
+                // Calculate years, months, days
+                let years = asofDate.getFullYear() - dobDate.getFullYear();
+                let months = asofDate.getMonth() - dobDate.getMonth();
+                let days = asofDate.getDate() - dobDate.getDate();
+
+                if (days < 0) {
+                    // borrow days from previous month
+                    const prevMonth = new Date(asofDate.getFullYear(), asofDate.getMonth(), 0);
+                    const daysInPrevMonth = prevMonth.getDate();
+                    days += daysInPrevMonth;
+                    months -= 1;
+                }
+
+                if (months < 0) {
+                    months += 12;
+                    years -= 1;
+                }
+
+                // total days alive (difference in ms)
+                const diffMs = asofDate.getTime() - dobDate.getTime();
+                const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                // display
+                yearsSpan.textContent = years;
+                monthsSpan.textContent = months;
+                daysSpan.textContent = days;
+                totalDaysSpan.textContent = totalDays.toLocaleString();
+                resultDiv.style.display = 'grid';
+            }
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calcAge();
+            });
+
+            form.addEventListener('reset', function(e) {
+                // reset asof to today after reset
+                setTimeout(function() {
+                    asofInput.value = y + '-' + m + '-' + d;
+                    resultDiv.style.display = 'none';
+                }, 10);
+            });
+
+            // auto-calculate on page load if dob is set (optional)
+            // but we keep it empty initially.
+
+            // Also recalculate when asof changes? we keep manual.
+
+        })();
+    </script>
+
+</body>
+</html>
