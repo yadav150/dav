@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loan Calculator · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+    <!-- Chart.js for pie chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+            <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">Loan Calculator</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Calculate your monthly EMI, total interest, and total payment with a visual breakdown.
+                    </p>
+
+                    <form class="loan-form" id="loanForm" novalidate>
+
+                        <!-- ===== PRINCIPAL ===== -->
+                        <div class="field-group">
+                            <label for="principal">Principal Amount (₹)</label>
+                            <input type="number" id="principal" step="1000" min="1000" value="500000" required />
+                            <input type="range" id="principalRange" min="1000" max="10000000" step="1000" value="500000" class="loan-range" />
+                            <span class="range-value" id="principalVal">₹5,00,000</span>
+                        </div>
+
+                        <!-- ===== INTEREST RATE ===== -->
+                        <div class="field-group">
+                            <label for="interestRate">Interest Rate (% p.a.)</label>
+                            <input type="number" id="interestRate" step="0.1" min="0.1" max="30" value="8.5" required />
+                            <input type="range" id="interestRange" min="0.1" max="30" step="0.1" value="8.5" class="loan-range" />
+                            <span class="range-value" id="interestVal">8.5%</span>
+                        </div>
+
+                        <!-- ===== TENURE with toggle ===== -->
+                        <div class="field-group">
+                            <label for="tenure">Tenure</label>
+                            <div style="display:flex;flex:1 1 200px;min-width:160px;gap:8px;flex-wrap:wrap;">
+                                <input type="number" id="tenure" step="1" min="1" max="600" value="60" style="flex:1;min-width:80px;" />
+                                <button type="button" class="tenure-toggle" id="tenureToggle">Months</button>
+                            </div>
+                            <input type="range" id="tenureRange" min="1" max="600" step="1" value="60" class="loan-range" style="flex:1 1 200px;" />
+                            <span class="range-value" id="tenureVal">60 Months</span>
+                        </div>
+
+                        <!-- ===== PROCESSING FEE ===== -->
+                        <div class="field-group">
+                            <label for="processingFee">Processing Fee (₹)</label>
+                            <input type="number" id="processingFee" step="100" min="0" value="0" />
+                            <span class="helper-text">One-time bank charges</span>
+                        </div>
+
+                        <!-- ===== PREPAYMENT ===== -->
+                        <div class="field-group">
+                            <label for="prepayment">Prepayment / Part-payment (₹)</label>
+                            <input type="number" id="prepayment" step="1000" min="0" value="0" />
+                            <span class="helper-text">Extra lump-sum payment mid-loan</span>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn">Calculate</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </form>
+
+                    <div class="error-msg" id="errorMsg"></div>
+
+                    <!-- ===== RESULTS ===== -->
+                    <div class="loan-result" id="loanResult" style="display:none;">
+                        <div class="result-grid">
+                            <div class="result-card highlight">
+                                <span class="result-label">Monthly EMI</span>
+                                <span class="result-value" id="emiValue">₹0</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Principal Amount</span>
+                                <span class="result-value" id="principalResult">₹0</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Total Interest</span>
+                                <span class="result-value" id="totalInterest">₹0</span>
+                            </div>
+                            <div class="result-card">
+                                <span class="result-label">Total Amount</span>
+                                <span class="result-value" id="totalAmount">₹0</span>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="loanChart" width="300" height="300"></canvas>
+                        </div>
+                        <div class="result-detail" id="loanDetail"></div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // DOM refs
+            const form = document.getElementById('loanForm');
+            const principal = document.getElementById('principal');
+            const interestRate = document.getElementById('interestRate');
+            const tenure = document.getElementById('tenure');
+            const tenureToggle = document.getElementById('tenureToggle');
+            const processingFee = document.getElementById('processingFee');
+            const prepayment = document.getElementById('prepayment');
+            const principalRange = document.getElementById('principalRange');
+            const interestRange = document.getElementById('interestRange');
+            const tenureRange = document.getElementById('tenureRange');
+            const principalVal = document.getElementById('principalVal');
+            const interestVal = document.getElementById('interestVal');
+            const tenureVal = document.getElementById('tenureVal');
+            const errorMsg = document.getElementById('errorMsg');
+            const resultDiv = document.getElementById('loanResult');
+            const emiValue = document.getElementById('emiValue');
+            const principalResult = document.getElementById('principalResult');
+            const totalInterest = document.getElementById('totalInterest');
+            const totalAmount = document.getElementById('totalAmount');
+            const loanDetail = document.getElementById('loanDetail');
+            const chartCanvas = document.getElementById('loanChart');
+
+            let chartInstance = null;
+            let tenureUnit = 'months'; // 'months' or 'years'
+
+            // ===== SYNC SLIDERS =====
+            function syncRange(input, range, display, formatFn) {
+                input.addEventListener('input', function() {
+                    const val = parseFloat(this.value) || 0;
+                    range.value = val;
+                    if (display) display.textContent = formatFn ? formatFn(val) : val;
+                });
+                range.addEventListener('input', function() {
+                    const val = parseFloat(this.value) || 0;
+                    input.value = val;
+                    if (display) display.textContent = formatFn ? formatFn(val) : val;
+                });
+            }
+
+            syncRange(principal, principalRange, principalVal, function(v) { return '₹' + Number(v).toLocaleString(); });
+            syncRange(interestRate, interestRange, interestVal, function(v) { return v + '%'; });
+
+            // Tenure sync with unit-aware formatting
+            function updateTenureDisplay(val) {
+                const unit = tenureUnit === 'months' ? 'Months' : 'Years';
+                const displayVal = tenureUnit === 'months' ? val : (val / 12).toFixed(1);
+                tenureVal.textContent = displayVal + ' ' + unit;
+            }
+
+            tenure.addEventListener('input', function() {
+                const val = parseInt(this.value) || 0;
+                tenureRange.value = val;
+                updateTenureDisplay(val);
+            });
+            tenureRange.addEventListener('input', function() {
+                const val = parseInt(this.value) || 0;
+                tenure.value = val;
+                updateTenureDisplay(val);
+            });
+
+            // ===== TENURE TOGGLE =====
+            tenureToggle.addEventListener('click', function() {
+                const currentVal = parseInt(tenure.value) || 1;
+                if (tenureUnit === 'months') {
+                    // Switch to years: convert months to years (rounded to 1 decimal)
+                    const years = currentVal / 12;
+                    const newVal = Math.max(1, Math.round(years * 10) / 10);
+                    tenureUnit = 'years';
+                    tenureToggle.textContent = 'Years';
+                    tenure.step = '0.1';
+                    tenure.value = newVal;
+                    const rangeVal = Math.round(newVal * 12);
+                    tenureRange.value = rangeVal;
+                    tenureRange.max = 600;
+                    updateTenureDisplay(rangeVal);
+                } else {
+                    // Switch to months: convert years to months
+                    const months = Math.round(currentVal * 12);
+                    const newVal = Math.max(1, months);
+                    tenureUnit = 'months';
+                    tenureToggle.textContent = 'Months';
+                    tenure.step = '1';
+                    tenure.value = newVal;
+                    tenureRange.value = newVal;
+                    tenureRange.max = 600;
+                    updateTenureDisplay(newVal);
+                }
+            });
+
+            // Initial display
+            updateTenureDisplay(60);
+
+            // ===== HELPERS =====
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.add('show');
+                resultDiv.style.display = 'none';
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('show');
+                errorMsg.textContent = '';
+            }
+
+            function formatCurrency(val) {
+                return '₹' + Math.round(val).toLocaleString();
+            }
+
+            // ===== CALCULATE =====
+            function calculateLoan() {
+                hideError();
+
+                const P = parseFloat(principal.value);
+                const rate = parseFloat(interestRate.value);
+                let tenureVal = parseFloat(tenure.value);
+                const fee = parseFloat(processingFee.value) || 0;
+                const prepay = parseFloat(prepayment.value) || 0;
+
+                if (isNaN(P) || P <= 0) { showError('Please enter a valid principal amount.'); return; }
+                if (isNaN(rate) || rate <= 0) { showError('Please enter a valid interest rate.'); return; }
+                if (isNaN(tenureVal) || tenureVal <= 0) { showError('Please enter a valid tenure.'); return; }
+
+                // Convert tenure to months if in years
+                let months;
+                if (tenureUnit === 'years') {
+                    months = Math.round(tenureVal * 12);
+                } else {
+                    months = Math.round(tenureVal);
+                }
+                if (months < 1) { showError('Tenure must be at least 1 month.'); return; }
+
+                const monthlyRate = rate / 12 / 100;
+
+                // Standard EMI formula
+                let emi;
+                if (monthlyRate === 0) {
+                    emi = P / months;
+                } else {
+                    emi = P * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
+                }
+
+                // Total payment without prepayment
+                let totalPayment = emi * months;
+                let totalInterestPaid = totalPayment - P;
+
+                // Apply prepayment (simplified: reduce principal by prepay at halfway, recalc)
+                let adjustedEmi = emi;
+                let adjustedTotalInterest = totalInterestPaid;
+                let adjustedTotalPayment = totalPayment;
+                let prepayApplied = false;
+
+                if (prepay > 0 && prepay < P) {
+                    // Simple simulation: at half tenure, reduce principal by prepay, then recalc remaining EMI
+                    const halfMonths = Math.floor(months / 2);
+                    const remainingPrincipal = P - prepay;
+                    if (remainingPrincipal > 0) {
+                        const remainingMonths = months - halfMonths;
+                        let newEmi;
+                        if (monthlyRate === 0) {
+                            newEmi = remainingPrincipal / remainingMonths;
+                        } else {
+                            newEmi = remainingPrincipal * monthlyRate * Math.pow(1 + monthlyRate, remainingMonths) /
+                                (Math.pow(1 + monthlyRate, remainingMonths) - 1);
+                        }
+                        // Recalculate total interest
+                        const interestFirstHalf = (emi * halfMonths) - (P * (halfMonths / months)); // rough
+                        // More accurate: total interest without prepay minus saved interest
+                        const savedInterest = (emi * months - P) - (emi * halfMonths + newEmi * remainingMonths - P);
+                        adjustedTotalInterest = totalInterestPaid - savedInterest;
+                        adjustedTotalPayment = P + adjustedTotalInterest;
+                        adjustedEmi = newEmi;
+                        prepayApplied = true;
+                    }
+                }
+
+                // Add processing fee to total cost
+                const totalWithFee = adjustedTotalPayment + fee;
+
+                // Display results
+                emiValue.textContent = formatCurrency(adjustedEmi);
+                principalResult.textContent = formatCurrency(P);
+                totalInterest.textContent = formatCurrency(adjustedTotalInterest);
+                totalAmount.textContent = formatCurrency(totalWithFee);
+
+                let detail = `EMI: ${formatCurrency(adjustedEmi)} · Tenure: ${months} months`;
+                if (fee > 0) detail += ` · Processing Fee: ${formatCurrency(fee)}`;
+                if (prepayApplied) detail += ` · Prepayment applied (saved interest)`;
+                loanDetail.textContent = detail;
+
+                // Update chart
+                const principalData = P;
+                const interestData = adjustedTotalInterest;
+                const feeData = fee;
+
+                if (chartInstance) chartInstance.destroy();
+
+                const ctx = chartCanvas.getContext('2d');
+                chartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Principal', 'Interest', 'Processing Fee'],
+                        datasets: [{
+                            data: [principalData, interestData, feeData],
+                            backgroundColor: ['#1a5c3a', '#d4e4dc', '#e67e22'],
+                            borderColor: ['#fff', '#fff', '#fff'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: { size: 12 },
+                                    color: '#1e3d2f'
+                                }
+                            }
+                        },
+                        cutout: '60%'
+                    }
+                });
+
+                resultDiv.style.display = 'block';
+            }
+
+            // ===== EVENT LISTENERS =====
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                calculateLoan();
+            });
+
+            form.addEventListener('reset', function(e) {
+                setTimeout(function() {
+                    principal.value = 500000;
+                    interestRate.value = 8.5;
+                    tenure.value = 60;
+                    tenureRange.value = 60;
+                    processingFee.value = 0;
+                    prepayment.value = 0;
+                    principalRange.value = 500000;
+                    interestRange.value = 8.5;
+                    principalVal.textContent = '₹5,00,000';
+                    interestVal.textContent = '8.5%';
+                    updateTenureDisplay(60);
+                    // Reset tenure unit to months if changed
+                    if (tenureUnit !== 'months') {
+                        tenureUnit = 'months';
+                        tenureToggle.textContent = 'Months';
+                        tenure.step = '1';
+                    }
+                    resultDiv.style.display = 'none';
+                    hideError();
+                    if (chartInstance) { chartInstance.destroy();
+                        chartInstance = null; }
+                }, 10);
+            });
+
+            // Clear error on input
+            document.querySelectorAll('#loanForm input').forEach(function(el) {
+                el.addEventListener('input', hideError);
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
