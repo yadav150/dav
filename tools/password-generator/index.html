@@ -158,280 +158,279 @@
 
     <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
     <script>
-        (function() {
-            'use strict';
+    (function() {
+        'use strict';
 
-            // ===== DOM REFS =====
-            const form = document.getElementById('passwordForm');
-            const passwordDisplay = document.getElementById('passwordDisplay');
-            const passwordLength = document.getElementById('passwordLength');
-            const lengthRange = document.getElementById('lengthRange');
-            const lengthVal = document.getElementById('lengthVal');
-            const useUppercase = document.getElementById('useUppercase');
-            const useLowercase = document.getElementById('useLowercase');
-            const useNumbers = document.getElementById('useNumbers');
-            const useSymbols = document.getElementById('useSymbols');
-            const excludeSimilar = document.getElementById('excludeSimilar');
-            const pronounceable = document.getElementById('pronounceable');
-            const passphrase = document.getElementById('passphrase');
-            const copyBtn = document.getElementById('copyBtn');
-            const regenerateBtn = document.getElementById('regenerateBtn');
-            const strengthBar = document.getElementById('strengthBar');
-            const strengthText = document.getElementById('strengthText');
-            const errorMsg = document.getElementById('errorMsg');
+        // ===== DOM REFS =====
+        const form = document.getElementById('passwordForm');
+        const passwordDisplay = document.getElementById('passwordDisplay');
+        const passwordLength = document.getElementById('passwordLength');
+        const lengthRange = document.getElementById('lengthRange');
+        const lengthVal = document.getElementById('lengthVal');
+        const useUppercase = document.getElementById('useUppercase');
+        const useLowercase = document.getElementById('useLowercase');
+        const useNumbers = document.getElementById('useNumbers');
+        const useSymbols = document.getElementById('useSymbols');
+        const excludeSimilar = document.getElementById('excludeSimilar');
+        const pronounceable = document.getElementById('pronounceable');
+        const passphrase = document.getElementById('passphrase');
+        const copyBtn = document.getElementById('copyBtn');
+        const regenerateBtn = document.getElementById('regenerateBtn');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+        const errorMsg = document.getElementById('errorMsg');
 
-            // ===== SYNC LENGTH SLIDER =====
-            passwordLength.addEventListener('input', function() {
-                const val = parseInt(this.value) || 16;
-                if (val < 8) this.value = 8;
-                if (val > 64) this.value = 64;
-                lengthRange.value = this.value;
-                lengthVal.textContent = this.value;
-            });
+        // ===== SYNC LENGTH SLIDER =====
+        passwordLength.addEventListener('input', function() {
+            const val = parseInt(this.value) || 16;
+            if (val < 8) this.value = 8;
+            if (val > 64) this.value = 64;
+            lengthRange.value = this.value;
+            lengthVal.textContent = this.value;
+        });
 
-            lengthRange.addEventListener('input', function() {
-                const val = parseInt(this.value);
-                passwordLength.value = val;
-                lengthVal.textContent = val;
-            });
+        lengthRange.addEventListener('input', function() {
+            const val = parseInt(this.value);
+            passwordLength.value = val;
+            lengthVal.textContent = val;
+        });
 
-            // ===== CHARACTER SETS =====
-            const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            const lowerChars = 'abcdefghijklmnopqrstuvwxyz';
-            const numberChars = '0123456789';
-            const symbolChars = '!@#$%^&*';
-            const similarChars = 'iIl1o0O';
+        // ===== CHARACTER SETS =====
+        const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const lowerChars = 'abcdefghijklmnopqrstuvwxyz';
+        const numberChars = '0123456789';
+        const symbolChars = '!@#$%^&*';
+        const similarChars = 'iIl1o0O';
 
-            // ===== PRONOUNCEABLE WORD LIST =====
-            const pronounceableWords = [
-                'vomas', 'tudin', 'kolar', 'fesim', 'nopar', 'lupin', 'goton', 'miret',
-                'solin', 'baret', 'tener', 'lomar', 'paxin', 'ronet', 'tiral', 'mosen',
-                'jolin', 'peran', 'nolas', 'tuson', 'viren', 'sotar', 'lumen', 'poren',
-                'kiran', 'tovan', 'selar', 'moten', 'lirik', 'tusar', 'bolan', 'niten'
-            ];
+        // ===== PRONOUNCEABLE WORD LIST =====
+        const pronounceableWords = [
+            'vomas', 'tudin', 'kolar', 'fesim', 'nopar', 'lupin', 'goton', 'miret',
+            'solin', 'baret', 'tener', 'lomar', 'paxin', 'ronet', 'tiral', 'mosen',
+            'jolin', 'peran', 'nolas', 'tuson', 'viren', 'sotar', 'lumen', 'poren',
+            'kiran', 'tovan', 'selar', 'moten', 'lirik', 'tusar', 'bolan', 'niten'
+        ];
 
-            // ===== PASSPHRASE WORD LIST =====
-            const passphraseWords = [
-                'apple', 'river', 'guitar', 'window', 'forest', 'tiger', 'mountain', 'ocean',
-                'thunder', 'silver', 'golden', 'cherry', 'breeze', 'crystal', 'dragon', 'eagle',
-                'flame', 'garden', 'harbor', 'island', 'jade', 'kingdom', 'lily', 'mirror',
-                'night', 'orchid', 'pearl', 'quartz', 'rain', 'star', 'temple', 'unity',
-                'valley', 'water', 'xenon', 'youth', 'zenith', 'bloom', 'cloud', 'dawn',
-                'ember', 'frost', 'glade', 'haven', 'ivory', 'jewel', 'knight', 'lunar'
-            ];
+        // ===== PASSPHRASE WORD LIST =====
+        const passphraseWords = [
+            'apple', 'river', 'guitar', 'window', 'forest', 'tiger', 'mountain', 'ocean',
+            'thunder', 'silver', 'golden', 'cherry', 'breeze', 'crystal', 'dragon', 'eagle',
+            'flame', 'garden', 'harbor', 'island', 'jade', 'kingdom', 'lily', 'mirror',
+            'night', 'orchid', 'pearl', 'quartz', 'rain', 'star', 'temple', 'unity',
+            'valley', 'water', 'xenon', 'youth', 'zenith', 'bloom', 'cloud', 'dawn',
+            'ember', 'frost', 'glade', 'haven', 'ivory', 'jewel', 'knight', 'lunar'
+        ];
 
-            // ===== SIMILAR CHARACTERS FILTER =====
-            function filterSimilar(chars) {
-                if (!excludeSimilar.checked) return chars;
-                const filtered = chars.split('').filter(function(c) {
-                    return !similarChars.includes(c);
-                }).join('');
-                return filtered || chars;
+        // ===== SIMILAR CHARACTERS FILTER =====
+        function filterSimilar(chars) {
+            if (!excludeSimilar.checked) return chars;
+            const filtered = chars.split('').filter(function(c) {
+                return !similarChars.includes(c);
+            }).join('');
+            return filtered || chars;
+        }
+
+        // ===== GENERATE PASSWORD =====
+        function generatePassword() {
+            const length = parseInt(passwordLength.value) || 16;
+            let chars = '';
+            if (useUppercase.checked) chars += upperChars;
+            if (useLowercase.checked) chars += lowerChars;
+            if (useNumbers.checked) chars += numberChars;
+            if (useSymbols.checked) chars += symbolChars;
+
+            chars = filterSimilar(chars);
+
+            if (!chars) {
+                showError('Please select at least one character set.');
+                return '';
             }
 
-            // ===== GENERATE PASSWORD =====
-            function generatePassword() {
-                const length = parseInt(passwordLength.value) || 16;
-                let chars = '';
-                if (useUppercase.checked) chars += upperChars;
-                if (useLowercase.checked) chars += lowerChars;
-                if (useNumbers.checked) chars += numberChars;
-                if (useSymbols.checked) chars += symbolChars;
-
-                // Filter similar characters if enabled
-                chars = filterSimilar(chars);
-
-                if (!chars) {
-                    showError('Please select at least one character set.');
-                    return '';
+            if (pronounceable.checked) {
+                const words = [];
+                const numWords = Math.max(2, Math.min(4, Math.floor(length / 5)));
+                for (let i = 0; i < numWords; i++) {
+                    const word = pronounceableWords[Math.floor(Math.random() * pronounceableWords.length)];
+                    words.push(word);
                 }
-
-                // ===== PRONOUNCEABLE =====
-                if (pronounceable.checked) {
-                    const words = [];
-                    const numWords = Math.max(2, Math.min(4, Math.floor(length / 5)));
-                    for (let i = 0; i < numWords; i++) {
-                        const word = pronounceableWords[Math.floor(Math.random() * pronounceableWords.length)];
-                        words.push(word);
-                    }
-                    // Add a number suffix
-                    const numSuffix = Math.floor(Math.random() * 100);
-                    const result = words.join('-') + '-' + String(numSuffix).padStart(2, '0');
-                    return result.slice(0, length);
-                }
-
-                // ===== PASSPHRASE =====
-                if (passphrase.checked) {
-                    const words = [];
-                    const numWords = 4 + Math.floor(Math.random() * 2); // 4-5 words
-                    const shuffled = [...passphraseWords].sort(function() { return 0.5 - Math.random(); });
-                    for (let i = 0; i < numWords && i < shuffled.length; i++) {
-                        words.push(shuffled[i]);
-                    }
-                    // Add a number suffix
-                    const numSuffix = Math.floor(Math.random() * 1000);
-                    const result = words.join('-') + '-' + String(numSuffix).padStart(3, '0');
-                    return result.slice(0, Math.min(length, 64));
-                }
-
-                // ===== STANDARD RANDOM =====
-                let password = '';
-                for (let i = 0; i < length; i++) {
-                    const randomIndex = Math.floor(Math.random() * chars.length);
-                    password += chars[randomIndex];
-                }
-                return password;
+                const numSuffix = Math.floor(Math.random() * 100);
+                const result = words.join('-') + '-' + String(numSuffix).padStart(2, '0');
+                return result.slice(0, length);
             }
 
-            // ===== STRENGTH METER =====
-            function updateStrength(password) {
-                const length = password.length;
-                let sets = 0;
-                if (/[A-Z]/.test(password)) sets++;
-                if (/[a-z]/.test(password)) sets++;
-                if (/[0-9]/.test(password)) sets++;
-                if (/[^A-Za-z0-9]/.test(password)) sets++;
-
-                let score = 0;
-                if (length >= 8) score += 1;
-                if (length >= 12) score += 1;
-                if (length >= 16) score += 1;
-                if (sets >= 2) score += 1;
-                if (sets >= 3) score += 1;
-                if (sets >= 4) score += 1;
-
-                // Bonus for pronounceable or passphrase
-                if (pronounceable.checked || passphrase.checked) score += 1;
-
-                let level, color, text;
-                if (score <= 2) {
-                    level = 'weak';
-                    color = '#e74c3c';
-                    text = 'Weak';
-                } else if (score <= 4) {
-                    level = 'medium';
-                    color = '#f39c12';
-                    text = 'Medium';
-                } else {
-                    level = 'strong';
-                    color = '#27ae60';
-                    text = 'Strong';
+            if (passphrase.checked) {
+                const words = [];
+                const numWords = 4 + Math.floor(Math.random() * 2);
+                const shuffled = [...passphraseWords].sort(function() { return 0.5 - Math.random(); });
+                for (let i = 0; i < numWords && i < shuffled.length; i++) {
+                    words.push(shuffled[i]);
                 }
-
-                strengthBar.style.width = (score / 6) * 100 + '%';
-                strengthBar.style.background = color;
-                strengthText.textContent = text;
-                strengthText.style.color = color;
+                const numSuffix = Math.floor(Math.random() * 1000);
+                const result = words.join('-') + '-' + String(numSuffix).padStart(3, '0');
+                return result.slice(0, Math.min(length, 64));
             }
 
-            // ===== SHOW/HIDE ERROR =====
-            function showError(msg) {
-                errorMsg.textContent = msg;
-                errorMsg.classList.add('show');
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * chars.length);
+                password += chars[randomIndex];
+            }
+            return password;
+        }
+
+        // ===== STRENGTH METER =====
+        function updateStrength(password) {
+            const length = password.length;
+            let sets = 0;
+            if (/[A-Z]/.test(password)) sets++;
+            if (/[a-z]/.test(password)) sets++;
+            if (/[0-9]/.test(password)) sets++;
+            if (/[^A-Za-z0-9]/.test(password)) sets++;
+
+            let score = 0;
+            if (length >= 8) score += 1;
+            if (length >= 12) score += 1;
+            if (length >= 16) score += 1;
+            if (sets >= 2) score += 1;
+            if (sets >= 3) score += 1;
+            if (sets >= 4) score += 1;
+
+            if (pronounceable.checked || passphrase.checked) score += 1;
+
+            let level, color, text;
+            if (score <= 2) {
+                level = 'weak';
+                color = '#e74c3c';
+                text = 'Weak';
+            } else if (score <= 4) {
+                level = 'medium';
+                color = '#f39c12';
+                text = 'Medium';
+            } else {
+                level = 'strong';
+                color = '#27ae60';
+                text = 'Strong';
             }
 
-            function hideError() {
-                errorMsg.classList.remove('show');
-                errorMsg.textContent = '';
+            strengthBar.style.width = (score / 6) * 100 + '%';
+            strengthBar.style.background = color;
+            strengthText.textContent = text;
+            strengthText.style.color = color;
+        }
+
+        // ===== SHOW/HIDE ERROR =====
+        function showError(msg) {
+            errorMsg.textContent = msg;
+            errorMsg.classList.add('show');
+        }
+
+        function hideError() {
+            errorMsg.classList.remove('show');
+            errorMsg.textContent = '';
+        }
+
+        // ===== GENERATE AND DISPLAY =====
+        function generateAndDisplay() {
+            hideError();
+            const password = generatePassword();
+            if (password) {
+                passwordDisplay.value = password;
+                updateStrength(password);
             }
+        }
 
-            // ===== GENERATE AND DISPLAY =====
-            function generateAndDisplay() {
-                hideError();
-                const password = generatePassword();
-                if (password) {
-                    passwordDisplay.value = password;
-                    updateStrength(password);
-                }
+        // ===== COPY TO CLIPBOARD =====
+        function copyPassword() {
+            const password = passwordDisplay.value;
+            if (!password) {
+                showError('No password to copy. Generate one first.');
+                return;
             }
-
-            // ===== COPY TO CLIPBOARD =====
-            function copyPassword() {
-                const password = passwordDisplay.value;
-                if (!password) {
-                    showError('No password to copy. Generate one first.');
-                    return;
-                }
-                navigator.clipboard.writeText(password).then(function() {
-                    const originalText = copyBtn.textContent;
-                    copyBtn.textContent = '✓ Copied!';
-                    copyBtn.style.background = '#27ae60';
-                    setTimeout(function() {
-                        copyBtn.textContent = originalText;
-                        copyBtn.style.background = '';
-                    }, 2000);
-                }).catch(function() {
-                    // Fallback
-                    passwordDisplay.select();
-                    document.execCommand('copy');
-                    const originalText = copyBtn.textContent;
-                    copyBtn.textContent = '✓ Copied!';
-                    copyBtn.style.background = '#27ae60';
-                    setTimeout(function() {
-                        copyBtn.textContent = originalText;
-                        copyBtn.style.background = '';
-                    }, 2000);
-                });
-            }
-
-            // ===== EVENT LISTENERS =====
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                generateAndDisplay();
-            });
-
-            form.addEventListener('reset', function(e) {
+            navigator.clipboard.writeText(password).then(function() {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✓ Copied!';
+                copyBtn.style.background = '#27ae60';
                 setTimeout(function() {
-                    passwordLength.value = 16;
-                    lengthRange.value = 16;
-                    lengthVal.textContent = '16';
-                    useUppercase.checked = true;
-                    useLowercase.checked = true;
-                    useNumbers.checked = true;
-                    useSymbols.checked = true;
-                    excludeSimilar.checked = false;
-                    pronounceable.checked = false;
-                    passphrase.checked = false;
-                    passwordDisplay.value = '';
-                    strengthBar.style.width = '0%';
-                    strengthText.textContent = '';
-                    hideError();
-                }, 10);
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = '';
+                }, 2000);
+            }).catch(function() {
+                passwordDisplay.select();
+                document.execCommand('copy');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✓ Copied!';
+                copyBtn.style.background = '#27ae60';
+                setTimeout(function() {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = '';
+                }, 2000);
             });
+        }
 
-            copyBtn.addEventListener('click', copyPassword);
+        // ===== EVENT LISTENERS =====
 
-            regenerateBtn.addEventListener('click', function() {
-                generateAndDisplay();
-            });
-
-            // Auto-generate on checkbox or option change
-            document.querySelectorAll('#passwordForm input[type="checkbox"]').forEach(function(el) {
-                el.addEventListener('change', function() {
-                    // Auto-generate when options change, but only if we have a password already
-                    if (passwordDisplay.value) {
-                        generateAndDisplay();
-                    }
-                });
-            });
-
-            // Auto-generate on length change
-            passwordLength.addEventListener('input', function() {
-                if (passwordDisplay.value) {
-                    generateAndDisplay();
-                }
-            });
-            lengthRange.addEventListener('input', function() {
-                if (passwordDisplay.value) {
-                    generateAndDisplay();
-                }
-            });
-
-            // ===== INITIAL GENERATION =====
+        // Form submit – Generate
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
             generateAndDisplay();
+        });
 
-        })();
-    </script>
+        // Form reset
+        form.addEventListener('reset', function(e) {
+            setTimeout(function() {
+                passwordLength.value = 16;
+                lengthRange.value = 16;
+                lengthVal.textContent = '16';
+                useUppercase.checked = true;
+                useLowercase.checked = true;
+                useNumbers.checked = true;
+                useSymbols.checked = true;
+                excludeSimilar.checked = false;
+                pronounceable.checked = false;
+                passphrase.checked = false;
+                passwordDisplay.value = '';
+                strengthBar.style.width = '0%';
+                strengthText.textContent = '';
+                hideError();
+            }, 10);
+        });
 
+        // Copy button
+        copyBtn.addEventListener('click', copyPassword);
+
+        // Regenerate button – NOW ONLY WORKS IF PASSWORD EXISTS
+        regenerateBtn.addEventListener('click', function() {
+            if (!passwordDisplay.value) {
+                showError('Generate a password first.');
+                return;
+            }
+            generateAndDisplay();
+        });
+
+        // Auto-generate on checkbox change (if password exists)
+        document.querySelectorAll('#passwordForm input[type="checkbox"]').forEach(function(el) {
+            el.addEventListener('change', function() {
+                if (passwordDisplay.value) {
+                    generateAndDisplay();
+                }
+            });
+        });
+
+        // Auto-generate on length change (if password exists)
+        passwordLength.addEventListener('input', function() {
+            if (passwordDisplay.value) {
+                generateAndDisplay();
+            }
+        });
+        lengthRange.addEventListener('input', function() {
+            if (passwordDisplay.value) {
+                generateAndDisplay();
+            }
+        });
+
+        // ===== INITIAL GENERATION =====
+        generateAndDisplay();
+
+    })();
+</script>
 </body>
 </html>
