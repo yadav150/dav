@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Filling Guide · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+            <button class="hamburger"
+                    aria-expanded="false"
+                    aria-controls="primary-nav"
+                    aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">Online Form Filling Guide</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Let our AI guide you through filling out any form. Select a template below and follow the chatbot instructions.
+                    </p>
+
+                    <!-- ===== TEMPLATE SELECTOR ===== -->
+                    <div class="template-selector" id="templateSelector">
+                        <div class="field-group">
+                            <label>Select Form Template</label>
+                            <div class="template-grid">
+                                <button type="button" class="template-btn active" data-template="affidavit">
+                                    Affidavit / Character Certificate
+                                </button>
+                                <button type="button" class="template-btn" data-template="jobapp">
+                                    Job Application Form
+                                </button>
+                                <button type="button" class="template-btn" data-template="registration">
+                                    Registration Form
+                                </button>
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <button type="button" class="btn btn-secondary" id="resetGuideBtn">Start Over</button>
+                        </div>
+                    </div>
+
+                    <!-- ===== FORM FILLING INTERFACE ===== -->
+                    <div class="filling-interface" id="fillingInterface">
+
+                        <!-- Progress -->
+                        <div class="progress-container">
+                            <div class="progress-bar" id="progressBar" style="width:0%"></div>
+                            <span class="progress-text" id="progressText">0 / 0 fields</span>
+                        </div>
+
+                        <!-- Chat Container -->
+                        <div class="chat-container" id="chatContainer">
+                            <div class="chat-messages" id="chatMessages">
+                                <div class="message system">
+                                    <span class="message-text">Welcome to the Form Filling Guide!</span>
+                                    <span class="message-text">Select a template above to begin. I'll guide you through each field step by step.</span>
+                                </div>
+                            </div>
+
+                            <!-- Chat Input Area -->
+                            <div class="chat-input-area" id="chatInputArea" style="display:none;">
+                                <input type="text" id="chatInput" placeholder="Type your answer here..." />
+                                <button type="button" class="btn" id="chatSendBtn">Send</button>
+                            </div>
+
+                            <div class="chat-controls" id="chatControls" style="display:none;">
+                                <button type="button" class="btn btn-secondary" id="prevFieldBtn">← Previous</button>
+                                <button type="button" class="btn btn-secondary" id="skipFieldBtn">Skip</button>
+                            </div>
+                        </div>
+
+                        <!-- Preview Panel -->
+                        <div class="preview-container" id="previewContainer">
+                            <div class="preview-title">Form Preview</div>
+                            <div class="preview-content" id="previewContent">
+                                <p class="preview-placeholder">Select a template and start filling to see the preview here.</p>
+                            </div>
+                            <button type="button" class="btn btn-secondary" id="copyFilledBtn" style="margin-top:10px;display:none;">Copy Filled Form</button>
+                        </div>
+
+                    </div>
+
+                    <div class="error-msg" id="errorMsg"></div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ===== TEMPLATE DATA =====
+            const templates = {
+                affidavit: {
+                    label: 'Affidavit / Character Certificate',
+                    fields: [
+                        { id: 'name', label: 'Full Name', placeholder: 'e.g. Rahul Sharma' },
+                        { id: 'father_name', label: 'Father\'s Name', placeholder: 'e.g. Suresh Sharma' },
+                        { id: 'mother_name', label: 'Mother\'s Name', placeholder: 'e.g. Geeta Sharma' },
+                        { id: 'dob', label: 'Date of Birth', placeholder: 'e.g. 15 January 1990' },
+                        { id: 'address', label: 'Residential Address', placeholder: 'e.g. 123, Main Street, City' },
+                        { id: 'city', label: 'City', placeholder: 'e.g. Mumbai' },
+                        { id: 'state', label: 'State', placeholder: 'e.g. Maharashtra' },
+                        { id: 'pincode', label: 'Pincode', placeholder: 'e.g. 400001' },
+                        { id: 'occupation', label: 'Occupation', placeholder: 'e.g. Software Engineer' }
+                    ],
+                    render: function(data) {
+                        const d = data || {};
+                        return `
+                            <div class="form-preview">
+                                <h3>AFFIDAVIT</h3>
+                                <p>I, <span class="preview-field ${d.name ? 'filled' : ''}" data-field="name">${d.name || '________'}</span>, son/daughter of <span class="preview-field ${d.father_name ? 'filled' : ''}" data-field="father_name">${d.father_name || '________'}</span> and <span class="preview-field ${d.mother_name ? 'filled' : ''}" data-field="mother_name">${d.mother_name || '________'}</span>,</p>
+                                <p>resident of <span class="preview-field ${d.address ? 'filled' : ''}" data-field="address">${d.address || '________'}</span>, <span class="preview-field ${d.city ? 'filled' : ''}" data-field="city">${d.city || '________'}</span>, <span class="preview-field ${d.state ? 'filled' : ''}" data-field="state">${d.state || '________'}</span> - <span class="preview-field ${d.pincode ? 'filled' : ''}" data-field="pincode">${d.pincode || '________'}</span>,</p>
+                                <p>do hereby solemnly affirm and state that the information provided above is true and correct to the best of my knowledge.</p>
+                                <p><strong>Occupation:</strong> <span class="preview-field ${d.occupation ? 'filled' : ''}" data-field="occupation">${d.occupation || '________'}</span></p>
+                                <p><strong>Date of Birth:</strong> <span class="preview-field ${d.dob ? 'filled' : ''}" data-field="dob">${d.dob || '________'}</span></p>
+                                <p style="margin-top:20px;">Signature: __________________</p>
+                                <p>Date: __________________</p>
+                            </div>
+                        `;
+                    }
+                },
+                jobapp: {
+                    label: 'Job Application Form',
+                    fields: [
+                        { id: 'full_name', label: 'Full Name', placeholder: 'e.g. Priya Patel' },
+                        { id: 'email', label: 'Email Address', placeholder: 'e.g. priya@email.com' },
+                        { id: 'phone', label: 'Phone Number', placeholder: 'e.g. 9876543210' },
+                        { id: 'position', label: 'Position Applied For', placeholder: 'e.g. Frontend Developer' },
+                        { id: 'experience', label: 'Years of Experience', placeholder: 'e.g. 5 years' },
+                        { id: 'current_company', label: 'Current Company', placeholder: 'e.g. Tech Corp' },
+                        { id: 'education', label: 'Highest Education', placeholder: 'e.g. B.Tech in CS' },
+                        { id: 'skills', label: 'Key Skills', placeholder: 'e.g. HTML, CSS, JavaScript' },
+                        { id: 'notice_period', label: 'Notice Period', placeholder: 'e.g. 30 days' }
+                    ],
+                    render: function(data) {
+                        const d = data || {};
+                        return `
+                            <div class="form-preview">
+                                <h3>JOB APPLICATION FORM</h3>
+                                <p><strong>Name:</strong> <span class="preview-field ${d.full_name ? 'filled' : ''}" data-field="full_name">${d.full_name || '________'}</span></p>
+                                <p><strong>Email:</strong> <span class="preview-field ${d.email ? 'filled' : ''}" data-field="email">${d.email || '________'}</span></p>
+                                <p><strong>Phone:</strong> <span class="preview-field ${d.phone ? 'filled' : ''}" data-field="phone">${d.phone || '________'}</span></p>
+                                <p><strong>Position Applied:</strong> <span class="preview-field ${d.position ? 'filled' : ''}" data-field="position">${d.position || '________'}</span></p>
+                                <p><strong>Experience:</strong> <span class="preview-field ${d.experience ? 'filled' : ''}" data-field="experience">${d.experience || '________'}</span></p>
+                                <p><strong>Current Company:</strong> <span class="preview-field ${d.current_company ? 'filled' : ''}" data-field="current_company">${d.current_company || '________'}</span></p>
+                                <p><strong>Education:</strong> <span class="preview-field ${d.education ? 'filled' : ''}" data-field="education">${d.education || '________'}</span></p>
+                                <p><strong>Skills:</strong> <span class="preview-field ${d.skills ? 'filled' : ''}" data-field="skills">${d.skills || '________'}</span></p>
+                                <p><strong>Notice Period:</strong> <span class="preview-field ${d.notice_period ? 'filled' : ''}" data-field="notice_period">${d.notice_period || '________'}</span></p>
+                                <p style="margin-top:20px;">Signature: __________________</p>
+                                <p>Date: __________________</p>
+                            </div>
+                        `;
+                    }
+                },
+                registration: {
+                    label: 'Registration Form',
+                    fields: [
+                        { id: 'username', label: 'Username', placeholder: 'e.g. user123' },
+                        { id: 'email', label: 'Email Address', placeholder: 'e.g. user@email.com' },
+                        { id: 'password', label: 'Password', placeholder: 'e.g. ********' },
+                        { id: 'full_name', label: 'Full Name', placeholder: 'e.g. Amit Singh' },
+                        { id: 'dob', label: 'Date of Birth', placeholder: 'e.g. 1 Jan 2000' },
+                        { id: 'gender', label: 'Gender', placeholder: 'e.g. Male/Female/Other' },
+                        { id: 'country', label: 'Country', placeholder: 'e.g. India' },
+                        { id: 'city', label: 'City', placeholder: 'e.g. Delhi' },
+                        { id: 'phone', label: 'Phone Number', placeholder: 'e.g. 9876543210' }
+                    ],
+                    render: function(data) {
+                        const d = data || {};
+                        return `
+                            <div class="form-preview">
+                                <h3>REGISTRATION FORM</h3>
+                                <p><strong>Username:</strong> <span class="preview-field ${d.username ? 'filled' : ''}" data-field="username">${d.username || '________'}</span></p>
+                                <p><strong>Email:</strong> <span class="preview-field ${d.email ? 'filled' : ''}" data-field="email">${d.email || '________'}</span></p>
+                                <p><strong>Password:</strong> <span class="preview-field ${d.password ? 'filled' : ''}" data-field="password">${d.password ? '••••••••' : '________'}</span></p>
+                                <p><strong>Full Name:</strong> <span class="preview-field ${d.full_name ? 'filled' : ''}" data-field="full_name">${d.full_name || '________'}</span></p>
+                                <p><strong>Date of Birth:</strong> <span class="preview-field ${d.dob ? 'filled' : ''}" data-field="dob">${d.dob || '________'}</span></p>
+                                <p><strong>Gender:</strong> <span class="preview-field ${d.gender ? 'filled' : ''}" data-field="gender">${d.gender || '________'}</span></p>
+                                <p><strong>Country:</strong> <span class="preview-field ${d.country ? 'filled' : ''}" data-field="country">${d.country || '________'}</span></p>
+                                <p><strong>City:</strong> <span class="preview-field ${d.city ? 'filled' : ''}" data-field="city">${d.city || '________'}</span></p>
+                                <p><strong>Phone:</strong> <span class="preview-field ${d.phone ? 'filled' : ''}" data-field="phone">${d.phone || '________'}</span></p>
+                            </div>
+                        `;
+                    }
+                }
+            };
+
+            // ===== STATE =====
+            let currentTemplate = 'affidavit';
+            let formData = {};
+            let currentFieldIndex = 0;
+            let fieldKeys = [];
+            let isComplete = false;
+
+            // ===== DOM ELEMENTS =====
+            const templateBtns = document.querySelectorAll('.template-btn');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const chatSendBtn = document.getElementById('chatSendBtn');
+            const chatInputArea = document.getElementById('chatInputArea');
+            const chatControls = document.getElementById('chatControls');
+            const prevFieldBtn = document.getElementById('prevFieldBtn');
+            const skipFieldBtn = document.getElementById('skipFieldBtn');
+            const resetGuideBtn = document.getElementById('resetGuideBtn');
+            const previewContent = document.getElementById('previewContent');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const copyFilledBtn = document.getElementById('copyFilledBtn');
+            const errorMsg = document.getElementById('errorMsg');
+
+            // ===== HELPER FUNCTIONS =====
+            function showError(msg) {
+                errorMsg.textContent = msg;
+                errorMsg.classList.add('show');
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('show');
+                errorMsg.textContent = '';
+            }
+
+            function getTemplateKeys(templateId) {
+                return templates[templateId].fields.map(f => f.id);
+            }
+
+            function getFieldLabel(templateId, fieldId) {
+                const field = templates[templateId].fields.find(f => f.id === fieldId);
+                return field ? field.label : fieldId;
+            }
+
+            function getFieldPlaceholder(templateId, fieldId) {
+                const field = templates[templateId].fields.find(f => f.id === fieldId);
+                return field ? field.placeholder : '';
+            }
+
+            function getCompletedCount(data, keys) {
+                let count = 0;
+                keys.forEach(key => {
+                    if (data[key] && data[key].trim() !== '') count++;
+                });
+                return count;
+            }
+
+            function updateProgress() {
+                const keys = getTemplateKeys(currentTemplate);
+                const completed = getCompletedCount(formData, keys);
+                const total = keys.length;
+                const pct = total > 0 ? (completed / total) * 100 : 0;
+                progressBar.style.width = pct + '%';
+                progressText.textContent = `${completed} / ${total} fields`;
+                return completed === total;
+            }
+
+            function renderPreview() {
+                const template = templates[currentTemplate];
+                if (template) {
+                    previewContent.innerHTML = template.render(formData);
+                    // Highlight current field if active
+                    const keys = getTemplateKeys(currentTemplate);
+                    if (currentFieldIndex < keys.length) {
+                        const currentKey = keys[currentFieldIndex];
+                        const el = previewContent.querySelector(`.preview-field[data-field="${currentKey}"]`);
+                        if (el) {
+                            el.classList.add('active');
+                        }
+                    }
+                    // Show copy button if complete
+                    if (updateProgress()) {
+                        copyFilledBtn.style.display = 'inline-block';
+                    } else {
+                        copyFilledBtn.style.display = 'none';
+                    }
+                }
+            }
+
+            function addSystemMessage(text) {
+                const div = document.createElement('div');
+                div.className = 'message system';
+                div.innerHTML = `<span class="message-text">${text}</span>`;
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function addUserMessage(text) {
+                const div = document.createElement('div');
+                div.className = 'message user';
+                div.innerHTML = `<span class="message-text">${text}</span>`;
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function getChatPrompt(fieldId) {
+                const label = getFieldLabel(currentTemplate, fieldId);
+                const placeholder = getFieldPlaceholder(currentTemplate, fieldId);
+                return `I see a field for <strong>${label}</strong>. Please enter your ${label.toLowerCase()} here.${placeholder ? ' (e.g. ' + placeholder + ')' : ''}`;
+            }
+
+            function startFilling() {
+                const keys = getTemplateKeys(currentTemplate);
+                fieldKeys = keys;
+                currentFieldIndex = 0;
+                formData = {};
+                isComplete = false;
+
+                // Clear chat, keep welcome
+                chatMessages.innerHTML = '';
+                addSystemMessage('Welcome to the Form Filling Guide!');
+                addSystemMessage(`I've detected a <strong>${templates[currentTemplate].label}</strong>. I'll guide you through each field.`);
+
+                if (keys.length > 0) {
+                    const firstKey = keys[0];
+                    addSystemMessage(getChatPrompt(firstKey));
+                    chatInputArea.style.display = 'flex';
+                    chatControls.style.display = 'flex';
+                    chatInput.value = '';
+                    chatInput.focus();
+                } else {
+                    addSystemMessage('No fields found in this template.');
+                    chatInputArea.style.display = 'none';
+                    chatControls.style.display = 'none';
+                }
+
+                renderPreview();
+                updateProgress();
+                copyFilledBtn.style.display = 'none';
+            }
+
+            function moveToField(index) {
+                const keys = getTemplateKeys(currentTemplate);
+                if (index < 0 || index >= keys.length) {
+                    // All done
+                    chatInputArea.style.display = 'none';
+                    chatControls.style.display = 'none';
+                    addSystemMessage('🎉 All fields have been filled! You can review the form in the preview panel.');
+                    addSystemMessage('Click the "Copy Filled Form" button below to copy the completed form.');
+                    isComplete = true;
+                    renderPreview();
+                    updateProgress();
+                    copyFilledBtn.style.display = 'inline-block';
+                    return;
+                }
+
+                currentFieldIndex = index;
+                const key = keys[index];
+                const existing = formData[key] || '';
+                chatInput.value = existing;
+
+                // Add prompt
+                addSystemMessage(getChatPrompt(key));
+
+                // If already filled, auto-suggest? We'll just let them type.
+                if (existing.trim() !== '') {
+                    // Pre-fill the input with existing value
+                }
+
+                renderPreview();
+                updateProgress();
+                chatInput.focus();
+            }
+
+            function handleUserResponse(response) {
+                const keys = getTemplateKeys(currentTemplate);
+                if (currentFieldIndex >= keys.length) return;
+
+                const key = keys[currentFieldIndex];
+                const trimmed = response.trim();
+
+                if (trimmed === '') {
+                    addUserMessage('(skipped)');
+                    addSystemMessage(`You skipped <strong>${getFieldLabel(currentTemplate, key)}</strong>. Let's move on.`);
+                } else {
+                    addUserMessage(trimmed);
+                    formData[key] = trimmed;
+                    addSystemMessage(`Got it! I've saved <strong>${trimmed}</strong> for ${getFieldLabel(currentTemplate, key)}.`);
+                }
+
+                // Move to next field
+                const nextIndex = currentFieldIndex + 1;
+                if (nextIndex < keys.length) {
+                    setTimeout(function() {
+                        moveToField(nextIndex);
+                    }, 500);
+                } else {
+                    // All done
+                    setTimeout(function() {
+                        chatInputArea.style.display = 'none';
+                        chatControls.style.display = 'none';
+                        addSystemMessage('🎉 All fields have been filled! You can review the form in the preview panel.');
+                        addSystemMessage('Click the "Copy Filled Form" button below to copy the completed form.');
+                        isComplete = true;
+                        renderPreview();
+                        updateProgress();
+                        copyFilledBtn.style.display = 'inline-block';
+                    }, 500);
+                }
+            }
+
+            // ===== EVENT LISTENERS =====
+
+            // Template selection
+            templateBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    templateBtns.forEach(function(b) { b.classList.remove('active'); });
+                    this.classList.add('active');
+                    currentTemplate = this.dataset.template;
+                    startFilling();
+                });
+            });
+
+            // Send message
+            function sendMessage() {
+                const text = chatInput.value.trim();
+                if (text === '') {
+                    // Allow skip on empty? We'll treat as skip
+                }
+                handleUserResponse(text);
+                chatInput.value = '';
+            }
+
+            chatSendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Previous field
+            prevFieldBtn.addEventListener('click', function() {
+                if (currentFieldIndex > 0) {
+                    const prevIndex = currentFieldIndex - 1;
+                    // Remove last system message and user message
+                    // We'll just reset to previous field
+                    // This is a bit tricky - simpler: just go back
+                    const keys = getTemplateKeys(currentTemplate);
+                    const prevKey = keys[prevIndex];
+                    // Remove last few messages
+                    // For simplicity, we'll just restart from previous
+                    // Clear chat and rebuild
+                    // A bit heavy but works
+                    // Actually better: just move back and prompt again
+                    addSystemMessage(`Going back to <strong>${getFieldLabel(currentTemplate, prevKey)}</strong>.`);
+                    currentFieldIndex = prevIndex;
+                    const key = keys[prevIndex];
+                    const existing = formData[key] || '';
+                    chatInput.value = existing;
+                    renderPreview();
+                    updateProgress();
+                    chatInput.focus();
+                }
+            });
+
+            // Skip field
+            skipFieldBtn.addEventListener('click', function() {
+                const keys = getTemplateKeys(currentTemplate);
+                if (currentFieldIndex < keys.length) {
+                    const key = keys[currentFieldIndex];
+                    addUserMessage('(skipped)');
+                    addSystemMessage(`Skipping <strong>${getFieldLabel(currentTemplate, key)}</strong>.`);
+                    const nextIndex = currentFieldIndex + 1;
+                    if (nextIndex < keys.length) {
+                        setTimeout(function() {
+                            moveToField(nextIndex);
+                        }, 300);
+                    } else {
+                        setTimeout(function() {
+                            chatInputArea.style.display = 'none';
+                            chatControls.style.display = 'none';
+                            addSystemMessage('🎉 All fields have been reviewed!');
+                            isComplete = true;
+                            renderPreview();
+                            updateProgress();
+                            copyFilledBtn.style.display = 'inline-block';
+                        }, 300);
+                    }
+                }
+            });
+
+            // Reset guide
+            resetGuideBtn.addEventListener('click', function() {
+                startFilling();
+            });
+
+            // Copy filled form
+            copyFilledBtn.addEventListener('click', function() {
+                // Generate text version
+                const template = templates[currentTemplate];
+                let text = `=== ${template.label.toUpperCase()} ===\n\n`;
+                const keys = getTemplateKeys(currentTemplate);
+                keys.forEach(function(key) {
+                    const label = getFieldLabel(currentTemplate, key);
+                    const value = formData[key] || '(not filled)';
+                    text += `${label}: ${value}\n`;
+                });
+                text += '\n--- End of Form ---';
+
+                navigator.clipboard.writeText(text).then(function() {
+                    const orig = copyFilledBtn.textContent;
+                    copyFilledBtn.textContent = 'Copied!';
+                    setTimeout(function() {
+                        copyFilledBtn.textContent = orig;
+                    }, 2000);
+                }).catch(function() {
+                    // Fallback
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    textarea.remove();
+                    const orig = copyFilledBtn.textContent;
+                    copyFilledBtn.textContent = 'Copied!';
+                    setTimeout(function() {
+                        copyFilledBtn.textContent = orig;
+                    }, 2000);
+                });
+            });
+
+            // ===== INIT =====
+            startFilling();
+
+        })();
+    </script>
+
+</body>
+</html>
