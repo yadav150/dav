@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accessibility Tool · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+            <button class="hamburger"
+                    aria-expanded="false"
+                    aria-controls="primary-nav"
+                    aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">Accessibility Tool</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        This tool uses your browser's built-in speech capabilities to convert speech to text
+                        and text to speech — helping those with hearing or speech impairments communicate
+                        more easily. No data is sent to any server.
+                    </p>
+
+                    <!-- ===== STATUS BAR ===== -->
+                    <div class="access-status-bar" id="statusBar">
+                        <span class="access-status-dot" id="statusDot"></span>
+                        <span id="statusText">Ready</span>
+                    </div>
+
+                    <!-- ===== TEXT AREA ===== -->
+                    <div class="field-group">
+                        <label for="textOutput">Your Text</label>
+                        <textarea id="textOutput" class="access-textarea" placeholder="Speak or type here..."></textarea>
+                        <div class="char-count" id="charCount">0 characters · 0 words</div>
+                    </div>
+
+                    <!-- ===== TOOLBAR ===== -->
+                    <div class="access-toolbar">
+                        <button class="btn access-mic" id="micBtn">Start Listening</button>
+                        <button class="btn" id="speakBtn">Speak</button>
+                        <button class="btn btn-secondary" id="copyBtn">Copy</button>
+                        <button class="btn btn-clear" id="clearBtn">Clear</button>
+                        <button class="btn btn-secondary" id="resetBtn">Reset All</button>
+                    </div>
+
+                    <!-- ===== LANGUAGE ===== -->
+                    <div class="access-language">
+                        <label for="langSelect">Language:</label>
+                        <select id="langSelect" class="access-select">
+                            <option value="en-US">English (US)</option>
+                            <option value="en-GB">English (UK)</option>
+                            <option value="hi-IN">Hindi</option>
+                            <option value="as-IN">Assamese</option>
+                            <option value="bn-IN">Bengali</option>
+                            <option value="ta-IN">Tamil</option>
+                            <option value="te-IN">Telugu</option>
+                            <option value="ml-IN">Malayalam</option>
+                            <option value="kn-IN">Kannada</option>
+                        </select>
+                    </div>
+
+                    <!-- ===== FEATURES ===== -->
+                    <div class="access-features">
+                        <div class="access-feature-card">
+                            <span class="access-feature-name">Speech to Text</span>
+                            <span class="access-feature-desc">Click the microphone, speak naturally, and watch your words appear in real-time.</span>
+                        </div>
+                        <div class="access-feature-card">
+                            <span class="access-feature-name">Text to Speech</span>
+                            <span class="access-feature-desc">Type or paste text, click "Speak" — and the browser reads it aloud in a clear voice.</span>
+                        </div>
+                        <div class="access-feature-card">
+                            <span class="access-feature-name">Multi-Language Support</span>
+                            <span class="access-feature-desc">Choose from English, Hindi, Assamese, Bengali, Tamil, Telugu, Malayalam, and Kannada.</span>
+                        </div>
+                        <div class="access-feature-card">
+                            <span class="access-feature-name">Copy and Clear</span>
+                            <span class="access-feature-desc">Copy your text to the clipboard or clear it instantly with one click.</span>
+                        </div>
+                    </div>
+
+                    <!-- ===== DISCLAIMER ===== -->
+                    <div class="access-disclaimer">
+                        <strong>Privacy First:</strong> All speech processing happens locally in your browser.
+                        No data is ever transmitted, stored, or visible to any server.
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const textOutput = document.getElementById('textOutput');
+            const micBtn = document.getElementById('micBtn');
+            const speakBtn = document.getElementById('speakBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const langSelect = document.getElementById('langSelect');
+            const statusText = document.getElementById('statusText');
+            const statusDot = document.getElementById('statusDot');
+            const charCount = document.getElementById('charCount');
+
+            let recognition = null;
+            let isListening = false;
+
+            function updateCharCount() {
+                const text = textOutput.value;
+                const chars = text.length;
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                charCount.textContent = chars + ' characters · ' + words + ' words';
+            }
+
+            textOutput.addEventListener('input', updateCharCount);
+
+            function initSpeechRecognition() {
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                    statusText.textContent = 'Speech recognition not supported. Please use Chrome, Edge, or Safari.';
+                    micBtn.disabled = true;
+                    return false;
+                }
+
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.lang = langSelect.value;
+
+                recognition.onstart = function() {
+                    isListening = true;
+                    micBtn.textContent = 'Stop Listening';
+                    micBtn.classList.add('listening');
+                    statusDot.className = 'access-status-dot listening';
+                    statusText.textContent = 'Listening... Speak now';
+                };
+
+                recognition.onerror = function(event) {
+                    if (event.error === 'not-allowed') {
+                        statusText.textContent = 'Microphone access denied. Please allow microphone access.';
+                    } else if (event.error === 'no-speech') {
+                        statusText.textContent = 'No speech detected. Try again.';
+                    } else if (event.error === 'audio-capture') {
+                        statusText.textContent = 'No microphone found. Please connect a microphone.';
+                    } else {
+                        statusText.textContent = 'Error: ' + event.error;
+                    }
+                    stopListening();
+                };
+
+                recognition.onend = function() {
+                    if (isListening) {
+                        try {
+                            recognition.start();
+                        } catch (e) {}
+                    } else {
+                        micBtn.textContent = 'Start Listening';
+                        micBtn.classList.remove('listening');
+                        statusDot.className = 'access-status-dot';
+                        statusText.textContent = 'Stopped listening';
+                    }
+                };
+
+                recognition.onresult = function(event) {
+                    let finalText = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        if (event.results[i].isFinal) {
+                            finalText += event.results[i][0].transcript;
+                        }
+                    }
+                    if (finalText) {
+                        const current = textOutput.value;
+                        textOutput.value = current ? current + ' ' + finalText : finalText;
+                        updateCharCount();
+                        statusText.textContent = 'Speech captured';
+                        statusDot.className = 'access-status-dot active';
+                    }
+                };
+
+                return true;
+            }
+
+            function startListening() {
+                if (!recognition) {
+                    if (!initSpeechRecognition()) return;
+                }
+                try {
+                    recognition.lang = langSelect.value;
+                    recognition.start();
+                } catch (e) {
+                    if (e.message && e.message.includes('already started')) {
+                        stopListening();
+                        setTimeout(startListening, 300);
+                    }
+                }
+            }
+
+            function stopListening() {
+                isListening = false;
+                if (recognition) {
+                    try {
+                        recognition.stop();
+                    } catch (e) {}
+                }
+                micBtn.textContent = 'Start Listening';
+                micBtn.classList.remove('listening');
+                if (!statusDot.className.includes('active')) {
+                    statusDot.className = 'access-status-dot';
+                }
+                statusText.textContent = 'Stopped listening';
+            }
+
+            micBtn.addEventListener('click', function() {
+                if (isListening) {
+                    stopListening();
+                } else {
+                    startListening();
+                }
+            });
+
+            function speakText() {
+                const text = textOutput.value.trim();
+                if (!text) {
+                    statusText.textContent = 'Please enter some text to speak.';
+                    statusDot.className = 'access-status-dot';
+                    return;
+                }
+
+                if (!window.speechSynthesis) {
+                    statusText.textContent = 'Speech synthesis is not supported in this browser.';
+                    return;
+                }
+
+                if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                }
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = langSelect.value;
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+
+                utterance.onstart = function() {
+                    statusText.textContent = 'Speaking...';
+                    statusDot.className = 'access-status-dot active';
+                };
+
+                utterance.onend = function() {
+                    statusText.textContent = 'Speaking completed';
+                    statusDot.className = 'access-status-dot';
+                };
+
+                utterance.onerror = function() {
+                    statusText.textContent = 'Error while speaking.';
+                    statusDot.className = 'access-status-dot';
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }
+
+            speakBtn.addEventListener('click', speakText);
+
+            copyBtn.addEventListener('click', function() {
+                const text = textOutput.value;
+                if (!text) {
+                    statusText.textContent = 'Nothing to copy.';
+                    return;
+                }
+                navigator.clipboard.writeText(text).then(function() {
+                    statusText.textContent = 'Copied to clipboard!';
+                    copyBtn.textContent = 'Copied!';
+                    copyBtn.classList.add('copied');
+                    statusDot.className = 'access-status-dot active';
+                    setTimeout(function() {
+                        copyBtn.textContent = 'Copy';
+                        copyBtn.classList.remove('copied');
+                        statusDot.className = 'access-status-dot';
+                    }, 2000);
+                }).catch(function() {
+                    textOutput.select();
+                    document.execCommand('copy');
+                    statusText.textContent = 'Copied to clipboard!';
+                    copyBtn.textContent = 'Copied!';
+                    copyBtn.classList.add('copied');
+                    setTimeout(function() {
+                        copyBtn.textContent = 'Copy';
+                        copyBtn.classList.remove('copied');
+                    }, 2000);
+                });
+            });
+
+            clearBtn.addEventListener('click', function() {
+                textOutput.value = '';
+                updateCharCount();
+                statusText.textContent = 'Text cleared';
+                statusDot.className = 'access-status-dot';
+                if (isListening) stopListening();
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+            });
+
+            resetBtn.addEventListener('click', function() {
+                if (isListening) stopListening();
+                if (window.speechSynthesis) window.speechSynthesis.cancel();
+                textOutput.value = '';
+                updateCharCount();
+                langSelect.value = 'en-US';
+                statusText.textContent = 'Reset completed';
+                statusDot.className = 'access-status-dot';
+                if (recognition) {
+                    try { recognition.abort(); } catch (e) {}
+                    recognition = null;
+                }
+                initSpeechRecognition();
+            });
+
+            langSelect.addEventListener('change', function() {
+                if (isListening) {
+                    stopListening();
+                    setTimeout(function() {
+                        if (recognition) {
+                            recognition.lang = langSelect.value;
+                        }
+                        startListening();
+                    }, 300);
+                } else {
+                    if (recognition) {
+                        recognition.lang = langSelect.value;
+                    }
+                }
+                statusText.textContent = 'Language changed to ' + langSelect.options[langSelect.selectedIndex].text;
+                statusDot.className = 'access-status-dot';
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    speakText();
+                }
+                if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                    e.preventDefault();
+                    copyBtn.click();
+                }
+                if (e.key === 'Escape' && isListening) {
+                    stopListening();
+                }
+            });
+
+            initSpeechRecognition();
+            updateCharCount();
+            statusText.textContent = 'Ready';
+
+        })();
+    </script>
+
+</body>
+</html>
