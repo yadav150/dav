@@ -11,27 +11,23 @@
     const photoUpload = document.getElementById('photoUpload');
     const declarationCheck = document.getElementById('declarationCheck');
 
-    // Experience type
     const experienceType = document.getElementById('experienceType');
     const fresherContainer = document.getElementById('fresherContainer');
     const experiencedContainer = document.getElementById('experiencedContainer');
 
-    // Professional Summary
     const summarySelect = document.getElementById('summarySelect');
     const customSummaryContainer = document.getElementById('customSummaryContainer');
 
-    // Language
     const languageSelect = document.getElementById('languageSelect');
     const languageTags = document.getElementById('languageTags');
     let selectedLanguages = [];
 
-    // Counters
     let eduCount = 1;
     let otherCount = 1;
     let expCount = 1;
 
     // ============================================================
-    // 2. LANGUAGE BADGE SYSTEM (Max 5, Water-Droplet Green Hover)
+    // 2. LANGUAGE BADGE SYSTEM
     // ============================================================
     function updateLanguageTags() {
         languageTags.innerHTML = '';
@@ -100,12 +96,84 @@
     // ============================================================
     // 5. ADD / REMOVE FUNCTIONS
     // ============================================================
-    window.addEducation = function() { /* ... same as before ... */ };
-    window.addOther = function() { /* ... same as before ... */ };
-    window.addExperience = function() { /* ... same as before ... */ };
-    window.removeEntry = function(btn, className) { /* ... same as before ... */ };
-    window.removeExpEntry = function(btn) { /* ... same as before ... */ };
-    // (function bodies omitted for brevity, but they are unchanged from previous version)
+    window.addEducation = function() {
+        if (eduCount >= 3) { showError('Maximum 3 educational entries allowed.'); return; }
+        const container = document.getElementById('educationContainer');
+        const entry = document.createElement('div');
+        entry.className = 'entry-group edu-entry';
+        entry.innerHTML = `
+            <button type="button" class="remove-btn" onclick="removeEntry(this, 'edu-entry')">×</button>
+            <div class="field-group"><label>Exam Name <span class="required">*</span></label><input type="text" class="edu-exam" placeholder="Enter exam name" /></div>
+            <div class="field-group"><label>Board/University <span class="required">*</span></label><input type="text" class="edu-board" placeholder="Enter board/university" /></div>
+            <div class="field-group"><label>Passing Year <span class="required">*</span></label><input type="number" class="edu-year" placeholder="Enter year" /></div>
+            <div class="field-group"><label>Percentage <span class="required">*</span></label><input type="number" class="edu-percent" step="0.01" placeholder="Enter percentage" /></div>
+            <div class="field-group"><label>Division <span class="required">*</span></label><select class="edu-division"><option value="">-- Select Division --</option><option value="1st Division">1st Division</option><option value="2nd Division">2nd Division</option><option value="3rd Division">3rd Division</option></select></div>
+        `;
+        container.appendChild(entry);
+        eduCount++;
+        updateAddButtons();
+        hideError();
+        entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    window.addOther = function() {
+        if (otherCount >= 3) { showError('Maximum 3 other qualification entries allowed.'); return; }
+        const container = document.getElementById('otherContainer');
+        const entry = document.createElement('div');
+        entry.className = 'entry-group other-entry';
+        entry.innerHTML = `
+            <button type="button" class="remove-btn" onclick="removeEntry(this, 'other-entry')">×</button>
+            <div class="field-group"><label>Qualification Name <span class="required">*</span></label><input type="text" class="other-name" placeholder="Enter qualification name" /></div>
+            <div class="field-group"><label>Institute <span class="required">*</span></label><input type="text" class="other-institute" placeholder="Enter institute name" /></div>
+            <div class="field-group"><label>Passing Year <span class="required">*</span></label><input type="number" class="other-year" placeholder="Enter year" /></div>
+            <div class="field-group"><label>Score/Grade <span class="required">*</span></label><input type="text" class="other-score" placeholder="Enter score or grade" /></div>
+            <div class="field-group"><label>Duration <span class="required">*</span></label><input type="text" class="other-duration" placeholder="Enter duration" /></div>
+        `;
+        container.appendChild(entry);
+        otherCount++;
+        updateAddButtons();
+        hideError();
+        entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    window.addExperience = function() {
+        if (expCount >= 3) { showError('Maximum 3 experience entries allowed.'); return; }
+        const container = document.getElementById('experienceEntries');
+        const entry = document.createElement('div');
+        entry.className = 'entry-group exp-entry';
+        entry.innerHTML = `
+            <button type="button" class="remove-btn" onclick="removeExpEntry(this)">×</button>
+            <div class="field-group"><label>Organization <span class="required">*</span></label><input type="text" class="exp-org" placeholder="Organization name" /></div>
+            <div class="field-group"><label>Designation <span class="required">*</span></label><input type="text" class="exp-designation" placeholder="Your job title" /></div>
+            <div class="field-group"><label>Start Year <span class="required">*</span></label><input type="number" class="exp-start" placeholder="e.g. 2020" /></div>
+            <div class="field-group"><label>End Year <span class="required">*</span></label><input type="number" class="exp-end" placeholder="e.g. 2022" /></div>
+            <div class="field-group"><label>Work Description <span class="required">*</span></label><textarea class="exp-desc" rows="2" placeholder="Brief description of your responsibilities"></textarea></div>
+        `;
+        container.appendChild(entry);
+        expCount++;
+        updateAddButtons();
+        hideError();
+        entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+
+    window.removeEntry = function(btn, className) {
+        const entries = document.querySelectorAll('.' + className);
+        if (entries.length <= 1) { showError('You must have at least one entry.'); return; }
+        btn.closest('.entry-group').remove();
+        if (className === 'edu-entry') eduCount--;
+        else if (className === 'other-entry') otherCount--;
+        updateAddButtons();
+        hideError();
+    };
+
+    window.removeExpEntry = function(btn) {
+        const entries = document.querySelectorAll('.exp-entry');
+        if (entries.length <= 1) { showError('You must have at least one experience entry.'); return; }
+        btn.closest('.entry-group').remove();
+        expCount--;
+        updateAddButtons();
+        hideError();
+    };
 
     function updateAddButtons() {
         const eduBtn = document.getElementById('addEduBtn');
@@ -117,12 +185,11 @@
     }
 
     // ============================================================
-    // 6. FIELD VALIDATION (Green Highlight)
+    // 6. FIELD VALIDATION
     // ============================================================
     function validateField(fieldGroup) {
         if (!fieldGroup) return;
         const inputs = fieldGroup.querySelectorAll('input, select, textarea');
-        let allValid = true;
         inputs.forEach(function(input) {
             if (input.hasAttribute('required')) {
                 const value = input.value.trim();
@@ -138,27 +205,28 @@
                 } else {
                     fieldGroup.classList.remove('highlight');
                     fieldGroup.classList.add('error');
-                    allValid = false;
                 }
             }
         });
-        return allValid;
     }
 
     // ============================================================
-    // 7. VALIDATION (Full Form)
+    // 7. VALIDATION (Full Form) — SCROLL TO TOPMOST ERROR
     // ============================================================
     function validateForm() {
         let isValid = true;
         let firstError = null;
+
         document.querySelectorAll('.field-group.highlight, .field-group.error').forEach(function(el) {
             el.classList.remove('highlight', 'error');
         });
 
+        // 1. Check all required fields in DOM order (top to bottom)
         const requiredFields = form.querySelectorAll('[required]');
         requiredFields.forEach(function(field) {
             const fieldGroup = field.closest('.field-group');
             if (!fieldGroup) return;
+
             if (field.type === 'checkbox') {
                 if (!field.checked) {
                     fieldGroup.classList.add('error');
@@ -167,6 +235,7 @@
                 }
                 return;
             }
+
             const value = field.value.trim();
             const isSelect = field.tagName === 'SELECT';
             const isPlaceholder = isSelect && (value === '' || value === '-- Select Gender --' ||
@@ -174,6 +243,7 @@
                 value === '-- Select Division --' || value === '-- Select Professional Title --' ||
                 value === '-- Select Professional Summary --' || value === '-- Select --' ||
                 value === '-- Select a language --');
+
             if (!value || isPlaceholder) {
                 fieldGroup.classList.add('error');
                 isValid = false;
@@ -183,7 +253,7 @@
             }
         });
 
-        // Languages
+        // 2. Languages (special, not part of requiredFields because select has no 'required')
         if (selectedLanguages.length === 0) {
             const langField = languageSelect.closest('.field-group');
             if (langField) {
@@ -193,7 +263,7 @@
             }
         }
 
-        // Experience type
+        // 3. Experience type
         const expTypeVal = experienceType.value;
         if (!expTypeVal) {
             const expField = experienceType.closest('.field-group');
@@ -204,12 +274,16 @@
             }
         }
 
-        // Fresher/Experienced specific
+        // 4. Fresher/Experienced specific
         if (expTypeVal === 'fresher') {
             const fresherText = document.getElementById('fresherSummary');
             if (!fresherText.value.trim()) {
                 const fg = fresherText.closest('.field-group');
-                if (fg) { fg.classList.add('error'); isValid = false; if (!firstError) firstError = fg; }
+                if (fg) {
+                    fg.classList.add('error');
+                    isValid = false;
+                    if (!firstError) firstError = fg;
+                }
             }
         } else if (expTypeVal === 'experienced') {
             document.querySelectorAll('.exp-entry').forEach(function(entry) {
@@ -221,13 +295,17 @@
                 [org, des, start, end, desc].forEach(function(input) {
                     if (input && !input.value.trim()) {
                         const fg = input.closest('.field-group');
-                        if (fg) { fg.classList.add('error'); isValid = false; if (!firstError) firstError = fg; }
+                        if (fg) {
+                            fg.classList.add('error');
+                            isValid = false;
+                            if (!firstError) firstError = fg;
+                        }
                     }
                 });
             });
         }
 
-        // Declaration
+        // 5. Declaration
         if (!declarationCheck.checked) {
             const declField = declarationCheck.closest('.declaration-area');
             if (declField) {
@@ -248,17 +326,21 @@
             }
         }
 
+        // Scroll to the TOPMOST error (first one found)
         if (firstError) {
             setTimeout(function() {
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 firstError.style.transition = 'box-shadow 0.3s';
                 firstError.style.boxShadow = '0 0 0 4px rgba(192,57,43,0.2)';
-                setTimeout(function() { firstError.style.boxShadow = 'none'; }, 2000);
+                setTimeout(function() {
+                    firstError.style.boxShadow = 'none';
+                }, 2000);
             }, 100);
             showError('Please fill all required fields (marked with *).');
         } else {
             hideError();
         }
+
         return isValid;
     }
 
@@ -291,10 +373,8 @@
     function generatePDF() {
         if (!validateForm()) return;
 
-        // Show spinner overlay
         showSpinner();
 
-        // Collect data
         const fullName = safeValue(document.getElementById('fullName')) || 'Applicant';
         const professionalTitle = safeValue(document.getElementById('professionalTitle')) || 'Web Developer';
         const fatherName = safeValue(document.getElementById('fatherName'));
@@ -308,7 +388,6 @@
         const maritalStatus = safeValue(document.getElementById('maritalStatus'));
         const languages = selectedLanguages.join(', ');
 
-        // Summary
         let summary = '';
         const summaryVal = summarySelect.value;
         if (summaryVal === 'custom') {
@@ -317,7 +396,6 @@
             summary = summaryVal;
         }
 
-        // Experience
         const expType = experienceType.value;
         let experienceText = '';
         if (expType === 'fresher') {
@@ -338,7 +416,6 @@
             experienceText = expParts.join('\n');
         }
 
-        // Education
         const eduEntries = document.querySelectorAll('.edu-entry');
         let eduData = [];
         eduEntries.forEach(function(entry) {
@@ -352,7 +429,6 @@
             }
         });
 
-        // Other Qualifications
         const otherEntries = document.querySelectorAll('.other-entry');
         let otherData = [];
         otherEntries.forEach(function(entry) {
@@ -366,11 +442,9 @@
             }
         });
 
-        // Current date
         const now = new Date();
         const currentDate = now.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-        // --- Build PDF using jsPDF (text-based) ---
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pageWidth = pdf.internal.pageSize.getWidth();
@@ -378,10 +452,10 @@
         const margin = 20;
         let y = margin + 8; // extra top padding for name
 
-        // ----- Header: Name + Title (slightly down) -----
+        // Header: Name + Title (slightly down)
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(22);
-        pdf.setTextColor(26, 92, 58); // #1a5c3a
+        pdf.setTextColor(26, 92, 58);
         pdf.text(fullName, margin, y);
         y += 8;
         pdf.setFont('helvetica', 'normal');
@@ -390,12 +464,11 @@
         pdf.text(professionalTitle, margin, y);
         y += 12;
 
-        // ---- Horizontal line ----
         pdf.setDrawColor(26, 92, 58);
         pdf.line(margin, y, pageWidth - margin, y);
         y += 8;
 
-        // ----- Personal Details (table-like) -----
+        // Personal Details
         const details = [
             ['Father\'s Name', fatherName],
             ['Mother\'s Name', motherName],
@@ -428,7 +501,7 @@
         });
         y += 4;
 
-        // ----- Professional Summary -----
+        // Professional Summary (if any)
         if (summary) {
             pdf.setFont('helvetica', 'bold');
             pdf.setTextColor(26, 92, 58);
@@ -436,13 +509,12 @@
             y += 6;
             pdf.setFont('helvetica', 'normal');
             pdf.setTextColor(30, 30, 30);
-            // Wrap text
             const summaryLines = pdf.splitTextToSize(summary, pageWidth - margin * 2);
             pdf.text(summaryLines, margin, y);
             y += summaryLines.length * 5 + 4;
         }
 
-        // ----- Experience -----
+        // Experience
         if (experienceText) {
             pdf.setFont('helvetica', 'bold');
             pdf.setTextColor(26, 92, 58);
@@ -455,7 +527,7 @@
             y += expLines.length * 5 + 4;
         }
 
-        // ----- Educational Qualifications -----
+        // Educational Qualifications
         if (eduData.length > 0) {
             pdf.setFont('helvetica', 'bold');
             pdf.setTextColor(26, 92, 58);
@@ -463,13 +535,8 @@
             y += 6;
             pdf.setFont('helvetica', 'normal');
             pdf.setTextColor(30, 30, 30);
-            // Table header (gray background)
-            const col1 = margin;
-            const col2 = margin + 40;
-            const col3 = margin + 80;
-            const col4 = margin + 115;
-            const col5 = margin + 150;
-            pdf.setFillColor(232, 236, 234); // gray
+            const col1 = margin, col2 = margin + 40, col3 = margin + 80, col4 = margin + 115, col5 = margin + 150;
+            pdf.setFillColor(232, 236, 234);
             pdf.rect(col1, y - 4, pageWidth - margin * 2, 6, 'F');
             pdf.setFont('helvetica', 'bold');
             pdf.setTextColor(0, 0, 0);
@@ -492,7 +559,7 @@
             y += 4;
         }
 
-        // ----- Other Qualifications -----
+        // Other Qualifications
         if (otherData.length > 0) {
             pdf.setFont('helvetica', 'bold');
             pdf.setTextColor(26, 92, 58);
@@ -500,12 +567,7 @@
             y += 6;
             pdf.setFont('helvetica', 'normal');
             pdf.setTextColor(30, 30, 30);
-            // Table
-            const col1 = margin;
-            const col2 = margin + 45;
-            const col3 = margin + 85;
-            const col4 = margin + 120;
-            const col5 = margin + 150;
+            const col1 = margin, col2 = margin + 45, col3 = margin + 85, col4 = margin + 120, col5 = margin + 150;
             pdf.setFillColor(232, 236, 234);
             pdf.rect(col1, y - 4, pageWidth - margin * 2, 6, 'F');
             pdf.setFont('helvetica', 'bold');
@@ -529,15 +591,16 @@
             y += 4;
         }
 
-        // ----- Declaration -----
+        // Declaration – with justified alignment
         pdf.setFont('helvetica', 'italic');
         pdf.setTextColor(45, 61, 50);
         const declText = 'Declaration: I hereby declare that the above particulars of facts and information stated are true, correct and complete to the best of my belief and knowledge.';
         const declLines = pdf.splitTextToSize(declText, pageWidth - margin * 2);
-        pdf.text(declLines, margin, y);
+        // Justify each line (jsPDF supports 'justify' alignment)
+        pdf.text(declLines, margin, y, { align: 'justify' });
         y += declLines.length * 5 + 8;
 
-        // ----- Footer: Date (left) and Name (right) -----
+        // Footer: Date left, Name right
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(75, 75, 75);
         pdf.setFontSize(9);
@@ -546,14 +609,10 @@
         pdf.setFont('helvetica', 'bold');
         pdf.text(fullName, pageWidth - margin - pdf.getTextWidth(fullName), pageHeight - 12);
 
-        // ---- Save PDF ----
         const fileName = 'Resume_' + fullName.replace(/\s+/g, '_') + '.pdf';
         pdf.save(fileName);
 
-        // Hide spinner
         hideSpinner();
-
-        // Professional success indicator (no emoji)
         showError('Resume downloaded successfully.');
         setTimeout(function() { hideError(); }, 3000);
     }
@@ -630,7 +689,6 @@
         }, 50);
     });
 
-    // Declaration checkbox
     declarationCheck.addEventListener('change', function() {
         const declField = this.closest('.declaration-area');
         if (declField) {
@@ -649,7 +707,6 @@
         hideError();
     });
 
-    // Live validation
     form.querySelectorAll('input, select, textarea').forEach(function(field) {
         field.addEventListener('input', function() {
             const fg = this.closest('.field-group');
@@ -663,7 +720,6 @@
         });
     });
 
-    // Photo upload label
     photoUpload.addEventListener('change', function() {
         const label = this.closest('.field-group').querySelector('.file-label');
         if (this.files && this.files[0]) {
@@ -682,7 +738,6 @@
         otherCount = document.querySelectorAll('.other-entry').length;
         expCount = document.querySelectorAll('.exp-entry').length;
         updateAddButtons();
-        // Initial highlights
         form.querySelectorAll('[required]').forEach(function(field) {
             const fg = field.closest('.field-group');
             if (fg) {
