@@ -7,7 +7,6 @@
     const form = document.getElementById('resumeForm');
     const previewBtn = document.getElementById('previewBtn');
     const resetBtn = document.querySelector('button[type="reset"]');
-    const closePreviewBtn = document.getElementById('closePreviewBtn');
     const previewDiv = document.getElementById('resumePreview');
     const a4Container = document.getElementById('resumeA4');
     const errorMsg = document.getElementById('errorMsg');
@@ -17,8 +16,8 @@
     // ============================================================
     // 2. COUNTERS FOR ADD MORE BUTTONS (Max 3 entries each)
     // ============================================================
-    let eduCount = 3;  // starts with 3
-    let otherCount = 3; // starts with 3
+    let eduCount = 1;   // starts with 1 (only one on load)
+    let otherCount = 1; // starts with 1 (only one on load)
 
     // ============================================================
     // 3. ADD / REMOVE FUNCTIONS
@@ -27,7 +26,6 @@
     // ----- Add Education -----
     window.addEducation = function() {
         const container = document.getElementById('educationContainer');
-        const addBtn = document.getElementById('addEduBtn');
 
         if (eduCount >= 3) {
             showError('Maximum 3 educational entries allowed.');
@@ -40,23 +38,23 @@
             <button type="button" class="remove-btn" onclick="removeEntry(this, 'edu-entry')">×</button>
             <div class="field-group">
                 <label>Exam Name <span class="required">*</span></label>
-                <input type="text" class="edu-exam" placeholder="e.g. HSLC" required />
+                <input type="text" class="edu-exam" placeholder="Enter exam name" />
             </div>
             <div class="field-group">
                 <label>Board/University <span class="required">*</span></label>
-                <input type="text" class="edu-board" placeholder="e.g. SEBA" required />
+                <input type="text" class="edu-board" placeholder="Enter board/university" />
             </div>
             <div class="field-group">
                 <label>Passing Year <span class="required">*</span></label>
-                <input type="number" class="edu-year" placeholder="e.g. 2020" required />
+                <input type="number" class="edu-year" placeholder="Enter year" />
             </div>
             <div class="field-group">
                 <label>Percentage <span class="required">*</span></label>
-                <input type="number" class="edu-percent" step="0.01" placeholder="e.g. 75" required />
+                <input type="number" class="edu-percent" step="0.01" placeholder="Enter percentage" />
             </div>
             <div class="field-group">
                 <label>Division <span class="required">*</span></label>
-                <select class="edu-division" required>
+                <select class="edu-division">
                     <option value="">-- Select Division --</option>
                     <option value="1st Division">1st Division</option>
                     <option value="2nd Division">2nd Division</option>
@@ -77,7 +75,6 @@
     // ----- Add Other Qualification -----
     window.addOther = function() {
         const container = document.getElementById('otherContainer');
-        const addBtn = document.getElementById('addOtherBtn');
 
         if (otherCount >= 3) {
             showError('Maximum 3 other qualification entries allowed.');
@@ -90,23 +87,23 @@
             <button type="button" class="remove-btn" onclick="removeEntry(this, 'other-entry')">×</button>
             <div class="field-group">
                 <label>Qualification Name <span class="required">*</span></label>
-                <input type="text" class="other-name" placeholder="e.g. Web Development" required />
+                <input type="text" class="other-name" placeholder="Enter qualification name" />
             </div>
             <div class="field-group">
                 <label>Institute/Organization <span class="required">*</span></label>
-                <input type="text" class="other-institute" placeholder="e.g. Self-Learned" required />
+                <input type="text" class="other-institute" placeholder="Enter institute name" />
             </div>
             <div class="field-group">
                 <label>Passing Year <span class="required">*</span></label>
-                <input type="number" class="other-year" placeholder="e.g. 2024" required />
+                <input type="number" class="other-year" placeholder="Enter year" />
             </div>
             <div class="field-group">
                 <label>Score/Grade <span class="required">*</span></label>
-                <input type="text" class="other-score" placeholder="e.g. A" required />
+                <input type="text" class="other-score" placeholder="Enter score or grade" />
             </div>
             <div class="field-group">
                 <label>Duration <span class="required">*</span></label>
-                <input type="text" class="other-duration" placeholder="e.g. 6 months" required />
+                <input type="text" class="other-duration" placeholder="Enter duration" />
             </div>
         `;
 
@@ -122,6 +119,7 @@
     // ----- Remove Entry -----
     window.removeEntry = function(btn, className) {
         const entries = document.querySelectorAll('.' + className);
+
         if (entries.length <= 1) {
             showError('You must have at least one entry.');
             return;
@@ -183,27 +181,28 @@
             const fieldGroup = field.closest('.field-group');
             if (!fieldGroup) return;
 
-            if (field.tagName === 'INPUT' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA') {
-                const value = field.value.trim();
+            // Check if it's a select with placeholder value
+            const isSelect = field.tagName === 'SELECT';
+            const value = field.value.trim();
+            const isPlaceholder = isSelect && (value === '' || value === '-- Select Gender --' ||
+                value === '-- Select Category --' || value === '-- Select Marital Status --' ||
+                value === '-- Select Division --' || value === '-- Select Professional Title --');
 
-                // Special check for checkbox
-                if (field.type === 'checkbox') {
-                    if (!field.checked) {
-                        fieldGroup.classList.add('error');
-                        isValid = false;
-                        if (!firstError) firstError = fieldGroup;
-                    }
-                    return;
-                }
-
-                if (!value || value === '' || value === '-- Select Gender --' || value === '-- Select Category --' ||
-                    value === '-- Select Marital Status --' || value === '-- Select Division --') {
+            if (field.type === 'checkbox') {
+                if (!field.checked) {
                     fieldGroup.classList.add('error');
                     isValid = false;
                     if (!firstError) firstError = fieldGroup;
-                } else {
-                    fieldGroup.classList.add('highlight');
                 }
+                return;
+            }
+
+            if (!value || isPlaceholder) {
+                fieldGroup.classList.add('error');
+                isValid = false;
+                if (!firstError) firstError = fieldGroup;
+            } else {
+                fieldGroup.classList.add('highlight');
             }
         });
 
@@ -262,32 +261,45 @@
         return el ? el.value || '' : '';
     }
 
+    function getSelectedOptions(select) {
+        if (!select) return [];
+        const selected = [];
+        for (let i = 0; i < select.options.length; i++) {
+            if (select.options[i].selected) {
+                selected.push(select.options[i].value);
+            }
+        }
+        return selected;
+    }
+
     // ============================================================
-    // 8. GENERATE RESUME PREVIEW
+    // 8. GENERATE RESUME & AUTO-DOWNLOAD PDF
     // ============================================================
     function generateResume() {
-        // Validate first
-        if (!validateForm()) {
-            return;
-        }
+        if (!validateForm()) return;
 
         // Collect data
-        const fullName = safeValue(document.getElementById('fullName')) || 'Yadav Subba';
+        const fullName = safeValue(document.getElementById('fullName')) || 'Applicant';
+        const professionalTitle = safeValue(document.getElementById('professionalTitle')) || 'Web Developer';
         const fatherName = safeValue(document.getElementById('fatherName'));
         const motherName = safeValue(document.getElementById('motherName'));
         const mobile = safeValue(document.getElementById('mobileNo'));
         const email = safeValue(document.getElementById('emailAddress'));
         const dob = safeValue(document.getElementById('dob'));
         const gender = safeValue(document.getElementById('gender'));
-        const languages = safeValue(document.getElementById('languages'));
         const address = safeValue(document.getElementById('address'));
         const category = safeValue(document.getElementById('category'));
         const maritalStatus = safeValue(document.getElementById('maritalStatus'));
         const experience = safeValue(document.getElementById('experience'));
 
+        // Get selected languages
+        const languageSelect = document.getElementById('languages');
+        const selectedLanguages = getSelectedOptions(languageSelect);
+        const languages = selectedLanguages.join(', ') || '';
+
         const dobFormatted = formatDate(dob);
 
-        // ----- Personal Details Table -----
+        // Build Personal Details Table
         const details = [
             { label: 'Father\'s Name', value: fatherName },
             { label: 'Mother\'s Name', value: motherName },
@@ -313,9 +325,10 @@
             }
         });
 
-        // ----- Education Table -----
+        // Education
         const eduEntries = document.querySelectorAll('.edu-entry');
         let eduRows = '';
+        let hasEduData = false;
         eduEntries.forEach(function(entry) {
             const exam = entry.querySelector('.edu-exam').value || '';
             const board = entry.querySelector('.edu-board').value || '';
@@ -323,6 +336,7 @@
             const percent = entry.querySelector('.edu-percent').value || '';
             const division = entry.querySelector('.edu-division').value || '';
             if (exam || board || year) {
+                hasEduData = true;
                 eduRows += `
                     <tr>
                         <td>${exam}</td>
@@ -336,7 +350,7 @@
         });
 
         let eduHTML = '';
-        if (eduRows) {
+        if (hasEduData) {
             eduHTML = `
                 <div class="section-wrapper">
                     <div class="section-head">Educational Qualifications</div>
@@ -350,9 +364,10 @@
             `;
         }
 
-        // ----- Other Qualifications Table -----
+        // Other Qualifications
         const otherEntries = document.querySelectorAll('.other-entry');
         let otherRows = '';
+        let hasOtherData = false;
         otherEntries.forEach(function(entry) {
             const name = entry.querySelector('.other-name').value || '';
             const institute = entry.querySelector('.other-institute').value || '';
@@ -360,6 +375,7 @@
             const score = entry.querySelector('.other-score').value || '';
             const duration = entry.querySelector('.other-duration').value || '';
             if (name || institute) {
+                hasOtherData = true;
                 otherRows += `
                     <tr>
                         <td>${name}</td>
@@ -373,7 +389,7 @@
         });
 
         let otherHTML = '';
-        if (otherRows) {
+        if (hasOtherData) {
             otherHTML = `
                 <div class="section-wrapper">
                     <div class="section-head">Other Qualifications</div>
@@ -387,7 +403,7 @@
             `;
         }
 
-        // ----- Experience -----
+        // Experience
         let expHTML = '';
         if (experience) {
             expHTML = `
@@ -398,20 +414,22 @@
             `;
         }
 
-        // ----- Build Full Resume -----
+        // Get current date for footer
+        const now = new Date();
+        const currentDate = now.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+        // Build Full Resume
         a4Container.innerHTML = `
-            <!-- HEADER -->
             <div class="header">
                 <div class="name-title">
                     <h1>${fullName}</h1>
-                    <div class="tagline">Web Developer &amp; Content Writer</div>
+                    <div class="tagline">${professionalTitle}</div>
                 </div>
                 <div class="photo-wrap" id="photoPreview">
                     <span>Photo</span>
                 </div>
             </div>
 
-            <!-- PERSONAL DETAILS -->
             <div class="section-wrapper">
                 <div class="section-head">Personal Details</div>
                 <table class="resume-table">
@@ -423,45 +441,107 @@
             ${eduHTML}
             ${otherHTML}
 
-            <!-- DECLARATION -->
             <div class="declaration">
                 <strong>Declaration:</strong> I hereby declare that the above particulars of facts and information stated are true, correct and complete to the best of my belief and knowledge.
             </div>
+
+            <div class="resume-footer">
+                <span class="footer-left">Date: ${currentDate}</span>
+                <span class="footer-right">${fullName}</span>
+            </div>
         `;
 
-        // ----- Handle Photo -----
+        // Handle photo
         const photoPreview = document.getElementById('photoPreview');
         if (photoUpload.files && photoUpload.files[0]) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 photoPreview.innerHTML = `<img src="${e.target.result}" alt="Photo" />`;
+                // After photo loads, generate PDF
+                generatePDF(fullName);
             };
             reader.readAsDataURL(photoUpload.files[0]);
         } else {
-            photoPreview.innerHTML = `<span>Photo</span>`;
+            generatePDF(fullName);
         }
 
-        // ----- Show Preview -----
         previewDiv.classList.add('active');
-        previewDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
         hideError();
     }
 
     // ============================================================
-    // 9. EVENT LISTENERS
+    // 9. GENERATE PDF (Auto-Download)
+    // ============================================================
+    function generatePDF(fullName) {
+        // Show loading state
+        previewBtn.textContent = 'Generating...';
+        previewBtn.disabled = true;
+
+        const element = a4Container;
+
+        html2canvas(element, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            width: element.scrollWidth,
+            height: element.scrollHeight,
+            windowWidth: element.scrollWidth,
+            windowHeight: element.scrollHeight
+        }).then(function(canvas) {
+            const imgData = canvas.toDataURL('image/jpeg', 1.0);
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            let heightLeft = pdfHeight;
+            let position = 0;
+
+            // Add first page
+            pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight);
+            heightLeft -= pdfHeight;
+
+            // Add more pages if content overflows
+            while (heightLeft > 0) {
+                position = heightLeft - pdfHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight);
+                heightLeft -= pdfHeight;
+            }
+
+            // Auto-download
+            const fileName = 'Resume_' + fullName.replace(/\s+/g, '_') + '.pdf';
+            pdf.save(fileName);
+
+            // Reset button state
+            previewBtn.textContent = 'Generate Resume';
+            previewBtn.disabled = false;
+
+            // Show success message
+            showError('✅ PDF downloaded successfully!');
+            setTimeout(function() {
+                hideError();
+            }, 3000);
+
+        }).catch(function(err) {
+            console.error('PDF generation error:', err);
+            previewBtn.textContent = 'Generate Resume';
+            previewBtn.disabled = false;
+            showError('Error generating PDF. Please try again.');
+        });
+    }
+
+    // ============================================================
+    // 10. EVENT LISTENERS
     // ============================================================
 
     // ----- Preview Button -----
     previewBtn.addEventListener('click', generateResume);
 
-    // ----- Close Preview -----
-    closePreviewBtn.addEventListener('click', function() {
-        previewDiv.classList.remove('active');
-    });
-
     // ----- Reset -----
     resetBtn.addEventListener('click', function(e) {
-        // Let default reset happen first, then clean up
         setTimeout(function() {
             previewDiv.classList.remove('active');
             hideError();
@@ -479,10 +559,14 @@
                 declField.style.background = 'transparent';
             }
 
-            // Reset add buttons
+            // Reset counts
             eduCount = document.querySelectorAll('.edu-entry').length;
             otherCount = document.querySelectorAll('.other-entry').length;
             updateAddButtons();
+
+            // Reset button
+            previewBtn.textContent = 'Generate Resume';
+            previewBtn.disabled = false;
         }, 50);
     });
 
@@ -511,11 +595,14 @@
             const fieldGroup = this.closest('.field-group');
             if (!fieldGroup) return;
 
-            const value = this.value.trim();
             if (this.hasAttribute('required')) {
-                if (value && value !== '' && value !== '-- Select Gender --' &&
-                    value !== '-- Select Category --' && value !== '-- Select Marital Status --' &&
-                    value !== '-- Select Division --') {
+                const value = this.value.trim();
+                const isSelect = this.tagName === 'SELECT';
+                const isPlaceholder = isSelect && (value === '' || value === '-- Select Gender --' ||
+                    value === '-- Select Category --' || value === '-- Select Marital Status --' ||
+                    value === '-- Select Division --' || value === '-- Select Professional Title --');
+
+                if (value && !isPlaceholder) {
                     fieldGroup.classList.remove('error');
                     fieldGroup.classList.add('highlight');
                 } else {
@@ -530,11 +617,14 @@
             const fieldGroup = this.closest('.field-group');
             if (!fieldGroup) return;
 
-            const value = this.value.trim();
             if (this.hasAttribute('required')) {
-                if (value && value !== '' && value !== '-- Select Gender --' &&
-                    value !== '-- Select Category --' && value !== '-- Select Marital Status --' &&
-                    value !== '-- Select Division --') {
+                const value = this.value.trim();
+                const isSelect = this.tagName === 'SELECT';
+                const isPlaceholder = isSelect && (value === '' || value === '-- Select Gender --' ||
+                    value === '-- Select Category --' || value === '-- Select Marital Status --' ||
+                    value === '-- Select Division --' || value === '-- Select Professional Title --');
+
+                if (value && !isPlaceholder) {
                     fieldGroup.classList.remove('error');
                     fieldGroup.classList.add('highlight');
                 } else {
@@ -546,9 +636,7 @@
         });
     });
 
-    // ============================================================
-    // 10. PHOTO UPLOAD LABEL
-    // ============================================================
+    // ----- Photo Upload Label -----
     photoUpload.addEventListener('change', function() {
         const label = this.closest('.field-group').querySelector('.file-label');
         if (this.files && this.files[0]) {
@@ -563,34 +651,16 @@
     // 11. INITIALIZATION
     // ============================================================
     function init() {
-        // Update add button states
+        // Count current entries
         eduCount = document.querySelectorAll('.edu-entry').length;
         otherCount = document.querySelectorAll('.other-entry').length;
         updateAddButtons();
 
-        // Initial highlight for pre-filled fields
-        form.querySelectorAll('[required]').forEach(function(field) {
-            const fieldGroup = field.closest('.field-group');
-            if (!fieldGroup) return;
+        // Ensure only 1 entry exists (if somehow more, keep them)
+        // But we already set only 1 in HTML
 
-            const value = field.value.trim();
-            if (value && value !== '' && value !== '-- Select Gender --' &&
-                value !== '-- Select Category --' && value !== '-- Select Marital Status --' &&
-                value !== '-- Select Division --') {
-                fieldGroup.classList.add('highlight');
-            }
-        });
-
-        // Declaration initial state
-        if (declarationCheck.checked) {
-            const declField = declarationCheck.closest('.declaration-area');
-            if (declField) {
-                declField.style.border = '2px solid #27ae60';
-                declField.style.borderRadius = '8px';
-                declField.style.padding = '6px 10px';
-                declField.style.background = '#f0faf4';
-            }
-        }
+        // Remove any auto-populated values (they should be empty)
+        // All fields are already empty in HTML
     }
 
     init();
