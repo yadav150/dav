@@ -10,13 +10,19 @@
 .resume-maker input:valid:not(:placeholder-shown),.resume-maker select:valid:not(:placeholder-shown){border-color:#27ae60}
 .resume-maker textarea{min-height:60px;resize:vertical}
 
+/* Multi-select for languages */
+.resume-maker select[multiple]{height:auto;min-height:80px;padding:6px 8px}
+.resume-maker select[multiple] option{padding:4px 8px;border-radius:4px;transition:background .2s}
+.resume-maker select[multiple] option:hover{background:#e8f0ec;color:#1a5c3a}
+.resume-maker select[multiple] option:checked{background:#1a5c3a;color:#fff}
+
 /* ----- Validation Highlight (Green Dot/Indicator) ----- */
 .resume-maker .field-group.highlight label{color:#1a5c3a}
 .resume-maker .field-group.highlight input,.resume-maker .field-group.highlight select,.resume-maker .field-group.highlight textarea{border-color:#1a5c3a;box-shadow:0 0 0 3px rgba(26,92,58,0.15)}
 .resume-maker .field-group.error label{color:#c0392b}
 .resume-maker .field-group.error input,.resume-maker .field-group.error select,.resume-maker .field-group.error textarea{border-color:#c0392b;box-shadow:0 0 0 3px rgba(192,57,43,0.15)}
 
-/* ===== SECTION TITLES - Charming Red ===== */
+/* ===== SECTION TITLES - Charming Red (Form) ===== */
 .resume-maker .section-title-red{background:#c0392b;color:#fff;padding:6px 14px;border-radius:8px;font-weight:600;font-size:.95rem;margin:14px 0 10px;width:100%;letter-spacing:-.2px;box-shadow:0 1px 4px rgba(192,57,43,0.15)}
 
 /* ===== ADD / REMOVE BUTTONS ===== */
@@ -44,6 +50,9 @@
 .resume-maker .file-upload input[type="file"]{padding:6px 0;font-size:.85rem;flex:1;border:0;background:transparent}
 .resume-maker .file-upload .file-label{font-size:.85rem;color:#4a6b5a;padding:6px 12px;background:#f4f8f6;border-radius:8px;border:1px solid #e6e6e6;white-space:nowrap}
 
+/* ===== HELPER TEXT ===== */
+.resume-maker .helper-text{font-size:.75rem;color:#4a6b5a;margin-left:4px;font-style:italic;display:block;width:100%;padding-left:0}
+
 /* ===== BUTTON GROUP ===== */
 .resume-maker .btn-group{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px}
 .resume-maker .btn{min-width:120px;padding:10px 28px;font-size:1rem}
@@ -55,35 +64,36 @@
 .resume-preview .print-toolbar .btn{min-width:140px;padding:10px 28px;font-size:.95rem}
 
 /* ===== A4 RESUME LAYOUT ===== */
-.resume-a4{background:#ffffff;font-family:'Segoe UI',Arial,Helvetica,sans-serif;color:#1e1e1e;line-height:1.5;max-width:210mm;margin:0 auto;padding:30px 35px 25px;border-radius:4px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.resume-a4{background:#ffffff;font-family:Arial,Helvetica,sans-serif;color:#1e1e1e;line-height:1.5;max-width:210mm;margin:0 auto;padding:30px 35px 25px;border-radius:4px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
 
 /* Header */
 .resume-a4 .header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:3px solid #1a5c3a;margin-bottom:14px;gap:20px;break-inside:avoid;page-break-inside:avoid}
+.resume-a4 .header .name-title{padding-top:6px}
 .resume-a4 .header .name-title h1{font-size:1.8rem;font-weight:700;color:#1a5c3a;margin:0;letter-spacing:-.5px;line-height:1.2}
 .resume-a4 .header .name-title .tagline{font-size:.85rem;color:#3d5a4e;font-weight:500;margin:3px 0 0;letter-spacing:.2px}
 .resume-a4 .header .photo-wrap{flex-shrink:0;width:100px;height:100px;overflow:hidden;background:#f4f8f6;display:flex;align-items:center;justify-content:center;border:none;box-shadow:none}
 .resume-a4 .header .photo-wrap img{width:100%;height:100%;object-fit:cover;display:block}
 .resume-a4 .header .photo-wrap span{font-size:.65rem;color:#4a6b5a;text-align:center;padding:4px}
 
-/* Section Headers - Green */
+/* Section Headers - Green (PDF) */
 .resume-a4 .section-head{background:#1a5c3a;color:#fff;padding:4px 14px;border-radius:4px;font-weight:600;font-size:.85rem;margin:10px 0 6px;letter-spacing:-.2px;text-transform:uppercase}
 
-/* Table Styles */
+/* Table Styles - Gray TH */
 .resume-a4 .resume-table{width:100%;border-collapse:collapse;font-size:.8rem;margin-bottom:2px}
 .resume-a4 .resume-table td{padding:5px 10px;border:1px solid #e6e6e6;vertical-align:middle}
 .resume-a4 .resume-table .label-cell{font-weight:600;color:#1a5c3a;width:140px;background:#f8faf9;text-transform:uppercase;font-size:.72rem;letter-spacing:.3px}
 .resume-a4 .resume-table .value-cell{color:#2d3d32;background:#ffffff}
 
-/* Education Table */
+/* Education Table - Gray TH */
 .resume-a4 .edu-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-bottom:2px}
-.resume-a4 .edu-table th{background:#1a5c3a;color:#fff;padding:5px 8px;text-align:left;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.3px}
+.resume-a4 .edu-table th{background:#e8ecea;color:#1e1e1e;padding:5px 8px;text-align:left;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.3px;border:1px solid #d4d8d6}
 .resume-a4 .edu-table td{padding:5px 8px;border:1px solid #e6e6e6;color:#2d3d32}
 .resume-a4 .edu-table tr:nth-child(even) td{background:#f8faf9}
 .resume-a4 .edu-table tr:nth-child(odd) td{background:#ffffff}
 
-/* Other Qualifications Table */
+/* Other Qualifications Table - Gray TH */
 .resume-a4 .other-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-bottom:2px}
-.resume-a4 .other-table th{background:#1a5c3a;color:#fff;padding:5px 8px;text-align:left;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.3px}
+.resume-a4 .other-table th{background:#e8ecea;color:#1e1e1e;padding:5px 8px;text-align:left;font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.3px;border:1px solid #d4d8d6}
 .resume-a4 .other-table td{padding:5px 8px;border:1px solid #e6e6e6;color:#2d3d32}
 .resume-a4 .other-table tr:nth-child(even) td{background:#f8faf9}
 .resume-a4 .other-table tr:nth-child(odd) td{background:#ffffff}
@@ -95,10 +105,16 @@
 .resume-a4 .declaration{font-size:.75rem;color:#2d3d32;padding:8px 14px;background:#f8faf9;border-radius:4px;margin-top:8px;border-left:4px solid #1a5c3a;font-style:italic;line-height:1.6;break-inside:avoid;page-break-inside:avoid}
 .resume-a4 .declaration strong{color:#1a5c3a;font-style:normal;font-weight:600}
 
+/* Footer - Date + Name */
+.resume-a4 .resume-footer{display:flex;justify-content:space-between;padding-top:10px;margin-top:10px;border-top:1px solid #e6e6e6;font-size:.75rem;color:#4a6b5a;break-inside:avoid;page-break-inside:avoid}
+.resume-a4 .resume-footer .footer-left{text-align:left}
+.resume-a4 .resume-footer .footer-right{text-align:right;font-weight:500;color:#1a5c3a}
+
 /* Break control */
 .resume-a4 .section-wrapper{break-inside:avoid;page-break-inside:avoid;margin-bottom:4px}
 .resume-a4 .header{break-inside:avoid;page-break-inside:avoid}
 .resume-a4 .declaration{break-inside:avoid;page-break-inside:avoid}
+.resume-a4 .resume-footer{break-inside:avoid;page-break-inside:avoid}
 
 /* ===== PRINT STYLES ===== */
 @media print {
@@ -116,9 +132,11 @@
     .resume-a4 .experience-box{font-size:.72rem;padding:5px 10px}
     .resume-a4 .declaration{font-size:.68rem;padding:5px 10px}
     .resume-a4 .section-head{font-size:.75rem;padding:3px 10px}
+    .resume-a4 .resume-footer{font-size:.65rem}
     .resume-a4 .section-wrapper{break-inside:avoid;page-break-inside:avoid}
     .resume-a4 .header{break-inside:avoid;page-break-inside:avoid}
     .resume-a4 .declaration{break-inside:avoid;page-break-inside:avoid}
+    .resume-a4 .resume-footer{break-inside:avoid;page-break-inside:avoid}
 }
 
 /* ===== RESPONSIVE ===== */
@@ -138,4 +156,5 @@
     .resume-preview{padding:8px}
     .resume-preview .print-toolbar .btn{min-width:100%;justify-content:center}
     .resume-maker .entry-group .remove-btn{position:relative;top:auto;right:auto;display:inline-block;margin-bottom:4px}
+    .resume-a4 .resume-footer{flex-direction:column;align-items:center;gap:4px;text-align:center}
 }
