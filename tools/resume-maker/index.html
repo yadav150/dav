@@ -113,64 +113,68 @@
                             </select>
                         </div>
 
+                        <!-- Languages - Dropdown with Badges -->
                         <div class="field-group">
-                            <label for="languages">Known Languages <span class="required">*</span></label>
-                            <select id="languages" multiple>
-                                <option value="">-- Select Languages (Ctrl+Click for multiple) --</option>
-                                <!-- Indian Languages -->
-                                <option value="Assamese">Assamese</option>
-                                <option value="Bengali">Bengali</option>
-                                <option value="Bodo">Bodo</option>
-                                <option value="Dogri">Dogri</option>
-                                <option value="Gujarati">Gujarati</option>
-                                <option value="Hindi">Hindi</option>
-                                <option value="Kannada">Kannada</option>
-                                <option value="Kashmiri">Kashmiri</option>
-                                <option value="Konkani">Konkani</option>
-                                <option value="Maithili">Maithili</option>
-                                <option value="Malayalam">Malayalam</option>
-                                <option value="Manipuri">Manipuri</option>
-                                <option value="Marathi">Marathi</option>
-                                <option value="Nepali">Nepali</option>
-                                <option value="Odia">Odia</option>
-                                <option value="Punjabi">Punjabi</option>
-                                <option value="Sanskrit">Sanskrit</option>
-                                <option value="Santali">Santali</option>
-                                <option value="Sindhi">Sindhi</option>
-                                <option value="Tamil">Tamil</option>
-                                <option value="Telugu">Telugu</option>
-                                <option value="Tulu">Tulu</option>
-                                <option value="Urdu">Urdu</option>
-                                <!-- Foreign Languages -->
-                                <option value="English">English</option>
-                                <option value="French">French</option>
-                                <option value="German">German</option>
-                                <option value="Spanish">Spanish</option>
-                                <option value="Portuguese">Portuguese</option>
-                                <option value="Russian">Russian</option>
-                                <option value="Chinese">Chinese</option>
-                                <option value="Japanese">Japanese</option>
-                                <option value="Korean">Korean</option>
-                                <option value="Arabic">Arabic</option>
-                                <option value="Italian">Italian</option>
-                                <option value="Dutch">Dutch</option>
-                                <option value="Swedish">Swedish</option>
-                                <option value="Norwegian">Norwegian</option>
-                                <option value="Danish">Danish</option>
-                                <option value="Finnish">Finnish</option>
-                                <option value="Greek">Greek</option>
-                                <option value="Turkish">Turkish</option>
-                                <option value="Persian">Persian</option>
-                                <option value="Thai">Thai</option>
-                                <option value="Vietnamese">Vietnamese</option>
-                                <option value="Indonesian">Indonesian</option>
-                                <option value="Malay">Malay</option>
-                                <option value="Tagalog">Tagalog</option>
-                                <option value="Swahili">Swahili</option>
-                                <option value="Hausa">Hausa</option>
-                                <option value="Zulu">Zulu</option>
-                            </select>
-                            <span class="helper-text">Hold Ctrl (Windows) or Cmd (Mac) to select multiple</span>
+                            <label for="languageSelect">Known Languages <span class="required">*</span></label>
+                            <div class="language-wrapper">
+                                <select id="languageSelect">
+                                    <option value="">-- Select a language --</option>
+                                    <!-- Indian -->
+                                    <option value="Assamese">Assamese</option>
+                                    <option value="Bengali">Bengali</option>
+                                    <option value="Bodo">Bodo</option>
+                                    <option value="Dogri">Dogri</option>
+                                    <option value="Gujarati">Gujarati</option>
+                                    <option value="Hindi">Hindi</option>
+                                    <option value="Kannada">Kannada</option>
+                                    <option value="Kashmiri">Kashmiri</option>
+                                    <option value="Konkani">Konkani</option>
+                                    <option value="Maithili">Maithili</option>
+                                    <option value="Malayalam">Malayalam</option>
+                                    <option value="Manipuri">Manipuri</option>
+                                    <option value="Marathi">Marathi</option>
+                                    <option value="Nepali">Nepali</option>
+                                    <option value="Odia">Odia</option>
+                                    <option value="Punjabi">Punjabi</option>
+                                    <option value="Sanskrit">Sanskrit</option>
+                                    <option value="Santali">Santali</option>
+                                    <option value="Sindhi">Sindhi</option>
+                                    <option value="Tamil">Tamil</option>
+                                    <option value="Telugu">Telugu</option>
+                                    <option value="Tulu">Tulu</option>
+                                    <option value="Urdu">Urdu</option>
+                                    <!-- Foreign -->
+                                    <option value="English">English</option>
+                                    <option value="French">French</option>
+                                    <option value="German">German</option>
+                                    <option value="Spanish">Spanish</option>
+                                    <option value="Portuguese">Portuguese</option>
+                                    <option value="Russian">Russian</option>
+                                    <option value="Chinese">Chinese</option>
+                                    <option value="Japanese">Japanese</option>
+                                    <option value="Korean">Korean</option>
+                                    <option value="Arabic">Arabic</option>
+                                    <option value="Italian">Italian</option>
+                                    <option value="Dutch">Dutch</option>
+                                    <option value="Swedish">Swedish</option>
+                                    <option value="Norwegian">Norwegian</option>
+                                    <option value="Danish">Danish</option>
+                                    <option value="Finnish">Finnish</option>
+                                    <option value="Greek">Greek</option>
+                                    <option value="Turkish">Turkish</option>
+                                    <option value="Persian">Persian</option>
+                                    <option value="Thai">Thai</option>
+                                    <option value="Vietnamese">Vietnamese</option>
+                                    <option value="Indonesian">Indonesian</option>
+                                    <option value="Malay">Malay</option>
+                                    <option value="Tagalog">Tagalog</option>
+                                    <option value="Swahili">Swahili</option>
+                                    <option value="Hausa">Hausa</option>
+                                    <option value="Zulu">Zulu</option>
+                                </select>
+                                <div class="language-tags" id="languageTags"></div>
+                                <span class="helper-text">Select up to 5 languages (click a language to add it)</span>
+                            </div>
                         </div>
 
                         <div class="field-group">
@@ -201,19 +205,84 @@
                             </select>
                         </div>
 
+                        <!-- ===== PROFESSIONAL SUMMARY ===== -->
+                        <div class="section-title-red">Professional Summary</div>
+
+                        <div class="field-group">
+                            <label for="summarySelect">Summary <span class="required">*</span></label>
+                            <select id="summarySelect">
+                                <option value="">-- Select a summary --</option>
+                                <option value="Seeking a challenging position in a reputed organization where I can utilize my skills and grow professionally.">Seeking a challenging position...</option>
+                                <option value="Aspiring to work in a dynamic environment that offers opportunities for learning and career advancement.">Aspiring to work in a dynamic environment...</option>
+                                <option value="Looking for a role where I can contribute to the organization's success while developing my expertise.">Looking for a role...</option>
+                                <option value="Motivated professional seeking to leverage my skills in a growth-oriented organization.">Motivated professional...</option>
+                                <option value="Eager to work in a collaborative environment that values innovation and excellence.">Eager to work...</option>
+                                <option value="Dedicated professional seeking opportunities in the field of web development and technology.">Dedicated professional...</option>
+                                <option value="Committed to delivering high-quality work and contributing to organizational goals.">Committed...</option>
+                                <option value="Passionate about technology and seeking a role that challenges and inspires me.">Passionate about technology...</option>
+                                <option value="Aiming to build a long-term career in a forward-thinking organization.">Aiming to build...</option>
+                                <option value="Enthusiastic about working with teams that prioritize creativity and problem-solving.">Enthusiastic...</option>
+                                <option value="custom">Custom (Type your own)</option>
+                            </select>
+                        </div>
+
+                        <div class="field-group" id="customSummaryContainer" style="display:none;">
+                            <label for="customSummary">Write Your Summary</label>
+                            <textarea id="customSummary" rows="2" placeholder="Enter your professional summary..."></textarea>
+                        </div>
+
                         <!-- ===== EXPERIENCE ===== -->
                         <div class="section-title-red">Experience</div>
 
                         <div class="field-group">
-                            <label for="experience">Experience Details <span class="required">*</span></label>
-                            <textarea id="experience" rows="2" placeholder="Enter your work experience details"></textarea>
+                            <label for="experienceType">Experience Type <span class="required">*</span></label>
+                            <select id="experienceType">
+                                <option value="">-- Select --</option>
+                                <option value="fresher">Fresher</option>
+                                <option value="experienced">Experienced</option>
+                            </select>
+                        </div>
+
+                        <!-- Fresher -> textarea -->
+                        <div class="field-group" id="fresherContainer" style="display:none;">
+                            <label for="fresherSummary">Fresher Summary <span class="required">*</span></label>
+                            <textarea id="fresherSummary" rows="2" placeholder="Describe your skills, projects, or why you are suitable for the role..."></textarea>
+                        </div>
+
+                        <!-- Experienced -> dynamic fields -->
+                        <div id="experiencedContainer" style="display:none;">
+                            <div id="experienceEntries">
+                                <div class="entry-group exp-entry">
+                                    <button type="button" class="remove-btn" onclick="removeExpEntry(this)">×</button>
+                                    <div class="field-group">
+                                        <label>Organization <span class="required">*</span></label>
+                                        <input type="text" class="exp-org" placeholder="Organization name" />
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Designation <span class="required">*</span></label>
+                                        <input type="text" class="exp-designation" placeholder="Your job title" />
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Start Year <span class="required">*</span></label>
+                                        <input type="number" class="exp-start" placeholder="e.g. 2020" />
+                                    </div>
+                                    <div class="field-group">
+                                        <label>End Year <span class="required">*</span></label>
+                                        <input type="number" class="exp-end" placeholder="e.g. 2022" />
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Work Description <span class="required">*</span></label>
+                                        <textarea class="exp-desc" rows="2" placeholder="Brief description of your responsibilities"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" id="addExpBtn" onclick="addExperience()">+ Add More Experience</button>
                         </div>
 
                         <!-- ===== EDUCATIONAL QUALIFICATIONS ===== -->
                         <div class="section-title-red">Educational Qualifications</div>
 
                         <div id="educationContainer">
-                            <!-- Entry 1 (only one on load) -->
                             <div class="entry-group edu-entry">
                                 <button type="button" class="remove-btn" onclick="removeEntry(this, 'edu-entry')">×</button>
                                 <div class="field-group">
@@ -250,7 +319,6 @@
                         <div class="section-title-red">Other Qualifications</div>
 
                         <div id="otherContainer">
-                            <!-- Entry 1 (only one on load) -->
                             <div class="entry-group other-entry">
                                 <button type="button" class="remove-btn" onclick="removeEntry(this, 'other-entry')">×</button>
                                 <div class="field-group">
@@ -258,7 +326,7 @@
                                     <input type="text" class="other-name" placeholder="Enter qualification name" />
                                 </div>
                                 <div class="field-group">
-                                    <label>Institute/Organization <span class="required">*</span></label>
+                                    <label>Institute <span class="required">*</span></label>
                                     <input type="text" class="other-institute" placeholder="Enter institute name" />
                                 </div>
                                 <div class="field-group">
@@ -282,12 +350,12 @@
                         <div class="section-title-red">Final Steps</div>
 
                         <div class="field-group">
-                            <label>Upload Documents</label>
+                            <label>Upload Photo</label>
                             <div class="file-upload">
-                                <span class="file-label">Passport Size Photo (100KB)</span>
+                                <span class="file-label">Passport Size Photo (optional)</span>
                                 <input type="file" id="photoUpload" accept="image/*" />
                             </div>
-                            <span class="helper-text">Optional — upload a passport-size photo</span>
+                            <span class="helper-text">Optional — a placeholder silhouette will be used if no photo is uploaded</span>
                         </div>
 
                         <div class="declaration-area">
@@ -305,13 +373,10 @@
 
                     <div class="error-msg" id="errorMsg"></div>
 
-                    <!-- ===== RESUME PREVIEW ===== -->
+                    <!-- ===== RESUME PREVIEW (hidden, used for PDF generation) ===== -->
                     <div class="resume-preview" id="resumePreview">
-                        <div class="print-toolbar" style="display:none;">
-                            <!-- Hidden toolbar — PDF auto-downloads -->
-                        </div>
                         <div class="resume-a4" id="resumeA4">
-                            <!-- Dynamically populated -->
+                            <!-- dynamically populated -->
                         </div>
                     </div>
 
