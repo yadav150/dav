@@ -53,39 +53,61 @@
 
                         <div class="field-group">
                             <label for="fullName">Applicant's Name <span class="required">*</span></label>
-                            <input type="text" id="fullName" placeholder="e.g. Yadav Subba" value="Yadav Subba" required />
+                            <input type="text" id="fullName" placeholder="Enter your full name" />
+                        </div>
+
+                        <div class="field-group">
+                            <label for="professionalTitle">Professional Title <span class="required">*</span></label>
+                            <select id="professionalTitle">
+                                <option value="">-- Select Professional Title --</option>
+                                <option value="Web Developer">Web Developer</option>
+                                <option value="Frontend Developer">Frontend Developer</option>
+                                <option value="Full Stack Developer">Full Stack Developer</option>
+                                <option value="Software Engineer">Software Engineer</option>
+                                <option value="UI/UX Designer">UI/UX Designer</option>
+                                <option value="Content Writer">Content Writer</option>
+                                <option value="Technical Writer">Technical Writer</option>
+                                <option value="Data Analyst">Data Analyst</option>
+                                <option value="Mathematics Teacher">Mathematics Teacher</option>
+                                <option value="Graphic Designer">Graphic Designer</option>
+                                <option value="Digital Marketer">Digital Marketer</option>
+                                <option value="Project Manager">Project Manager</option>
+                                <option value="Quality Assurance Engineer">Quality Assurance Engineer</option>
+                                <option value="DevOps Engineer">DevOps Engineer</option>
+                                <option value="Cloud Architect">Cloud Architect</option>
+                            </select>
                         </div>
 
                         <div class="field-group">
                             <label for="fatherName">Father's Name <span class="required">*</span></label>
-                            <input type="text" id="fatherName" placeholder="e.g. Lt. Dilli Singh Subba" value="Lt. Dilli Singh Subba" required />
+                            <input type="text" id="fatherName" placeholder="Enter father's name" />
                         </div>
 
                         <div class="field-group">
                             <label for="motherName">Mother's Name</label>
-                            <input type="text" id="motherName" placeholder="e.g. Smt. ..." value="Smt. ..." />
+                            <input type="text" id="motherName" placeholder="Enter mother's name (optional)" />
                         </div>
 
                         <div class="field-group">
                             <label for="mobileNo">Mobile Number <span class="required">*</span></label>
-                            <input type="tel" id="mobileNo" placeholder="e.g. 9876543210" value="9876543210" required />
+                            <input type="tel" id="mobileNo" placeholder="Enter mobile number" />
                         </div>
 
                         <div class="field-group">
                             <label for="emailAddress">Email Address <span class="required">*</span></label>
-                            <input type="email" id="emailAddress" placeholder="e.g. yadavsubba2003@gmail.com" value="yadavsubba2003@gmail.com" required />
+                            <input type="email" id="emailAddress" placeholder="Enter email address" />
                         </div>
 
                         <div class="field-group">
                             <label for="dob">Date of Birth <span class="required">*</span></label>
-                            <input type="date" id="dob" value="2003-09-08" required />
+                            <input type="date" id="dob" />
                         </div>
 
                         <div class="field-group">
                             <label for="gender">Gender <span class="required">*</span></label>
-                            <select id="gender" required>
+                            <select id="gender">
                                 <option value="">-- Select Gender --</option>
-                                <option value="Male" selected>Male</option>
+                                <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
                             </select>
@@ -93,31 +115,86 @@
 
                         <div class="field-group">
                             <label for="languages">Known Languages <span class="required">*</span></label>
-                            <input type="text" id="languages" placeholder="e.g. Assamese, English, Hindi" value="Assamese, English, Hindi" required />
+                            <select id="languages" multiple>
+                                <option value="">-- Select Languages (Ctrl+Click for multiple) --</option>
+                                <!-- Indian Languages -->
+                                <option value="Assamese">Assamese</option>
+                                <option value="Bengali">Bengali</option>
+                                <option value="Bodo">Bodo</option>
+                                <option value="Dogri">Dogri</option>
+                                <option value="Gujarati">Gujarati</option>
+                                <option value="Hindi">Hindi</option>
+                                <option value="Kannada">Kannada</option>
+                                <option value="Kashmiri">Kashmiri</option>
+                                <option value="Konkani">Konkani</option>
+                                <option value="Maithili">Maithili</option>
+                                <option value="Malayalam">Malayalam</option>
+                                <option value="Manipuri">Manipuri</option>
+                                <option value="Marathi">Marathi</option>
+                                <option value="Nepali">Nepali</option>
+                                <option value="Odia">Odia</option>
+                                <option value="Punjabi">Punjabi</option>
+                                <option value="Sanskrit">Sanskrit</option>
+                                <option value="Santali">Santali</option>
+                                <option value="Sindhi">Sindhi</option>
+                                <option value="Tamil">Tamil</option>
+                                <option value="Telugu">Telugu</option>
+                                <option value="Tulu">Tulu</option>
+                                <option value="Urdu">Urdu</option>
+                                <!-- Foreign Languages -->
+                                <option value="English">English</option>
+                                <option value="French">French</option>
+                                <option value="German">German</option>
+                                <option value="Spanish">Spanish</option>
+                                <option value="Portuguese">Portuguese</option>
+                                <option value="Russian">Russian</option>
+                                <option value="Chinese">Chinese</option>
+                                <option value="Japanese">Japanese</option>
+                                <option value="Korean">Korean</option>
+                                <option value="Arabic">Arabic</option>
+                                <option value="Italian">Italian</option>
+                                <option value="Dutch">Dutch</option>
+                                <option value="Swedish">Swedish</option>
+                                <option value="Norwegian">Norwegian</option>
+                                <option value="Danish">Danish</option>
+                                <option value="Finnish">Finnish</option>
+                                <option value="Greek">Greek</option>
+                                <option value="Turkish">Turkish</option>
+                                <option value="Persian">Persian</option>
+                                <option value="Thai">Thai</option>
+                                <option value="Vietnamese">Vietnamese</option>
+                                <option value="Indonesian">Indonesian</option>
+                                <option value="Malay">Malay</option>
+                                <option value="Tagalog">Tagalog</option>
+                                <option value="Swahili">Swahili</option>
+                                <option value="Hausa">Hausa</option>
+                                <option value="Zulu">Zulu</option>
+                            </select>
+                            <span class="helper-text">Hold Ctrl (Windows) or Cmd (Mac) to select multiple</span>
                         </div>
 
                         <div class="field-group">
                             <label for="address">Address <span class="required">*</span></label>
-                            <input type="text" id="address" placeholder="e.g. Pan Bazaar, Guwahati, Assam" value="Dikhlem Nepali Subba Gaon, Hawaipur, West Karbi Anglong, Assam" required />
+                            <input type="text" id="address" placeholder="Enter full address" />
                         </div>
 
                         <div class="field-group">
                             <label for="category">Category <span class="required">*</span></label>
-                            <select id="category" required>
+                            <select id="category">
                                 <option value="">-- Select Category --</option>
                                 <option value="General">General</option>
                                 <option value="OBC">OBC</option>
                                 <option value="SC">SC</option>
-                                <option value="ST" selected>ST</option>
+                                <option value="ST">ST</option>
                                 <option value="EWS">EWS</option>
                             </select>
                         </div>
 
                         <div class="field-group">
                             <label for="maritalStatus">Marital Status <span class="required">*</span></label>
-                            <select id="maritalStatus" required>
+                            <select id="maritalStatus">
                                 <option value="">-- Select Marital Status --</option>
-                                <option value="Unmarried" selected>Unmarried</option>
+                                <option value="Unmarried">Unmarried</option>
                                 <option value="Married">Married</option>
                                 <option value="Divorced">Divorced</option>
                                 <option value="Widowed">Widowed</option>
@@ -129,97 +206,37 @@
 
                         <div class="field-group">
                             <label for="experience">Experience Details <span class="required">*</span></label>
-                            <textarea id="experience" rows="2" placeholder="e.g. 2 years as Web Developer at XYZ Company" required>2 years as Web Developer &amp; Manager at Skill2Job.site. Currently building Yadav Web Tools.</textarea>
+                            <textarea id="experience" rows="2" placeholder="Enter your work experience details"></textarea>
                         </div>
 
                         <!-- ===== EDUCATIONAL QUALIFICATIONS ===== -->
                         <div class="section-title-red">Educational Qualifications</div>
 
                         <div id="educationContainer">
-                            <!-- Entry 1 -->
+                            <!-- Entry 1 (only one on load) -->
                             <div class="entry-group edu-entry">
                                 <button type="button" class="remove-btn" onclick="removeEntry(this, 'edu-entry')">×</button>
                                 <div class="field-group">
                                     <label>Exam Name <span class="required">*</span></label>
-                                    <input type="text" class="edu-exam" placeholder="e.g. HSLC" value="HSLC" required />
+                                    <input type="text" class="edu-exam" placeholder="Enter exam name" />
                                 </div>
                                 <div class="field-group">
                                     <label>Board/University <span class="required">*</span></label>
-                                    <input type="text" class="edu-board" placeholder="e.g. SEBA" value="SEBA" required />
+                                    <input type="text" class="edu-board" placeholder="Enter board/university" />
                                 </div>
                                 <div class="field-group">
                                     <label>Passing Year <span class="required">*</span></label>
-                                    <input type="number" class="edu-year" placeholder="e.g. 2020" value="2020" required />
+                                    <input type="number" class="edu-year" placeholder="Enter year" />
                                 </div>
                                 <div class="field-group">
                                     <label>Percentage <span class="required">*</span></label>
-                                    <input type="number" class="edu-percent" step="0.01" placeholder="e.g. 39.39" value="39.39" required />
+                                    <input type="number" class="edu-percent" step="0.01" placeholder="Enter percentage" />
                                 </div>
                                 <div class="field-group">
                                     <label>Division <span class="required">*</span></label>
-                                    <select class="edu-division" required>
+                                    <select class="edu-division">
                                         <option value="">-- Select Division --</option>
                                         <option value="1st Division">1st Division</option>
-                                        <option value="2nd Division">2nd Division</option>
-                                        <option value="3rd Division" selected>3rd Division</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Entry 2 -->
-                            <div class="entry-group edu-entry">
-                                <button type="button" class="remove-btn" onclick="removeEntry(this, 'edu-entry')">×</button>
-                                <div class="field-group">
-                                    <label>Exam Name <span class="required">*</span></label>
-                                    <input type="text" class="edu-exam" placeholder="e.g. HS" value="Higher Secondary" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Board/University <span class="required">*</span></label>
-                                    <input type="text" class="edu-board" placeholder="e.g. AHSEC" value="AHSEC" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Passing Year <span class="required">*</span></label>
-                                    <input type="number" class="edu-year" placeholder="e.g. 2023" value="2023" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Percentage <span class="required">*</span></label>
-                                    <input type="number" class="edu-percent" step="0.01" placeholder="e.g. 80.4" value="80.4" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Division <span class="required">*</span></label>
-                                    <select class="edu-division" required>
-                                        <option value="">-- Select Division --</option>
-                                        <option value="1st Division" selected>1st Division</option>
-                                        <option value="2nd Division">2nd Division</option>
-                                        <option value="3rd Division">3rd Division</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- Entry 3 -->
-                            <div class="entry-group edu-entry">
-                                <button type="button" class="remove-btn" onclick="removeEntry(this, 'edu-entry')">×</button>
-                                <div class="field-group">
-                                    <label>Exam Name <span class="required">*</span></label>
-                                    <input type="text" class="edu-exam" placeholder="e.g. BA" value="BA in English (Honours)" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Board/University <span class="required">*</span></label>
-                                    <input type="text" class="edu-board" placeholder="e.g. Gauhati University" value="Gauhati University" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Passing Year <span class="required">*</span></label>
-                                    <input type="number" class="edu-year" placeholder="e.g. 2026" value="2026" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Percentage <span class="required">*</span></label>
-                                    <input type="number" class="edu-percent" step="0.01" placeholder="e.g. 75" value="75" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Division <span class="required">*</span></label>
-                                    <select class="edu-division" required>
-                                        <option value="">-- Select Division --</option>
-                                        <option value="1st Division" selected>1st Division</option>
                                         <option value="2nd Division">2nd Division</option>
                                         <option value="3rd Division">3rd Division</option>
                                     </select>
@@ -233,78 +250,28 @@
                         <div class="section-title-red">Other Qualifications</div>
 
                         <div id="otherContainer">
-                            <!-- Entry 1 -->
+                            <!-- Entry 1 (only one on load) -->
                             <div class="entry-group other-entry">
                                 <button type="button" class="remove-btn" onclick="removeEntry(this, 'other-entry')">×</button>
                                 <div class="field-group">
                                     <label>Qualification Name <span class="required">*</span></label>
-                                    <input type="text" class="other-name" placeholder="e.g. Web Development" value="Web Development" required />
+                                    <input type="text" class="other-name" placeholder="Enter qualification name" />
                                 </div>
                                 <div class="field-group">
                                     <label>Institute/Organization <span class="required">*</span></label>
-                                    <input type="text" class="other-institute" placeholder="e.g. Self-Learned" value="Self-Learned" required />
+                                    <input type="text" class="other-institute" placeholder="Enter institute name" />
                                 </div>
                                 <div class="field-group">
                                     <label>Passing Year <span class="required">*</span></label>
-                                    <input type="number" class="other-year" placeholder="e.g. 2024" value="2024" required />
+                                    <input type="number" class="other-year" placeholder="Enter year" />
                                 </div>
                                 <div class="field-group">
                                     <label>Score/Grade <span class="required">*</span></label>
-                                    <input type="text" class="other-score" placeholder="e.g. A" value="A" required />
+                                    <input type="text" class="other-score" placeholder="Enter score or grade" />
                                 </div>
                                 <div class="field-group">
                                     <label>Duration <span class="required">*</span></label>
-                                    <input type="text" class="other-duration" placeholder="e.g. 6 months" value="2 years" required />
-                                </div>
-                            </div>
-
-                            <!-- Entry 2 -->
-                            <div class="entry-group other-entry">
-                                <button type="button" class="remove-btn" onclick="removeEntry(this, 'other-entry')">×</button>
-                                <div class="field-group">
-                                    <label>Qualification Name <span class="required">*</span></label>
-                                    <input type="text" class="other-name" placeholder="e.g. Web Development" value="Content Writing" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Institute/Organization <span class="required">*</span></label>
-                                    <input type="text" class="other-institute" placeholder="e.g. Self-Learned" value="Self-Learned" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Passing Year <span class="required">*</span></label>
-                                    <input type="number" class="other-year" placeholder="e.g. 2024" value="2024" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Score/Grade <span class="required">*</span></label>
-                                    <input type="text" class="other-score" placeholder="e.g. A" value="A+" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Duration <span class="required">*</span></label>
-                                    <input type="text" class="other-duration" placeholder="e.g. 6 months" value="1 year" required />
-                                </div>
-                            </div>
-
-                            <!-- Entry 3 -->
-                            <div class="entry-group other-entry">
-                                <button type="button" class="remove-btn" onclick="removeEntry(this, 'other-entry')">×</button>
-                                <div class="field-group">
-                                    <label>Qualification Name <span class="required">*</span></label>
-                                    <input type="text" class="other-name" placeholder="e.g. Web Development" value="Teaching" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Institute/Organization <span class="required">*</span></label>
-                                    <input type="text" class="other-institute" placeholder="e.g. Self-Learned" value="Self-Learned" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Passing Year <span class="required">*</span></label>
-                                    <input type="number" class="other-year" placeholder="e.g. 2024" value="2024" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Score/Grade <span class="required">*</span></label>
-                                    <input type="text" class="other-score" placeholder="e.g. A" value="A" required />
-                                </div>
-                                <div class="field-group">
-                                    <label>Duration <span class="required">*</span></label>
-                                    <input type="text" class="other-duration" placeholder="e.g. 6 months" value="2 years" required />
+                                    <input type="text" class="other-duration" placeholder="Enter duration" />
                                 </div>
                             </div>
                         </div>
@@ -320,10 +287,11 @@
                                 <span class="file-label">Passport Size Photo (100KB)</span>
                                 <input type="file" id="photoUpload" accept="image/*" />
                             </div>
+                            <span class="helper-text">Optional — upload a passport-size photo</span>
                         </div>
 
                         <div class="declaration-area">
-                            <input type="checkbox" id="declarationCheck" checked />
+                            <input type="checkbox" id="declarationCheck" />
                             <label for="declarationCheck">
                                 I hereby declare that the above particulars of facts and information stated are true, correct and complete to the best of my belief and knowledge. <span class="required">*</span>
                             </label>
@@ -339,9 +307,8 @@
 
                     <!-- ===== RESUME PREVIEW ===== -->
                     <div class="resume-preview" id="resumePreview">
-                        <div class="print-toolbar">
-                            <button class="btn" onclick="window.print()">Print / Save as PDF</button>
-                            <button class="btn btn-secondary" id="closePreviewBtn">Close Preview</button>
+                        <div class="print-toolbar" style="display:none;">
+                            <!-- Hidden toolbar — PDF auto-downloads -->
                         </div>
                         <div class="resume-a4" id="resumeA4">
                             <!-- Dynamically populated -->
@@ -372,6 +339,10 @@
 
     <!-- ===== GLOBAL SCRIPTS ===== -->
     <script src="../../script.js"></script>
+
+    <!-- ===== PDF GENERATION LIBRARIES ===== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <!-- ===== TOOL-SPECIFIC SCRIPTS ===== -->
     <script src="resume-maker.js"></script>
