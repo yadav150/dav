@@ -1,4 +1,4 @@
-/* ===== Resume Maker – refined front-end ===== */
+/* ===== Resume Maker – consistent alignment ===== */
 
 /* ----- Section titles (red) ----- */
 .resume-maker .section-title-red {
@@ -14,17 +14,89 @@
     box-shadow: 0 1px 4px rgba(192,57,43,0.15);
 }
 
-/* ===== LANGUAGE SELECT – properly sized, same as all dropdowns ===== */
+/* ----- All field groups: fixed label width, input fills rest ----- */
+.resume-maker .field-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    margin-bottom: 8px;
+}
+
+.resume-maker label {
+    font-weight: 500;
+    min-width: 140px;      /* fixed width for all labels */
+    max-width: 140px;      /* ensures uniform width */
+    color: #1a5c3a;
+    font-size: .9rem;
+    flex-shrink: 0;
+}
+
+.resume-maker label .required {
+    color: #c0392b;
+    font-weight: 700;
+    margin-left: 2px;
+}
+
+/* ----- All inputs, selects, textareas: identical sizing ----- */
+.resume-maker input[type="text"],
+.resume-maker input[type="email"],
+.resume-maker input[type="tel"],
+.resume-maker input[type="date"],
+.resume-maker input[type="number"],
+.resume-maker select,
+.resume-maker textarea {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: .9rem;
+    background: #fff;
+    flex: 1 1 auto;          /* fills remaining width */
+    min-width: 0;
+    width: 100%;
+    transition: border-color .3s, box-shadow .3s;
+    font-family: inherit;
+    box-sizing: border-box;  /* ensures padding doesn't affect width */
+}
+
+.resume-maker input:focus,
+.resume-maker select:focus,
+.resume-maker textarea:focus {
+    border-color: #1a5c3a;
+    outline: 0;
+    box-shadow: 0 0 0 3px rgba(26,92,58,0.1);
+}
+
+.resume-maker textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+/* ----- Validation states (same as other tools) ----- */
+.resume-maker .field-group.highlight input,
+.resume-maker .field-group.highlight select,
+.resume-maker .field-group.highlight textarea {
+    border-color: #1a5c3a;
+    box-shadow: 0 0 0 3px rgba(26,92,58,0.15);
+}
+.resume-maker .field-group.error input,
+.resume-maker .field-group.error select,
+.resume-maker .field-group.error textarea {
+    border-color: #c0392b;
+    box-shadow: 0 0 0 3px rgba(192,57,43,0.15);
+}
+
+/* ===== LANGUAGE SELECT – full width, aligned ===== */
 .lang-select-wrapper {
-    flex: 1 1 200px;
-    min-width: 140px;
+    flex: 1 1 auto;
+    min-width: 0;
     width: 100%;
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
+
 .lang-select-wrapper select {
-    height: auto;
     padding: 8px 12px;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -34,10 +106,11 @@
     cursor: pointer;
     appearance: auto;
     -webkit-appearance: auto;
-    min-height: 40px; /* ensures same height as other selects */
+    min-height: 40px;        /* same as other selects */
+    box-sizing: border-box;
 }
 
-/* ----- Language badges (smooth fade animations) ----- */
+/* ----- Language badges (with fade animation) ----- */
 .lang-tags-container {
     display: flex;
     flex-wrap: wrap;
@@ -58,8 +131,6 @@
     transition: all .4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     cursor: pointer;
     animation: fadeIn .3s ease;
-    opacity: 1;
-    transform: scale(1);
 }
 .lang-tag:hover {
     background: #1a5c3a;
@@ -78,7 +149,6 @@
 .lang-tag:hover .tag-remove {
     color: #fff;
 }
-/* Fade out animation when removed */
 .lang-tag.removing {
     animation: fadeOut .25s ease forwards;
 }
@@ -90,6 +160,17 @@
 @keyframes fadeOut {
     0% { opacity: 1; transform: scale(1); }
     100% { opacity: 0; transform: scale(0.8); }
+}
+
+/* ----- Helper text (kept for other fields, removed for languages) ----- */
+.resume-maker .helper-text {
+    font-size: .75rem;
+    color: #4a6b5a;
+    font-style: italic;
+    display: block;
+    width: 100%;
+    padding-left: 0;
+    margin-top: 2px;
 }
 
 /* ----- Add / Remove buttons ----- */
@@ -126,7 +207,7 @@
     background: #a93226;
 }
 
-/* ----- Entry group (dynamic add-remove blocks) ----- */
+/* ----- Entry group (dynamic blocks) ----- */
 .resume-maker .entry-group {
     background: #f8faf9;
     padding: 10px 12px;
@@ -153,10 +234,11 @@
 }
 .resume-maker .entry-group .field-group label {
     min-width: 100px;
+    max-width: 100px;
     font-size: .85rem;
 }
 
-/* ----- Declaration area ----- */
+/* ----- Declaration ----- */
 .resume-maker .declaration-area {
     display: flex;
     align-items: flex-start;
@@ -206,18 +288,7 @@
     white-space: nowrap;
 }
 
-/* ----- Helper text ----- */
-.resume-maker .helper-text {
-    font-size: .75rem;
-    color: #4a6b5a;
-    font-style: italic;
-    display: block;
-    width: 100%;
-    padding-left: 0;
-    margin-top: 2px;
-}
-
-/* ----- Button group ----- */
+/* ----- Buttons (align with global) ----- */
 .resume-maker .btn-group {
     display: flex;
     flex-wrap: wrap;
@@ -230,7 +301,7 @@
     font-size: 1rem;
 }
 
-/* ===== Resume preview (hidden, used only for PDF generation) ===== */
+/* ===== Resume preview (hidden, used for PDF) ===== */
 .resume-preview {
     display: none;
     background: #fff;
@@ -242,7 +313,7 @@
     display: block;
 }
 
-/* ===== A4 layout styles for the generated PDF ===== */
+/* ===== A4 layout ===== */
 .resume-a4 {
     background: #ffffff;
     font-family: Arial, Helvetica, sans-serif;
@@ -442,7 +513,7 @@
     page-break-inside: avoid;
 }
 
-/* ===== Print overrides (for PDF export) ===== */
+/* ===== Print overrides ===== */
 @media print {
     body * {
         visibility: hidden;
@@ -520,6 +591,7 @@
     }
     .resume-maker label {
         min-width: auto;
+        max-width: none;
         width: 100%;
     }
     .resume-maker input[type="text"],
