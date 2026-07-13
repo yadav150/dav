@@ -4,7 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Resume Maker · Yadav Web Tools</title>
+    <!-- Global styles (shared across all pages) -->
     <link rel="stylesheet" href="../../style.css" />
+    <!-- Tool-specific styles -->
     <link rel="stylesheet" href="resume-maker.css" />
 </head>
 <body>
@@ -85,7 +87,7 @@
 
                         <div class="field-group">
                             <label for="motherName">Mother's Name</label>
-                            <input type="text" id="motherName" placeholder="Enter mother's name (optional)" />
+                            <input type="text" id="motherName" placeholder="Enter mother's name" />
                         </div>
 
                         <div class="field-group">
@@ -113,7 +115,7 @@
                             </select>
                         </div>
 
-                        <!-- ===== KNOWN LANGUAGES – full width select, no helper text ===== -->
+                        <!-- ===== KNOWN LANGUAGES ===== -->
                         <div class="field-group">
                             <label for="languageSelect">Known Languages <span class="required">*</span></label>
                             <div class="lang-select-wrapper">
@@ -171,7 +173,6 @@
                                     <option value="Zulu">Zulu</option>
                                 </select>
                                 <div class="lang-tags-container" id="languageTags"></div>
-                                <!-- helper text removed -->
                             </div>
                         </div>
 
@@ -203,23 +204,43 @@
                             </select>
                         </div>
 
-                        <!-- ===== PROFESSIONAL SUMMARY ===== -->
+                        <!-- ===== PROFESSIONAL SUMMARY (30 options) ===== -->
                         <div class="section-title-red">Professional Summary</div>
 
                         <div class="field-group">
                             <label for="summarySelect">Summary <span class="required">*</span></label>
                             <select id="summarySelect">
                                 <option value="">-- Select a summary --</option>
-                                <option value="Growth-Driven Professional: A driven professional with over 8 years of experience executing high-impact strategies in globally recognized corporations while consistently delivering measurable business growth.">Growth-Driven Professional</option>
-                                <option value="Efficiency-Focused Leader: A results-oriented leader with a proven track record of optimizing internal processes and maximizing organizational efficiency to significantly reduce annual operational expenditure.">Efficiency-Focused Leader</option>
-                                <option value="Strategic Collaborator: A strategic team player skilled at leading cross-functional initiatives and delivering high-value projects under strict deadlines within fast-paced corporate environments.">Strategic Collaborator</option>
-                                <option value="Analytical Revenue Specialist: An analytical specialist with extensive experience driving revenue growth and market expansion within premier industry leaders by leveraging advanced data insights.">Analytical Revenue Specialist</option>
-                                <option value="Digital Transformation Expert: An adaptive professional recognized for spearheading digital transformation and modernizing workflows across large-scale enterprises to enhance overall agility and output.">Digital Transformation Expert</option>
-                                <option value="High-Performance Team Manager: A collaborative manager expert at building high-performing teams and fostering strong, long-term stakeholder partnerships across diverse global business units.">High-Performance Team Manager</option>
-                                <option value="Compliance Strategist: A detail-oriented strategist adept at mitigating corporate risks and ensuring strict compliance with global standards and complex regulatory environments.">Compliance Strategist</option>
-                                <option value="Innovative Profitability Specialist: An innovative problem-solver with a history of implementing cost-saving measures that boost corporate profitability and optimize resource allocation.">Innovative Profitability Specialist</option>
-                                <option value="Client Success Specialist: A performance-focused specialist dedicated to enhancing client satisfaction and retention metrics within top-tier firms through exceptional service delivery models.">Client Success Specialist</option>
-                                <option value="Data Intelligence Specialist: A data-driven professional experienced in transforming complex operational challenges into actionable, structured business solutions that align with overarching corporate goals.">Data Intelligence Specialist</option>
+                                <option value="Motivated IT professional with strong technical knowledge, problem-solving abilities, and an interest in modern technologies. Skilled in supporting digital solutions, learning new systems, and contributing effectively to organizational goals.">Motivated IT professional...</option>
+                                <option value="Dedicated software development professional with knowledge of programming concepts, application development, debugging, and problem-solving. Eager to build reliable software solutions, improve technical skills, and contribute to innovative projects.">Dedicated software development professional...</option>
+                                <option value="Creative and detail-oriented web development professional with knowledge of modern web technologies, responsive design, and user-friendly interfaces. Passionate about building efficient websites and continuously improving technical skills.">Creative web development professional...</option>
+                                <option value="Analytical and detail-oriented professional with an interest in data science and analytics. Skilled in interpreting information, identifying patterns, solving problems, and using insights to support effective decision-making.">Analytical data science professional...</option>
+                                <option value="Enthusiastic professional with a strong interest in artificial intelligence and machine learning. Eager to apply analytical thinking, programming knowledge, and modern technologies to develop intelligent solutions.">Enthusiastic AI/ML professional...</option>
+                                <option value="Dedicated engineering professional with strong analytical thinking, technical knowledge, and problem-solving abilities. Committed to applying engineering principles, maintaining quality standards, and contributing to innovative practical solutions.">Dedicated engineering professional...</option>
+                                <option value="Curious and detail-oriented science and research professional with strong analytical, observational, and problem-solving abilities. Passionate about exploring ideas, conducting systematic research, and contributing to scientific innovation.">Curious science and research professional...</option>
+                                <option value="Creative and thoughtful arts and humanities professional with strong communication, critical thinking, research, and analytical abilities. Skilled in understanding diverse perspectives and contributing effectively to professional environments.">Creative arts and humanities professional...</option>
+                                <option value="Motivated commerce professional with knowledge of business operations, accounting principles, financial concepts, and organizational practices. Eager to apply analytical skills while contributing effectively to business growth and efficiency.">Motivated commerce professional...</option>
+                                <option value="Responsible and detail-oriented banking professional with knowledge of financial services, customer relations, transactions, and banking operations. Committed to maintaining accuracy, confidentiality, professionalism, and excellent customer service.">Responsible banking professional...</option>
+                                <option value="Analytical finance and accounting professional with knowledge of financial management, budgeting, accounting principles, and record keeping. Focused on accuracy, responsible practices, and supporting effective organizational decision-making.">Analytical finance and accounting professional...</option>
+                                <option value="Results-oriented business and management professional with strong organizational, communication, leadership, and problem-solving abilities. Skilled in supporting teams, managing responsibilities, and contributing to sustainable organizational growth.">Results-oriented business and management professional...</option>
+                                <option value="Energetic sales and marketing professional with strong communication, customer engagement, and relationship-building abilities. Passionate about understanding customer needs, promoting products, achieving targets, and supporting business growth.">Energetic sales and marketing professional...</option>
+                                <option value="People-focused human resources professional with strong communication, organizational, and interpersonal abilities. Interested in employee relations, recruitment, workplace coordination, and supporting a positive and productive organizational environment.">People-focused human resources professional...</option>
+                                <option value="Dedicated education and teaching professional with strong communication, subject knowledge, patience, and passion for learning. Committed to supporting students, creating engaging experiences, and contributing to academic development.">Dedicated education and teaching professional...</option>
+                                <option value="Compassionate and responsible healthcare professional committed to supporting patient well-being, maintaining professional standards, and working effectively with healthcare teams. Possesses strong communication, organizational, and patient-care abilities.">Compassionate healthcare professional...</option>
+                                <option value="Caring and dedicated nursing and healthcare support professional with a strong commitment to patient comfort, safety, and well-being. Skilled in providing assistance and working effectively within healthcare environments.">Caring nursing and healthcare professional...</option>
+                                <option value="Service-oriented hospitality and hotel management professional with strong communication, customer service, and organizational abilities. Committed to delivering excellent guest experiences, maintaining standards, and supporting efficient operations.">Service-oriented hospitality professional...</option>
+                                <option value="Enthusiastic tourism and travel professional with strong communication, customer service, planning, and organizational abilities. Passionate about assisting travelers, coordinating services, and creating memorable travel experiences.">Enthusiastic tourism and travel professional...</option>
+                                <option value="Responsible and service-oriented public administration professional with strong organizational, communication, and problem-solving abilities. Committed to efficiency, accountability, ethical practices, and contributing positively to public services.">Responsible public administration professional...</option>
+                                <option value="Detail-oriented legal professional with strong research, analytical, communication, and documentation abilities. Committed to understanding legal principles, maintaining confidentiality, and supporting accurate and ethical legal processes.">Detail-oriented legal professional...</option>
+                                <option value="Creative and curious media and journalism professional with strong writing, communication, research, and storytelling abilities. Passionate about presenting accurate information and producing engaging content for diverse audiences.">Creative media and journalism professional...</option>
+                                <option value="Creative graphic design and visual arts professional with a strong eye for detail, composition, and visual communication. Passionate about developing engaging designs and transforming ideas into creative solutions.">Creative graphic design professional...</option>
+                                <option value="Customer-focused service professional with strong communication, listening, and problem-solving abilities. Dedicated to understanding customer needs, resolving concerns, maintaining positive relationships, and delivering professional service.">Customer-focused service professional...</option>
+                                <option value="Organized and dependable office administration professional with strong communication, documentation, coordination, and time-management abilities. Skilled in supporting daily operations, maintaining records, and ensuring efficient administrative processes.">Organized office administration professional...</option>
+                                <option value="Customer-oriented retail and e-commerce professional with strong communication, sales, product coordination, and service abilities. Committed to improving customer experiences, supporting operations, and contributing to sustainable sales growth.">Customer-oriented retail and e-commerce professional...</option>
+                                <option value="Organized logistics and supply chain professional with strong planning, coordination, and problem-solving abilities. Focused on supporting efficient movement of goods, maintaining records, and improving operational processes.">Organized logistics and supply chain professional...</option>
+                                <option value="Detail-oriented construction and architecture professional with strong planning, technical understanding, creativity, and problem-solving abilities. Committed to quality, safety, practical design, and effective collaboration throughout projects.">Detail-oriented construction and architecture professional...</option>
+                                <option value="Dedicated agriculture and environmental professional with an interest in sustainable practices, natural resources, and responsible development. Eager to apply practical knowledge and skills to support environmental and agricultural progress.">Dedicated agriculture and environmental professional...</option>
+                                <option value="Motivated and adaptable fresher with strong communication, learning, teamwork, and problem-solving abilities. Eager to gain professional experience, develop skills, accept responsibilities, and contribute positively to organizational goals.">Motivated and adaptable fresher...</option>
                                 <option value="custom">Custom (Type your own)</option>
                             </select>
                         </div>
@@ -241,11 +262,14 @@
                             </select>
                         </div>
 
+                        <!-- Fresher -> no input required -->
                         <div class="field-group" id="fresherContainer" style="display:none;">
-                            <label for="fresherSummary">Fresher Summary <span class="required">*</span></label>
-                            <textarea id="fresherSummary" rows="2" placeholder="Describe your skills, projects, or why you are suitable for the role..."></textarea>
+                            <label for="fresherSummary">Fresher Summary</label>
+                            <textarea id="fresherSummary" rows="2" placeholder="Describe your skills or projects (optional)"></textarea>
+                            <span class="helper-text">Optional — this field is not mandatory</span>
                         </div>
 
+                        <!-- Experienced -> dynamic fields (all mandatory) -->
                         <div id="experiencedContainer" style="display:none;">
                             <div id="experienceEntries">
                                 <div class="entry-group exp-entry">
@@ -341,6 +365,87 @@
                         </div>
 
                         <button type="button" class="add-btn" id="addOtherBtn" onclick="addOther()">+ Add More</button>
+
+                        <!-- ===== SKILLS SECTION (NEW) ===== -->
+                        <div class="section-title-red">Skills</div>
+
+                        <div class="field-group">
+                            <label for="skillsSelect">Select Skills <span class="required">*</span></label>
+                            <div class="skills-select-wrapper">
+                                <select id="skillsSelect">
+                                    <option value="">-- Select a skill --</option>
+                                    <option value="Communication Skills">Communication Skills</option>
+                                    <option value="Teamwork">Teamwork</option>
+                                    <option value="Leadership">Leadership</option>
+                                    <option value="Problem Solving">Problem Solving</option>
+                                    <option value="Time Management">Time Management</option>
+                                    <option value="Critical Thinking">Critical Thinking</option>
+                                    <option value="Decision Making">Decision Making</option>
+                                    <option value="Adaptability">Adaptability</option>
+                                    <option value="Creativity">Creativity</option>
+                                    <option value="Attention to Detail">Attention to Detail</option>
+                                    <option value="Organizational Skills">Organizational Skills</option>
+                                    <option value="Interpersonal Skills">Interpersonal Skills</option>
+                                    <option value="Active Listening">Active Listening</option>
+                                    <option value="Conflict Resolution">Conflict Resolution</option>
+                                    <option value="Multitasking">Multitasking</option>
+                                    <option value="Project Management">Project Management</option>
+                                    <option value="Customer Service">Customer Service</option>
+                                    <option value="Public Speaking">Public Speaking</option>
+                                    <option value="Presentation Skills">Presentation Skills</option>
+                                    <option value="Negotiation Skills">Negotiation Skills</option>
+                                    <option value="Microsoft Word">Microsoft Word</option>
+                                    <option value="Microsoft Excel">Microsoft Excel</option>
+                                    <option value="Microsoft PowerPoint">Microsoft PowerPoint</option>
+                                    <option value="Data Entry">Data Entry</option>
+                                    <option value="Data Analysis">Data Analysis</option>
+                                    <option value="Computer Skills">Computer Skills</option>
+                                    <option value="Internet Research">Internet Research</option>
+                                    <option value="Email Communication">Email Communication</option>
+                                    <option value="Typing Skills">Typing Skills</option>
+                                    <option value="Documentation">Documentation</option>
+                                    <option value="HTML">HTML</option>
+                                    <option value="CSS">CSS</option>
+                                    <option value="JavaScript">JavaScript</option>
+                                    <option value="Python">Python</option>
+                                    <option value="Java">Java</option>
+                                    <option value="C Programming">C Programming</option>
+                                    <option value="C++">C++</option>
+                                    <option value="SQL">SQL</option>
+                                    <option value="Web Development">Web Development</option>
+                                    <option value="Responsive Web Design">Responsive Web Design</option>
+                                    <option value="Git & GitHub">Git & GitHub</option>
+                                    <option value="Database Management">Database Management</option>
+                                    <option value="UI/UX Design">UI/UX Design</option>
+                                    <option value="Graphic Design">Graphic Design</option>
+                                    <option value="Digital Marketing">Digital Marketing</option>
+                                    <option value="Social Media Management">Social Media Management</option>
+                                    <option value="Content Writing">Content Writing</option>
+                                    <option value="SEO">SEO</option>
+                                    <option value="Accounting">Accounting</option>
+                                    <option value="Bookkeeping">Bookkeeping</option>
+                                    <option value="Financial Analysis">Financial Analysis</option>
+                                    <option value="Sales">Sales</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Human Resource Management">Human Resource Management</option>
+                                    <option value="Recruitment">Recruitment</option>
+                                    <option value="Teaching">Teaching</option>
+                                    <option value="Research">Research</option>
+                                    <option value="Report Writing">Report Writing</option>
+                                    <option value="Administrative Skills">Administrative Skills</option>
+                                    <option value="Inventory Management">Inventory Management</option>
+                                    <option value="custom">Custom (Type your own)</option>
+                                </select>
+                                <div class="skills-tags-container" id="skillsTags"></div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Skill Field -->
+                        <div class="field-group" id="customSkillContainer" style="display:none;">
+                            <label for="customSkill">Enter Skill Name</label>
+                            <input type="text" id="customSkill" placeholder="Type your skill and press Enter" />
+                            <span class="helper-text">Type a skill and press Enter to add it</span>
+                        </div>
 
                         <!-- ===== FINAL STEPS ===== -->
                         <div class="section-title-red">Final Steps</div>
