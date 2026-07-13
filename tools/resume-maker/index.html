@@ -4,9 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Resume Maker · Yadav Web Tools</title>
-    <!-- Global styles (shared across all pages) -->
     <link rel="stylesheet" href="../../style.css" />
-    <!-- Tool-specific styles -->
     <link rel="stylesheet" href="resume-maker.css" />
 </head>
 <body>
@@ -38,7 +36,6 @@
     <main id="main-content">
 
         <section class="section tools-section resume-maker" aria-labelledby="tool-heading">
-            <!-- Tool heading (global style) -->
             <div class="section-title-bar">
                 <h2 id="tool-heading">Resume Maker</h2>
             </div>
@@ -116,7 +113,7 @@
                             </select>
                         </div>
 
-                        <!-- ===== KNOWN LANGUAGES – refined, normal height ===== -->
+                        <!-- ===== KNOWN LANGUAGES – full width select, no helper text ===== -->
                         <div class="field-group">
                             <label for="languageSelect">Known Languages <span class="required">*</span></label>
                             <div class="lang-select-wrapper">
@@ -173,10 +170,8 @@
                                     <option value="Hausa">Hausa</option>
                                     <option value="Zulu">Zulu</option>
                                 </select>
-                                <div class="lang-tags-container" id="languageTags">
-                                    <!-- language badges will appear here -->
-                                </div>
-                                <span class="helper-text">Select up to 5 languages</span>
+                                <div class="lang-tags-container" id="languageTags"></div>
+                                <!-- helper text removed -->
                             </div>
                         </div>
 
