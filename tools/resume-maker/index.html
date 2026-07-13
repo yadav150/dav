@@ -6,7 +6,7 @@
     <title>Resume Maker · Yadav Web Tools</title>
     <!-- Global styles (shared across all pages) -->
     <link rel="stylesheet" href="../../style.css" />
-    <!-- Tool‑specific styles -->
+    <!-- Tool-specific styles -->
     <link rel="stylesheet" href="resume-maker.css" />
 </head>
 <body>
@@ -116,13 +116,12 @@
                             </select>
                         </div>
 
-                        <!-- ===== KNOWN LANGUAGES – single-select dropdown ===== -->
+                        <!-- ===== KNOWN LANGUAGES – refined, normal height ===== -->
                         <div class="field-group">
                             <label for="languageSelect">Known Languages <span class="required">*</span></label>
-                            <div class="language-wrapper">
+                            <div class="lang-select-wrapper">
                                 <select id="languageSelect">
                                     <option value="">-- Select a language --</option>
-                                    <!-- Indian -->
                                     <option value="Assamese">Assamese</option>
                                     <option value="Bengali">Bengali</option>
                                     <option value="Bodo">Bodo</option>
@@ -146,7 +145,6 @@
                                     <option value="Telugu">Telugu</option>
                                     <option value="Tulu">Tulu</option>
                                     <option value="Urdu">Urdu</option>
-                                    <!-- Foreign -->
                                     <option value="English">English</option>
                                     <option value="French">French</option>
                                     <option value="German">German</option>
@@ -175,8 +173,10 @@
                                     <option value="Hausa">Hausa</option>
                                     <option value="Zulu">Zulu</option>
                                 </select>
-                                <div class="language-tags" id="languageTags"></div>
-                                <span class="helper-text">Select up to 5 languages (click a language to add it)</span>
+                                <div class="lang-tags-container" id="languageTags">
+                                    <!-- language badges will appear here -->
+                                </div>
+                                <span class="helper-text">Select up to 5 languages</span>
                             </div>
                         </div>
 
@@ -246,13 +246,11 @@
                             </select>
                         </div>
 
-                        <!-- Fresher -> textarea -->
                         <div class="field-group" id="fresherContainer" style="display:none;">
                             <label for="fresherSummary">Fresher Summary <span class="required">*</span></label>
                             <textarea id="fresherSummary" rows="2" placeholder="Describe your skills, projects, or why you are suitable for the role..."></textarea>
                         </div>
 
-                        <!-- Experienced -> dynamic fields -->
                         <div id="experiencedContainer" style="display:none;">
                             <div id="experienceEntries">
                                 <div class="entry-group exp-entry">
@@ -358,7 +356,7 @@
                                 <span class="file-label">Passport Size Photo (optional)</span>
                                 <input type="file" id="photoUpload" accept="image/*" />
                             </div>
-                            <span class="helper-text">Optional — a placeholder silhouette will be used if no photo is uploaded</span>
+                            <span class="helper-text">Optional — a placeholder will be used if no photo is uploaded</span>
                         </div>
 
                         <div class="declaration-area">
