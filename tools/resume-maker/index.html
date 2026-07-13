@@ -4,12 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Resume Maker · Yadav Web Tools</title>
-    <link rel="stylesheet" href="style.css" />
-    <!-- Resume Maker CSS will be appended to style.css -->
+    <!-- Global styles (shared across all pages) -->
+    <link rel="stylesheet" href="../../style.css" />
+    <!-- Tool‑specific styles -->
+    <link rel="stylesheet" href="resume-maker.css" />
 </head>
 <body>
 
-    <!-- ===== HEADER ===== -->
+    <!-- ===== HEADER (global) ===== -->
     <header class="site-header" role="banner">
         <div class="header-inner">
             <a href="../../index.html" class="site-title">Yadav Web Tools</a>
@@ -36,6 +38,7 @@
     <main id="main-content">
 
         <section class="section tools-section resume-maker" aria-labelledby="tool-heading">
+            <!-- Tool heading (global style) -->
             <div class="section-title-bar">
                 <h2 id="tool-heading">Resume Maker</h2>
             </div>
@@ -43,7 +46,7 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Fill in your details below and generate a professional, A4-ready resume. All data stays in your browser.
+                        Fill in your details below and generate a professional, A4‑ready resume. All data stays in your browser.
                     </p>
 
                     <form id="resumeForm" novalidate>
@@ -113,7 +116,7 @@
                             </select>
                         </div>
 
-                        <!-- ===== KNOWN LANGUAGES – normal dropdown (same height as gender) ===== -->
+                        <!-- ===== KNOWN LANGUAGES – single-select dropdown ===== -->
                         <div class="field-group">
                             <label for="languageSelect">Known Languages <span class="required">*</span></label>
                             <div class="language-wrapper">
@@ -388,7 +391,7 @@
 
     </main>
 
-    <!-- ===== FOOTER ===== -->
+    <!-- ===== FOOTER (global) ===== -->
     <footer class="site-footer" role="contentinfo">
         <div class="footer-inner">
             <div class="footer-links">
@@ -405,11 +408,11 @@
     <!-- ===== GLOBAL SCRIPTS ===== -->
     <script src="../../script.js"></script>
 
-    <!-- ===== PDF GENERATION LIBRARIES ===== -->
+    <!-- ===== PDF LIBRARIES ===== -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- ===== TOOL-SPECIFIC SCRIPTS ===== -->
+    <!-- ===== TOOL‑SPECIFIC JAVASCRIPT ===== -->
     <script src="resume-maker.js"></script>
 
 </body>
