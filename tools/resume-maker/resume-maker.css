@@ -1,4 +1,4 @@
-/* ===== Resume Maker – tool‑specific styles ===== */
+/* ===== Resume Maker – refined front-end ===== */
 
 /* ----- Section titles (red) ----- */
 .resume-maker .section-title-red {
@@ -14,8 +14,8 @@
     box-shadow: 0 1px 4px rgba(192,57,43,0.15);
 }
 
-/* ----- Language select and badges ----- */
-.language-wrapper {
+/* ===== LANGUAGE SELECT – properly sized, same as all dropdowns ===== */
+.lang-select-wrapper {
     flex: 1 1 200px;
     min-width: 140px;
     width: 100%;
@@ -23,7 +23,7 @@
     flex-direction: column;
     gap: 6px;
 }
-.language-wrapper select {
+.lang-select-wrapper select {
     height: auto;
     padding: 8px 12px;
     border: 1px solid #ccc;
@@ -34,15 +34,18 @@
     cursor: pointer;
     appearance: auto;
     -webkit-appearance: auto;
+    min-height: 40px; /* ensures same height as other selects */
 }
-.language-tags {
+
+/* ----- Language badges (smooth fade animations) ----- */
+.lang-tags-container {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    min-height: 32px;
-    padding: 4px 0;
+    min-height: 28px;
+    padding: 2px 0;
 }
-.language-tag {
+.lang-tag {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -52,25 +55,41 @@
     border-radius: 8px;
     font-size: .85rem;
     color: #1a5c3a;
-    transition: all .3s ease;
+    transition: all .4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     cursor: pointer;
+    animation: fadeIn .3s ease;
+    opacity: 1;
+    transform: scale(1);
 }
-.language-tag:hover {
+.lang-tag:hover {
     background: #1a5c3a;
     color: #fff;
     border-color: #1a5c3a;
     transform: scale(1.04);
     box-shadow: 0 2px 8px rgba(26,92,58,0.25);
 }
-.language-tag .tag-remove {
+.lang-tag .tag-remove {
     font-size: .8rem;
     font-weight: 700;
     color: #c0392b;
     transition: color .3s;
     cursor: pointer;
 }
-.language-tag:hover .tag-remove {
+.lang-tag:hover .tag-remove {
     color: #fff;
+}
+/* Fade out animation when removed */
+.lang-tag.removing {
+    animation: fadeOut .25s ease forwards;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+@keyframes fadeOut {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.8); }
 }
 
 /* ----- Add / Remove buttons ----- */
@@ -107,7 +126,7 @@
     background: #a93226;
 }
 
-/* ----- Entry group (dynamic add‑remove blocks) ----- */
+/* ----- Entry group (dynamic add-remove blocks) ----- */
 .resume-maker .entry-group {
     background: #f8faf9;
     padding: 10px 12px;
@@ -198,7 +217,7 @@
     margin-top: 2px;
 }
 
-/* ----- Button group (aligns with global) ----- */
+/* ----- Button group ----- */
 .resume-maker .btn-group {
     display: flex;
     flex-wrap: wrap;
@@ -281,7 +300,7 @@
     display: block;
 }
 .resume-a4 .header .photo-wrap .placeholder-icon {
-    font-size: 3rem;
+    font-size: 2.5rem;
     color: #4a6b5a;
     opacity: .4;
     font-family: Arial, sans-serif;
@@ -525,7 +544,7 @@
         display: inline-block;
         margin-bottom: 4px;
     }
-    .resume-maker .language-wrapper {
+    .lang-select-wrapper {
         flex: 1 1 auto;
         min-width: 0;
         width: 100%;
