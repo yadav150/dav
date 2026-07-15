@@ -44,10 +44,10 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Upload a PDF, reorder pages, delete pages, and crop each page by dragging a selection box.
+                        Upload a PDF, reorder pages by dragging, and delete unwanted pages.
                     </p>
 
-                    <!-- Upload area as a field-group -->
+                    <!-- Upload area -->
                     <div class="field-group" style="margin-bottom:12px;">
                         <label for="fileInput" style="min-width:120px;">Select PDF</label>
                         <div class="drop-zone" id="dropZone">
@@ -63,10 +63,17 @@
                     <!-- Workspace (appears after upload) -->
                     <div id="workspace" style="display:none;">
 
-                        <!-- File info as a field-group -->
+                        <!-- File info -->
                         <div class="field-group" style="justify-content:space-between;margin:16px 0 12px;flex-wrap:wrap;gap:8px;">
                             <span id="fileName" style="font-weight:500;color:#1a5c3a;"></span>
                             <span id="pageCount" style="font-weight:500;color:#4a6b5a;"></span>
+                        </div>
+
+                        <!-- File name input -->
+                        <div class="field-group" style="margin:12px 0 16px;">
+                            <label for="outputFileName" style="min-width:120px;">File name</label>
+                            <input type="text" id="outputFileName" placeholder="edited" style="flex:1;padding:10px 14px;border:1px solid #ccc;border-radius:8px;font-size:1rem;background:#fff;min-width:160px;transition:border-color .2s;" />
+                            <span class="helper-text">.pdf (auto-added)</span>
                         </div>
 
                         <!-- Page grid -->
@@ -84,26 +91,6 @@
         </section>
 
         <div class="spacer"></div>
-
-        <!-- ===== CROP MODAL with visual crop ===== -->
-        <div class="modal-overlay" id="cropModal">
-            <div class="modal-box" style="max-width:700px;">
-                <h3>Crop Page <span id="modalPageNum"></span></h3>
-
-                <div style="position:relative;margin:12px 0;background:#fcfcfc;border:1px solid #e6e6e6;border-radius:8px;overflow:hidden;">
-                    <canvas id="cropCanvas" style="display:block;width:100%;height:auto;cursor:crosshair;"></canvas>
-                </div>
-
-                <div style="display:flex;gap:8px;justify-content:center;font-size:.8rem;color:#4a6b5a;margin:4px 0 12px;">
-                    <span>Drag on the image to select crop area</span>
-                </div>
-
-                <div class="modal-actions">
-                    <button class="btn btn-secondary" id="modalCancel">Cancel</button>
-                    <button class="btn" id="modalSave">Save Crop</button>
-                </div>
-            </div>
-        </div>
 
     </main>
 
@@ -144,25 +131,12 @@
             const downloadBtn = document.getElementById('downloadBtn');
             const resetBtn = document.getElementById('resetBtn');
             const errorMsg = document.getElementById('errorMsg');
-
-            const cropModal = document.getElementById('cropModal');
-            const modalPageNum = document.getElementById('modalPageNum');
-            const cropCanvas = document.getElementById('cropCanvas');
-            const modalCancel = document.getElementById('modalCancel');
-            const modalSave = document.getElementById('modalSave');
+            const outputFileName = document.getElementById('outputFileName');
 
             // ----- State -----
             let pdfDoc = null;
             let pageData = [];
-            let currentCropIndex = -1;
             let currentFile = null;
-
-            // Crop selection state
-            let isDrawing = false;
-            let startX = 0, startY = 0;
-            let endX = 0, endY = 0;
-            let cropRect = null; // {x, y, w, h} in canvas coordinates
-            let canvasImage = null; // ImageData or drawn image
 
             // ----- Error handling -----
             function showError(msg) {
@@ -211,30 +185,19 @@
                     const actions = document.createElement('div');
                     actions.className = 'page-actions';
 
-                    const cropBtn = document.createElement('button');
-                    cropBtn.className = 'btn-sm btn-crop';
-                    cropBtn.textContent = 'Crop';
-                    cropBtn.dataset.index = i;
-
                     const delBtn = document.createElement('button');
                     delBtn.className = 'btn-sm btn-delete';
                     delBtn.textContent = 'Delete';
                     delBtn.dataset.index = i;
 
-                    const badge = document.createElement('span');
-                    badge.className = 'crop-badge';
-                    badge.textContent = 'Cropped';
-
-                    actions.appendChild(cropBtn);
                     actions.appendChild(delBtn);
 
                     card.appendChild(thumbDiv);
                     card.appendChild(numSpan);
                     card.appendChild(actions);
-                    card.appendChild(badge);
 
                     pagesGrid.appendChild(card);
-                    pageData[i] = { pageNum: pageNum, crop: null }; // null means no crop
+                    pageData[i] = { pageNum: pageNum };
                 }
 
                 updatePageNumbers();
@@ -257,6 +220,10 @@
                 fileName.textContent = currentFile.name + ' (' + formatFileSize(currentFile.size) + ')';
                 pageCount.textContent = pdfDoc.numPages + ' pages';
                 hideError();
+
+                // Set default file name
+                const baseName = currentFile.name.replace(/\.pdf$/i, '');
+                outputFileName.value = baseName + '_edited';
             }
 
             function updatePageNumbers() {
@@ -344,207 +311,9 @@
                         pageCount.textContent = pageData.length + ' pages';
                     }
                 }
-
-                if (target.classList.contains('btn-crop')) {
-                    openCropModal(index);
-                }
             });
 
-            // ----- Crop Modal with visual crop -----
-            let cropCtx = null;
-            let cropImageData = null;
-            let cropCanvasWidth = 0, cropCanvasHeight = 0;
-
-            function openCropModal(index) {
-                currentCropIndex = index;
-                const data = pageData[index];
-                if (!data) return;
-                modalPageNum.textContent = '#' + (index + 1);
-
-                // Get the thumbnail canvas from the card
-                const card = pagesGrid.querySelectorAll('.page-card')[index];
-                const thumbCanvas = card.querySelector('.page-thumb canvas');
-                if (!thumbCanvas) return;
-
-                // Setup crop canvas
-                const rect = cropCanvas.parentElement.getBoundingClientRect();
-                const maxWidth = rect.width - 20; // padding
-                const scale = Math.min(1, maxWidth / thumbCanvas.width);
-                cropCanvas.width = thumbCanvas.width * scale;
-                cropCanvas.height = thumbCanvas.height * scale;
-                cropCanvasWidth = cropCanvas.width;
-                cropCanvasHeight = cropCanvas.height;
-                cropCtx = cropCanvas.getContext('2d');
-                cropCtx.drawImage(thumbCanvas, 0, 0, cropCanvas.width, cropCanvas.height);
-                cropImageData = cropCtx.getImageData(0, 0, cropCanvas.width, cropCanvas.height);
-
-                // If there is an existing crop, draw it
-                if (data.crop) {
-                    const c = data.crop;
-                    cropRect = {
-                        x: c.x * cropCanvas.width,
-                        y: c.y * cropCanvas.height,
-                        w: c.w * cropCanvas.width,
-                        h: c.h * cropCanvas.height
-                    };
-                } else {
-                    cropRect = null;
-                }
-
-                // Redraw with selection overlay
-                drawCropOverlay();
-
-                // Show modal
-                cropModal.classList.add('open');
-
-                // Mouse events for drawing
-                cropCanvas.onmousedown = startCrop;
-                cropCanvas.onmousemove = moveCrop;
-                cropCanvas.onmouseup = endCrop;
-                cropCanvas.onmouseleave = endCrop;
-
-                // Touch events for mobile
-                cropCanvas.ontouchstart = handleTouch(startCrop);
-                cropCanvas.ontouchmove = handleTouch(moveCrop);
-                cropCanvas.ontouchend = endCrop;
-            }
-
-            function handleTouch(fn) {
-                return function(e) {
-                    e.preventDefault();
-                    const touch = e.touches[0];
-                    const rect = cropCanvas.getBoundingClientRect();
-                    const mouseEvent = new MouseEvent('mousedown', {
-                        clientX: touch.clientX,
-                        clientY: touch.clientY
-                    });
-                    fn.call(cropCanvas, mouseEvent);
-                };
-            }
-
-            function startCrop(e) {
-                const rect = cropCanvas.getBoundingClientRect();
-                const scaleX = cropCanvas.width / rect.width;
-                const scaleY = cropCanvas.height / rect.height;
-                startX = (e.clientX - rect.left) * scaleX;
-                startY = (e.clientY - rect.top) * scaleY;
-                isDrawing = true;
-                cropRect = { x: startX, y: startY, w: 0, h: 0 };
-            }
-
-            function moveCrop(e) {
-                if (!isDrawing) return;
-                const rect = cropCanvas.getBoundingClientRect();
-                const scaleX = cropCanvas.width / rect.width;
-                const scaleY = cropCanvas.height / rect.height;
-                endX = (e.clientX - rect.left) * scaleX;
-                endY = (e.clientY - rect.top) * scaleY;
-
-                // Clamp
-                endX = Math.min(Math.max(endX, 0), cropCanvas.width);
-                endY = Math.min(Math.max(endY, 0), cropCanvas.height);
-
-                cropRect.x = Math.min(startX, endX);
-                cropRect.y = Math.min(startY, endY);
-                cropRect.w = Math.abs(endX - startX);
-                cropRect.h = Math.abs(endY - startY);
-
-                drawCropOverlay();
-            }
-
-            function endCrop() {
-                isDrawing = false;
-                // If rect is too small, ignore
-                if (cropRect && (cropRect.w < 5 || cropRect.h < 5)) {
-                    cropRect = null;
-                    drawCropOverlay();
-                }
-            }
-
-            function drawCropOverlay() {
-                if (!cropCtx) return;
-                // Redraw the original image
-                cropCtx.putImageData(cropImageData, 0, 0);
-
-                if (cropRect && cropRect.w > 0 && cropRect.h > 0) {
-                    // Draw semi-transparent overlay outside the crop area
-                    cropCtx.fillStyle = 'rgba(0,0,0,0.5)';
-                    cropCtx.fillRect(0, 0, cropCanvas.width, cropRect.y);
-                    cropCtx.fillRect(0, cropRect.y + cropRect.h, cropCanvas.width, cropCanvas.height - cropRect.y - cropRect.h);
-                    cropCtx.fillRect(0, cropRect.y, cropRect.x, cropRect.h);
-                    cropCtx.fillRect(cropRect.x + cropRect.w, cropRect.y, cropCanvas.width - cropRect.x - cropRect.w, cropRect.h);
-
-                    // Draw border
-                    cropCtx.strokeStyle = '#1a5c3a';
-                    cropCtx.lineWidth = 2;
-                    cropCtx.strokeRect(cropRect.x, cropRect.y, cropRect.w, cropRect.h);
-
-                    // Draw corner handles
-                    const handleSize = 8;
-                    cropCtx.fillStyle = '#1a5c3a';
-                    const corners = [
-                        [cropRect.x, cropRect.y],
-                        [cropRect.x + cropRect.w, cropRect.y],
-                        [cropRect.x, cropRect.y + cropRect.h],
-                        [cropRect.x + cropRect.w, cropRect.y + cropRect.h]
-                    ];
-                    corners.forEach(([cx, cy]) => {
-                        cropCtx.fillRect(cx - handleSize/2, cy - handleSize/2, handleSize, handleSize);
-                    });
-                }
-            }
-
-            // ----- Modal controls -----
-            function closeModal() {
-                cropModal.classList.remove('open');
-                currentCropIndex = -1;
-                cropRect = null;
-                // Remove event listeners
-                cropCanvas.onmousedown = null;
-                cropCanvas.onmousemove = null;
-                cropCanvas.onmouseup = null;
-                cropCanvas.onmouseleave = null;
-                cropCanvas.ontouchstart = null;
-                cropCanvas.ontouchmove = null;
-                cropCanvas.ontouchend = null;
-            }
-
-            modalCancel.addEventListener('click', closeModal);
-
-            cropModal.addEventListener('click', function(e) {
-                if (e.target === cropModal) closeModal();
-            });
-
-            modalSave.addEventListener('click', function() {
-                if (currentCropIndex === -1) return;
-                const data = pageData[currentCropIndex];
-                if (!data) return;
-
-                if (cropRect && cropRect.w > 5 && cropRect.h > 5) {
-                    // Store as percentages of canvas size
-                    data.crop = {
-                        x: cropRect.x / cropCanvasWidth,
-                        y: cropRect.y / cropCanvasHeight,
-                        w: cropRect.w / cropCanvasWidth,
-                        h: cropRect.h / cropCanvasHeight
-                    };
-                } else {
-                    data.crop = null;
-                }
-
-                // Update badge
-                const cards = pagesGrid.querySelectorAll('.page-card');
-                const card = cards[currentCropIndex];
-                if (card) {
-                    const badge = card.querySelector('.crop-badge');
-                    if (badge) {
-                        badge.classList.toggle('show', data.crop !== null);
-                    }
-                }
-                closeModal();
-            });
-
-            // ----- Download (Apply & Auto-Download) -----
+            // ----- Download -----
             downloadBtn.addEventListener('click', async function() {
                 if (!pdfDoc || pageData.length === 0) {
                     showError('Please upload a PDF file first.');
@@ -560,27 +329,22 @@
                     for (let i = 0; i < pageData.length; i++) {
                         const data = pageData[i];
                         const [srcPage] = await newDoc.copyPages(srcDoc, [data.pageNum - 1]);
-                        const crop = data.crop;
-                        if (crop) {
-                            const { width, height } = srcPage.getSize();
-                            const left = crop.x * width;
-                            const bottom = (1 - crop.y - crop.h) * height; // pdf-lib uses bottom-left origin
-                            const newWidth = crop.w * width;
-                            const newHeight = crop.h * height;
-                            if (newWidth > 0 && newHeight > 0) {
-                                srcPage.setCropBox(left, bottom, left + newWidth, bottom + newHeight);
-                                srcPage.setMediaBox(left, bottom, left + newWidth, bottom + newHeight);
-                            }
-                        }
                         newDoc.addPage(srcPage);
                     }
 
                     const pdfBytes = await newDoc.save();
                     const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                     const url = URL.createObjectURL(blob);
+
+                    // Get file name
+                    let name = outputFileName.value.trim() || 'edited';
+                    if (!name.toLowerCase().endsWith('.pdf')) {
+                        name += '.pdf';
+                    }
+
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'edited.pdf';
+                    a.download = name;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -602,6 +366,7 @@
                 workspace.style.display = 'none';
                 hideError();
                 dropZone.classList.remove('dragover');
+                outputFileName.value = '';
             });
 
         })();
