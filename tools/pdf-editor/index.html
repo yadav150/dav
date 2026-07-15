@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Editor · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+            <button class="hamburger"
+                    aria-expanded="false"
+                    aria-controls="primary-nav"
+                    aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="../../about/index.html">About</a></li>
+                <li><a href="../../contact/index.html">Contact</a></li>
+                <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="../../terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section pdf-tool" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">PDF Editor</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Upload a PDF, reorder, delete, and crop pages. All processing is done in your browser – no files are uploaded to any server.
+                    </p>
+
+                    <!-- Upload area -->
+                    <div class="drop-zone" id="dropZone">
+                        <div class="drop-icon">📄</div>
+                        <div class="drop-text"><strong>Drop your PDF here</strong> or click to browse</div>
+                        <input type="file" id="fileInput" accept=".pdf" />
+                    </div>
+
+                    <!-- Toolbar (appears after upload) -->
+                    <div class="toolbar" id="toolbar" style="display:none;">
+                        <div class="file-info">
+                            <span id="fileName"></span>
+                            <span id="pageCount"></span>
+                        </div>
+                        <button class="btn" id="applyBtn">Apply &amp; Auto-Download</button>
+                    </div>
+
+                    <!-- Page grid -->
+                    <div class="pages-grid" id="pagesGrid"></div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+        <!-- ===== CROP MODAL ===== -->
+        <div class="modal-overlay" id="cropModal">
+            <div class="modal-box">
+                <h3>✂️ Crop Page <span id="modalPageNum"></span></h3>
+                <div class="field-group">
+                    <label for="cropTop">Top (%)</label>
+                    <input type="number" id="cropTop" min="0" max="100" value="0" step="1" />
+                </div>
+                <div class="field-group">
+                    <label for="cropBottom">Bottom (%)</label>
+                    <input type="number" id="cropBottom" min="0" max="100" value="0" step="1" />
+                </div>
+                <div class="field-group">
+                    <label for="cropLeft">Left (%)</label>
+                    <input type="number" id="cropLeft" min="0" max="100" value="0" step="1" />
+                </div>
+                <div class="field-group">
+                    <label for="cropRight">Right (%)</label>
+                    <input type="number" id="cropRight" min="0" max="100" value="0" step="1" />
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="modalCancel">Cancel</button>
+                    <button class="btn" id="modalSave">Save Crop</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="../../about/index.html">About</a>
+                <a href="../../contact/index.html">Contact</a>
+                <a href="../../privacy-policy/index.html">Privacy Policy</a>
+                <a href="../../disclaimer/index.html">Disclaimer</a>
+                <a href="../../terms/index.html">Terms and Conditions</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== EXTERNAL LIBRARIES ===== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const toolbar = document.getElementById('toolbar');
+            const fileName = document.getElementById('fileName');
+            const pageCount = document.getElementById('pageCount');
+            const pagesGrid = document.getElementById('pagesGrid');
+            const applyBtn = document.getElementById('applyBtn');
+
+            const cropModal = document.getElementById('cropModal');
+            const modalPageNum = document.getElementById('modalPageNum');
+            const cropTop = document.getElementById('cropTop');
+            const cropBottom = document.getElementById('cropBottom');
+            const cropLeft = document.getElementById('cropLeft');
+            const cropRight = document.getElementById('cropRight');
+            const modalCancel = document.getElementById('modalCancel');
+            const modalSave = document.getElementById('modalSave');
+
+            let pdfDoc = null;
+            let pageData = [];
+            let currentCropIndex = -1;
+
+            function formatFileSize(bytes) {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / 1048576).toFixed(1) + ' MB';
+            }
+
+            async function renderThumbnails() {
+                pagesGrid.innerHTML = '';
+                for (let i = 0; i < pdfDoc.numPages; i++) {
+                    const pageNum = i + 1;
+                    const page = await pdfDoc.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: 0.5 });
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                    const card = document.createElement('div');
+                    card.className = 'page-card';
+                    card.dataset.index = i;
+
+                    const thumbDiv = document.createElement('div');
+                    thumbDiv.className = 'page-thumb';
+                    thumbDiv.appendChild(canvas);
+
+                    const numSpan = document.createElement('span');
+                    numSpan.className = 'page-number';
+                    numSpan.textContent = `Page ${i+1}`;
+
+                    const actions = document.createElement('div');
+                    actions.className = 'page-actions';
+
+                    const cropBtn = document.createElement('button');
+                    cropBtn.className = 'btn-sm btn-crop';
+                    cropBtn.textContent = 'Crop';
+                    cropBtn.dataset.index = i;
+
+                    const delBtn = document.createElement('button');
+                    delBtn.className = 'btn-sm btn-delete';
+                    delBtn.textContent = 'Delete';
+                    delBtn.dataset.index = i;
+
+                    const badge = document.createElement('span');
+                    badge.className = 'crop-badge';
+                    badge.textContent = '✂️ Cropped';
+
+                    actions.appendChild(cropBtn);
+                    actions.appendChild(delBtn);
+
+                    card.appendChild(thumbDiv);
+                    card.appendChild(numSpan);
+                    card.appendChild(actions);
+                    card.appendChild(badge);
+
+                    pagesGrid.appendChild(card);
+                    pageData[i] = { pageNum: pageNum, crop: { top: 0, bottom: 0, left: 0, right: 0 } };
+                }
+
+                updatePageNumbers();
+
+                Sortable.create(pagesGrid, {
+                    animation: 150,
+                    handle: '.page-card',
+                    onEnd: function(evt) {
+                        const [moved] = pageData.splice(evt.oldIndex, 1);
+                        pageData.splice(evt.newIndex, 0, moved);
+                        updatePageNumbers();
+                    }
+                });
+
+                toolbar.style.display = 'flex';
+                fileName.textContent = `📄 ${fileInput.files[0].name} (${formatFileSize(fileInput.files[0].size)})`;
+                pageCount.textContent = `${pdfDoc.numPages} pages`;
+            }
+
+            function updatePageNumbers() {
+                const cards = pagesGrid.querySelectorAll('.page-card');
+                cards.forEach((card, idx) => {
+                    const numSpan = card.querySelector('.page-number');
+                    if (numSpan) numSpan.textContent = `Page ${idx+1}`;
+                    card.dataset.index = idx;
+                });
+            }
+
+            async function loadPDF(file) {
+                const arrayBuffer = await file.arrayBuffer();
+                const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+                pdfDoc = await loadingTask.promise;
+                pageData = [];
+                await renderThumbnails();
+            }
+
+            function handleFile(file) {
+                if (!file || file.type !== 'application/pdf') {
+                    alert('Please select a valid PDF file.');
+                    return;
+                }
+                loadPDF(file);
+            }
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+            });
+            dropZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
+            });
+
+            pagesGrid.addEventListener('click', (e) => {
+                const target = e.target.closest('button');
+                if (!target) return;
+                const card = target.closest('.page-card');
+                if (!card) return;
+                const index = parseInt(card.dataset.index);
+
+                if (target.classList.contains('btn-delete')) {
+                    pageData.splice(index, 1);
+                    card.remove();
+                    updatePageNumbers();
+                    if (pageData.length === 0) {
+                        toolbar.style.display = 'none';
+                        pagesGrid.innerHTML = '';
+                    } else {
+                        pageCount.textContent = `${pageData.length} pages`;
+                    }
+                }
+
+                if (target.classList.contains('btn-crop')) {
+                    currentCropIndex = index;
+                    const data = pageData[index];
+                    if (data) {
+                        modalPageNum.textContent = `#${index+1}`;
+                        cropTop.value = data.crop.top || 0;
+                        cropBottom.value = data.crop.bottom || 0;
+                        cropLeft.value = data.crop.left || 0;
+                        cropRight.value = data.crop.right || 0;
+                        cropModal.classList.add('open');
+                    }
+                }
+            });
+
+            function closeModal() {
+                cropModal.classList.remove('open');
+                currentCropIndex = -1;
+            }
+
+            modalCancel.addEventListener('click', closeModal);
+            cropModal.addEventListener('click', (e) => {
+                if (e.target === cropModal) closeModal();
+            });
+
+            modalSave.addEventListener('click', () => {
+                if (currentCropIndex === -1) return;
+                const data = pageData[currentCropIndex];
+                if (!data) return;
+                data.crop.top = parseFloat(cropTop.value) || 0;
+                data.crop.bottom = parseFloat(cropBottom.value) || 0;
+                data.crop.left = parseFloat(cropLeft.value) || 0;
+                data.crop.right = parseFloat(cropRight.value) || 0;
+
+                const cards = pagesGrid.querySelectorAll('.page-card');
+                const card = cards[currentCropIndex];
+                if (card) {
+                    const badge = card.querySelector('.crop-badge');
+                    if (badge) {
+                        const hasCrop = data.crop.top > 0 || data.crop.bottom > 0 || data.crop.left > 0 || data.crop.right > 0;
+                        badge.classList.toggle('show', hasCrop);
+                    }
+                }
+                closeModal();
+            });
+
+            applyBtn.addEventListener('click', async () => {
+                if (pageData.length === 0) {
+                    alert('No pages to process. Please upload a PDF.');
+                    return;
+                }
+
+                const { PDFDocument } = PDFLib;
+                const existingPdfBytes = await fileInput.files[0].arrayBuffer();
+                const srcDoc = await PDFDocument.load(existingPdfBytes);
+                const newDoc = await PDFDocument.create();
+
+                for (let i = 0; i < pageData.length; i++) {
+                    const data = pageData[i];
+                    const [srcPage] = await newDoc.copyPages(srcDoc, [data.pageNum - 1]);
+                    const crop = data.crop;
+                    const { width, height } = srcPage.getSize();
+                    const left = (crop.left / 100) * width;
+                    const right = (crop.right / 100) * width;
+                    const top = (crop.top / 100) * height;
+                    const bottom = (crop.bottom / 100) * height;
+                    const newWidth = width - left - right;
+                    const newHeight = height - top - bottom;
+                    if (newWidth > 0 && newHeight > 0) {
+                        srcPage.setCropBox(left, bottom, left + newWidth, bottom + newHeight);
+                        srcPage.setMediaBox(left, bottom, left + newWidth, bottom + newHeight);
+                    }
+                    newDoc.addPage(srcPage);
+                }
+
+                const pdfBytes = await newDoc.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'edited.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
