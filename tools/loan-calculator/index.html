@@ -65,14 +65,14 @@
                             <span class="range-value" id="interestVal">8.5%</span>
                         </div>
 
-                        <!-- ===== TENURE with toggle ===== -->
-                        <div class="field-group">
+                        <!-- ===== TENURE (FIXED - NO INLINE STYLES) ===== -->
+                        <div class="field-group tenure-group">
                             <label for="tenure">Tenure</label>
-                            <div style="display:flex;flex:1 1 200px;min-width:160px;gap:8px;flex-wrap:wrap;">
-                                <input type="number" id="tenure" step="1" min="1" max="600" value="60" style="flex:1;min-width:80px;" />
+                            <div class="tenure-control">
+                                <input type="number" id="tenure" step="1" min="1" max="600" value="60" />
                                 <button type="button" class="tenure-toggle" id="tenureToggle">Months</button>
                             </div>
-                            <input type="range" id="tenureRange" min="1" max="600" step="1" value="60" class="loan-range" style="flex:1 1 200px;" />
+                            <input type="range" id="tenureRange" min="1" max="600" step="1" value="60" class="loan-range" />
                             <span class="range-value" id="tenureVal">60 Months</span>
                         </div>
 
@@ -179,7 +179,7 @@
             const chartCanvas = document.getElementById('loanChart');
 
             let chartInstance = null;
-            let tenureUnit = 'months'; // 'months' or 'years'
+            let tenureUnit = 'months';
 
             // ===== SYNC SLIDERS =====
             function syncRange(input, range, display, formatFn) {
@@ -198,7 +198,6 @@
             syncRange(principal, principalRange, principalVal, function(v) { return '₹' + Number(v).toLocaleString(); });
             syncRange(interestRate, interestRange, interestVal, function(v) { return v + '%'; });
 
-            // Tenure sync with unit-aware formatting
             function updateTenureDisplay(val) {
                 const unit = tenureUnit === 'months' ? 'Months' : 'Years';
                 const displayVal = tenureUnit === 'months' ? val : (val / 12).toFixed(1);
@@ -220,7 +219,6 @@
             tenureToggle.addEventListener('click', function() {
                 const currentVal = parseInt(tenure.value) || 1;
                 if (tenureUnit === 'months') {
-                    // Switch to years: convert months to years (rounded to 1 decimal)
                     const years = currentVal / 12;
                     const newVal = Math.max(1, Math.round(years * 10) / 10);
                     tenureUnit = 'years';
@@ -232,7 +230,6 @@
                     tenureRange.max = 600;
                     updateTenureDisplay(rangeVal);
                 } else {
-                    // Switch to months: convert years to months
                     const months = Math.round(currentVal * 12);
                     const newVal = Math.max(1, months);
                     tenureUnit = 'months';
@@ -245,7 +242,6 @@
                 }
             });
 
-            // Initial display
             updateTenureDisplay(60);
 
             // ===== HELPERS =====
@@ -278,7 +274,6 @@
                 if (isNaN(rate) || rate <= 0) { showError('Please enter a valid interest rate.'); return; }
                 if (isNaN(tenureVal) || tenureVal <= 0) { showError('Please enter a valid tenure.'); return; }
 
-                // Convert tenure to months if in years
                 let months;
                 if (tenureUnit === 'years') {
                     months = Math.round(tenureVal * 12);
@@ -289,7 +284,6 @@
 
                 const monthlyRate = rate / 12 / 100;
 
-                // Standard EMI formula
                 let emi;
                 if (monthlyRate === 0) {
                     emi = P / months;
@@ -297,18 +291,15 @@
                     emi = P * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
                 }
 
-                // Total payment without prepayment
                 let totalPayment = emi * months;
                 let totalInterestPaid = totalPayment - P;
 
-                // Apply prepayment (simplified: reduce principal by prepay at halfway, recalc)
                 let adjustedEmi = emi;
                 let adjustedTotalInterest = totalInterestPaid;
                 let adjustedTotalPayment = totalPayment;
                 let prepayApplied = false;
 
                 if (prepay > 0 && prepay < P) {
-                    // Simple simulation: at half tenure, reduce principal by prepay, then recalc remaining EMI
                     const halfMonths = Math.floor(months / 2);
                     const remainingPrincipal = P - prepay;
                     if (remainingPrincipal > 0) {
@@ -320,9 +311,6 @@
                             newEmi = remainingPrincipal * monthlyRate * Math.pow(1 + monthlyRate, remainingMonths) /
                                 (Math.pow(1 + monthlyRate, remainingMonths) - 1);
                         }
-                        // Recalculate total interest
-                        const interestFirstHalf = (emi * halfMonths) - (P * (halfMonths / months)); // rough
-                        // More accurate: total interest without prepay minus saved interest
                         const savedInterest = (emi * months - P) - (emi * halfMonths + newEmi * remainingMonths - P);
                         adjustedTotalInterest = totalInterestPaid - savedInterest;
                         adjustedTotalPayment = P + adjustedTotalInterest;
@@ -331,24 +319,17 @@
                     }
                 }
 
-                // Add processing fee to total cost
                 const totalWithFee = adjustedTotalPayment + fee;
 
-                // Display results
                 emiValue.textContent = formatCurrency(adjustedEmi);
                 principalResult.textContent = formatCurrency(P);
                 totalInterest.textContent = formatCurrency(adjustedTotalInterest);
                 totalAmount.textContent = formatCurrency(totalWithFee);
 
-                let detail = `EMI: ${formatCurrency(adjustedEmi)} · Tenure: ${months} months`;
-                if (fee > 0) detail += ` · Processing Fee: ${formatCurrency(fee)}`;
-                if (prepayApplied) detail += ` · Prepayment applied (saved interest)`;
+                let detail = 'EMI: ' + formatCurrency(adjustedEmi) + ' · Tenure: ' + months + ' months';
+                if (fee > 0) detail += ' · Processing Fee: ' + formatCurrency(fee);
+                if (prepayApplied) detail += ' · Prepayment applied (saved interest)';
                 loanDetail.textContent = detail;
-
-                // Update chart
-                const principalData = P;
-                const interestData = adjustedTotalInterest;
-                const feeData = fee;
 
                 if (chartInstance) chartInstance.destroy();
 
@@ -358,7 +339,7 @@
                     data: {
                         labels: ['Principal', 'Interest', 'Processing Fee'],
                         datasets: [{
-                            data: [principalData, interestData, feeData],
+                            data: [P, adjustedTotalInterest, fee],
                             backgroundColor: ['#1a5c3a', '#d4e4dc', '#e67e22'],
                             borderColor: ['#fff', '#fff', '#fff'],
                             borderWidth: 2
@@ -383,7 +364,6 @@
                 resultDiv.style.display = 'block';
             }
 
-            // ===== EVENT LISTENERS =====
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 calculateLoan();
@@ -402,7 +382,6 @@
                     principalVal.textContent = '₹5,00,000';
                     interestVal.textContent = '8.5%';
                     updateTenureDisplay(60);
-                    // Reset tenure unit to months if changed
                     if (tenureUnit !== 'months') {
                         tenureUnit = 'months';
                         tenureToggle.textContent = 'Months';
@@ -415,7 +394,6 @@
                 }, 10);
             });
 
-            // Clear error on input
             document.querySelectorAll('#loanForm input').forEach(function(el) {
                 el.addEventListener('input', hideError);
             });
