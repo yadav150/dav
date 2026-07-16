@@ -110,9 +110,8 @@
 
 })();
 // ============================================================
-//  "Explore More Tools" - Auto Recommendation
-//  Exactly 4 random tools, responsive grid, full width
-//  No extra CSS required – all styles inline
+//  "Explore More Tools" - Full Width, Responsive, 4 Cards
+//  Parent container spans full content width
 // ============================================================
 (function() {
     'use strict';
@@ -205,18 +204,21 @@
         if (available.length <= count) return available;
 
         // Shuffle
-        for (var i = available.length - 1; i > 0; i--) {
+        var shuffled = available.slice();
+        for (var i = shuffled.length - 1; i > 0; i--) {
             var j = Math.floor(Math.random() * (i + 1));
-            var temp = available[i];
-            available[i] = available[j];
-            available[j] = temp;
+            var temp = shuffled[i];
+            shuffled[i] = shuffled[j];
+            shuffled[j] = temp;
         }
-        return available.slice(0, count);
+        return shuffled.slice(0, count);
     }
 
     // ----- Build HTML -----
     function buildMoreToolsHTML() {
         var currentPath = getCurrentPath();
+
+        // Only show on tool pages
         if (currentPath.indexOf('/tools/') === -1) return null;
 
         var randomTools = getRandomTools(currentPath, 4);
@@ -224,11 +226,19 @@
 
         var html = '';
         html += '<div class="spacer" style="height:24px;"></div>';
-        html += '<section class="section tools-section more-tools-section" style="max-width:1200px;margin:0 auto;padding:0 16px;overflow:visible;">';
-        html += '  <div class="section-title-bar more-tools-title" style="background:#1e1e1e;padding:6px 18px;border-radius:8px 8px 0 0;">';
+
+        // SECTION - full width, matches your site's container
+        html += '<section class="section tools-section more-tools-section" style="max-width:1200px;margin:0 auto;padding:0 16px;display:block;width:100%;box-sizing:border-box;">';
+
+        // BLACK TITLE BAR - spans full container width
+        html += '  <div class="section-title-bar more-tools-title" style="background:#1e1e1e;padding:6px 18px;border-radius:8px 8px 0 0;display:block;width:100%;box-sizing:border-box;">';
         html += '    <h2 style="color:#fff;font-size:1.1rem;font-weight:600;margin:0;letter-spacing:-0.2px;">Explore More Tools</h2>';
         html += '  </div>';
-        html += '  <div class="section-body" style="border-radius:0 0 8px 8px;padding:16px 16px;width:100%;box-sizing:border-box;">';
+
+        // WHITE BODY - spans full container width
+        html += '  <div class="section-body" style="border-radius:0 0 8px 8px;padding:16px 16px;display:block;width:100%;box-sizing:border-box;background:#fff;border:1px solid #e6e6e6;border-top:0;">';
+
+        // GRID - full width, responsive, auto-fill
         html += '    <div class="more-tools-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:12px;width:100%;box-sizing:border-box;">';
 
         for (var i = 0; i < randomTools.length; i++) {
@@ -297,6 +307,7 @@
         }
     }
 
+    // ----- Run when page is ready -----
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', insertMoreTools);
     } else {
