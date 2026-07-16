@@ -315,32 +315,4 @@
     }
 
 })();
-// ===== DARK MODE TOGGLE (Session Only) =====
-(function() {
-    'use strict';
-
-    var toggleBtn = document.getElementById('themeToggle');
-    if (!toggleBtn) return;
-
-    // Check sessionStorage for current session preference
-    var sessionTheme = sessionStorage.getItem('theme');
-
-    // Apply theme if set in this session
-    if (sessionTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-    }
-
-    // Toggle on click
-    toggleBtn.addEventListener('click', function() {
-        document.body.classList.toggle('dark-mode');
-        var isDarkNow = document.body.classList.contains('dark-mode');
-
-        // Store in sessionStorage only (clears when tab is closed)
-        if (isDarkNow) {
-            sessionStorage.setItem('theme', 'dark');
-        } else {
-            sessionStorage.removeItem('theme');
-        }
-    });
-
-})();
+(function(){'use strict';var t=document.getElementById('themeToggle');if(!t)return;var s=sessionStorage.getItem('theme');if(s==='dark'){document.body.classList.add('dark-mode')}t.addEventListener('click',function(){document.body.classList.toggle('dark-mode');var n=document.body.classList.contains('dark-mode');if(n){sessionStorage.setItem('theme','dark')}else{sessionStorage.removeItem('theme')}});})();
