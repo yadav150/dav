@@ -109,3 +109,207 @@
     }
 
 })();
+// ============================================================
+//  "Explore More Tools" - Auto Recommendation Module
+//  Shows 4 random tool cards on every tool page
+//  Black title bar, fade-in on scroll, 4-column grid
+// ============================================================
+(function() {
+    'use strict';
+
+    // ----- Tool List (Add new tools here) -----
+    var tools = [
+        {
+            name: 'Age Calculator',
+            desc: 'Calculate exact age in years, months and days',
+            path: 'tools/age-calculator/index.html'
+        },
+        {
+            name: 'SIP Calculator',
+            desc: 'Plan your investments with our comprehensive SIP calculator',
+            path: 'tools/sip-calculator/index.html'
+        },
+        {
+            name: 'PDF Editor',
+            desc: 'Reorder and delete pages from your PDF files',
+            path: 'tools/pdf-editor/index.html'
+        },
+        {
+            name: 'Image Resizer',
+            desc: 'Resize, compress, and convert images to JPG format',
+            path: 'tools/image-resizer/index.html'
+        },
+        {
+            name: 'Text Counter',
+            desc: 'Count characters, words, sentences and paragraphs',
+            path: 'tools/text-counter/index.html'
+        },
+        {
+            name: 'Unit Converter',
+            desc: 'Convert length, mass, volume and temperature',
+            path: 'tools/unit-converter/index.html'
+        },
+        {
+            name: 'Password Generator',
+            desc: 'Generate strong and secure random passwords',
+            path: 'tools/password-generator/index.html'
+        },
+        {
+            name: 'QR Generator',
+            desc: 'Create QR codes from any text or URL',
+            path: 'tools/qr-generator/index.html'
+        },
+        {
+            name: 'GST Calculator',
+            desc: 'Calculate GST amount, CGST/SGST or IGST breakdown',
+            path: 'tools/gst-calculator/index.html'
+        },
+        {
+            name: 'Number Converter',
+            desc: 'Convert between binary, octal, decimal and hex',
+            path: 'tools/number-converter/index.html'
+        },
+        {
+            name: 'Percentage Calculator',
+            desc: 'Calculate percentages quickly and accurately',
+            path: 'tools/percentage-calculator/index.html'
+        },
+        {
+            name: 'BMI Calculator',
+            desc: 'Calculate body mass index from height and weight',
+            path: 'tools/bmi-calculator/index.html'
+        },
+        {
+            name: 'Loan Calculator',
+            desc: 'Estimate monthly payments and total interest',
+            path: 'tools/loan-calculator/index.html'
+        },
+        {
+            name: 'Accessibility Tool',
+            desc: 'Voice-to-text, font size controls, and contrast modes',
+            path: 'tools/accessibility-tool/index.html'
+        }
+    ];
+
+    // ----- Get current page path (excluding "dav/" prefix if any) -----
+    function getCurrentPath() {
+        var path = window.location.pathname.replace(/^\/+/, '');
+        if (path.indexOf('dav/') === 0) {
+            path = path.substring(4);
+        }
+        return path;
+    }
+
+    // ----- Get 4 random tools (excluding current page) -----
+    function getRandomTools(currentPath, count) {
+        var normalizedCurrent = currentPath.replace(/\/index\.html$/, '') + '/index.html';
+        var available = tools.filter(function(t) {
+            return t.path !== normalizedCurrent;
+        });
+
+        if (available.length <= count) {
+            return available;
+        }
+
+        // Fisher-Yates shuffle
+        var shuffled = available.slice();
+        for (var i = shuffled.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = shuffled[i];
+            shuffled[i] = shuffled[j];
+            shuffled[j] = temp;
+        }
+
+        return shuffled.slice(0, count);
+    }
+
+    // ----- Build "Explore More Tools" HTML -----
+    function buildMoreToolsHTML() {
+        var currentPath = getCurrentPath();
+
+        // Only show on tool pages (path contains "tools/")
+        if (currentPath.indexOf('tools/') !== 0) {
+            return null;
+        }
+
+        var randomTools = getRandomTools(currentPath, 4);
+
+        if (randomTools.length === 0) {
+            return null;
+        }
+
+        var html = '';
+        // Add a spacer for proper separation from the tool area above
+        html += '<div class="spacer" style="height:28px;"></div>';
+        html += '<section class="section tools-section more-tools-section" aria-labelledby="more-tools-heading">';
+        // Black title bar with reduced padding
+        html += '    <div class="section-title-bar more-tools-title" style="background:#1e1e1e;padding:6px 18px;border-radius:8px 8px 0 0;">';
+        html += '        <h2 id="more-tools-heading" style="color:#fff;font-size:1.1rem;font-weight:600;margin:0;letter-spacing:-0.2px;">Explore More Tools</h2>';
+        html += '    </div>';
+        html += '    <div class="section-body" style="border-radius:0 0 8px 8px;">';
+        html += '        <div class="tools-grid" role="list" style="grid-template-columns:repeat(4,1fr);">';
+
+        for (var i = 0; i < randomTools.length; i++) {
+            var tool = randomTools[i];
+            html += '            <a href="' + tool.path + '" class="tool-card" role="listitem">';
+            html += '                <span class="tool-name">' + tool.name + '</span>';
+            html += '                <span class="tool-desc">' + tool.desc + '</span>';
+            html += '            </a>';
+        }
+
+        html += '        </div>';
+        html += '    </div>';
+        html += '</section>';
+        html += '<div class="spacer"></div>';
+
+        return html;
+    }
+
+    // ----- Insert "Explore More Tools" before footer -----
+    function insertMoreTools() {
+        var html = buildMoreToolsHTML();
+        if (!html) return;
+
+        var footer = document.querySelector('.site-footer');
+        if (!footer) return;
+
+        var temp = document.createElement('div');
+        temp.innerHTML = html;
+
+        while (temp.children.length > 0) {
+            footer.parentNode.insertBefore(temp.children[0], footer);
+        }
+
+        // ----- Fade-in on scroll using Intersection Observer -----
+        var moreSection = document.querySelector('.more-tools-section');
+        if (moreSection) {
+            // Start with opacity 0 and a slight translate
+            moreSection.style.opacity = '0';
+            moreSection.style.transform = 'translateY(20px)';
+            moreSection.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            observer.observe(moreSection);
+        }
+    }
+
+    // ----- Run when page is ready -----
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', insertMoreTools);
+    } else {
+        insertMoreTools();
+    }
+
+})();
