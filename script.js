@@ -111,83 +111,82 @@
 })();
 // ============================================================
 //  "Explore More Tools" - Auto Recommendation Module
-//  Shows 4 random tool cards on every tool page
-//  Black title bar, fade-in on scroll, responsive grid
+//  Shows 4 random tool cards with SVG icons
+//  Responsive grid: 1 → 2 → 3 → 4 columns
 // ============================================================
 (function() {
     'use strict';
 
-    // ----- Tool List (Add new tools here) -----
-    // ⚠️ IMPORTANT: Use ABSOLUTE paths from the root (starting with /dav/)
+    // ----- Tool List with SVG Icons (short names) -----
     var tools = [
         {
-            name: 'Age Calculator',
-            desc: 'Calculate exact age in years, months and days',
+            name: 'Age',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
             path: '/dav/tools/age-calculator/index.html'
         },
         {
-            name: 'SIP Calculator',
-            desc: 'Plan your investments with our comprehensive SIP calculator',
+            name: 'SIP',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
             path: '/dav/tools/sip-calculator/index.html'
         },
         {
-            name: 'PDF Editor',
-            desc: 'Reorder and delete pages from your PDF files',
+            name: 'PDF',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>',
             path: '/dav/tools/pdf-editor/index.html'
         },
         {
-            name: 'Image Resizer',
-            desc: 'Resize, compress, and convert images to JPG format',
+            name: 'Image',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
             path: '/dav/tools/image-resizer/index.html'
         },
         {
-            name: 'Text Counter',
-            desc: 'Count characters, words, sentences and paragraphs',
+            name: 'Text',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>',
             path: '/dav/tools/text-counter/index.html'
         },
         {
-            name: 'Unit Converter',
-            desc: 'Convert length, mass, volume and temperature',
+            name: 'Unit',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
             path: '/dav/tools/unit-converter/index.html'
         },
         {
-            name: 'Password Generator',
-            desc: 'Generate strong and secure random passwords',
+            name: 'Pass',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
             path: '/dav/tools/password-generator/index.html'
         },
         {
-            name: 'QR Generator',
-            desc: 'Create QR codes from any text or URL',
+            name: 'QR',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><line x1="14" y1="14" x2="14" y2="21"/><line x1="17" y1="14" x2="17" y2="21"/><line x1="14" y1="17" x2="21" y2="17"/></svg>',
             path: '/dav/tools/qr-generator/index.html'
         },
         {
-            name: 'GST Calculator',
-            desc: 'Calculate GST amount, CGST/SGST or IGST breakdown',
+            name: 'GST',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
             path: '/dav/tools/gst-calculator/index.html'
         },
         {
-            name: 'Number Converter',
-            desc: 'Convert between binary, octal, decimal and hex',
+            name: 'Base',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
             path: '/dav/tools/number-converter/index.html'
         },
         {
-            name: 'Percentage Calculator',
-            desc: 'Calculate percentages quickly and accurately',
+            name: 'Percent',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><line x1="5" y1="5" x2="19" y2="19"/></svg>',
             path: '/dav/tools/percentage-calculator/index.html'
         },
         {
-            name: 'BMI Calculator',
-            desc: 'Calculate body mass index from height and weight',
+            name: 'BMI',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><line x1="8" y1="6" x2="8" y2="18"/><line x1="12" y1="6" x2="12" y2="18"/><line x1="16" y1="6" x2="16" y2="18"/></svg>',
             path: '/dav/tools/bmi-calculator/index.html'
         },
         {
-            name: 'Loan Calculator',
-            desc: 'Estimate monthly payments and total interest',
+            name: 'Loan',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
             path: '/dav/tools/loan-calculator/index.html'
         },
         {
-            name: 'Accessibility Tool',
-            desc: 'Voice-to-text, font size controls, and contrast modes',
+            name: 'Access',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
             path: '/dav/tools/accessibility-tool/index.html'
         }
     ];
@@ -207,7 +206,6 @@
             return available;
         }
 
-        // Fisher-Yates shuffle
         var shuffled = available.slice();
         for (var i = shuffled.length - 1; i > 0; i--) {
             var j = Math.floor(Math.random() * (i + 1));
@@ -219,11 +217,10 @@
         return shuffled.slice(0, count);
     }
 
-    // ----- Build "Explore More Tools" HTML -----
+    // ----- Build "More Tools" HTML -----
     function buildMoreToolsHTML() {
         var currentPath = getCurrentPath();
 
-        // Only show on tool pages (path contains "/tools/")
         if (currentPath.indexOf('/tools/') === -1) {
             return null;
         }
@@ -235,21 +232,19 @@
         }
 
         var html = '';
-        // Spacer for proper separation
-        html += '<div class="spacer" style="height:28px;"></div>';
+        html += '<div class="spacer" style="height:24px;"></div>';
         html += '<section class="section tools-section more-tools-section" aria-labelledby="more-tools-heading" style="max-width:1200px;margin:0 auto;padding:0 16px;overflow:hidden;">';
-        // Black title bar with reduced padding
-        html += '    <div class="section-title-bar more-tools-title" style="background:#1e1e1e;padding:6px 18px;border-radius:8px 8px 0 0;">';
-        html += '        <h2 id="more-tools-heading" style="color:#fff;font-size:1.1rem;font-weight:600;margin:0;letter-spacing:-0.2px;">Explore More Tools</h2>';
+        html += '    <div class="section-title-bar more-tools-title" style="background:#1e1e1e;padding:4px 16px;border-radius:8px 8px 0 0;">';
+        html += '        <h2 id="more-tools-heading" style="color:#fff;font-size:1rem;font-weight:600;margin:0;letter-spacing:-0.2px;">Explore More Tools</h2>';
         html += '    </div>';
-        html += '    <div class="section-body" style="border-radius:0 0 8px 8px;padding:18px 16px;">';
-        html += '        <div class="tools-grid" role="list" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:14px;max-width:100%;overflow:hidden;">';
+        html += '    <div class="section-body" style="border-radius:0 0 8px 8px;padding:14px 14px;">';
+        html += '        <div class="more-tools-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(100px, 1fr));gap:10px;max-width:100%;overflow:hidden;">';
 
         for (var i = 0; i < randomTools.length; i++) {
             var tool = randomTools[i];
-            html += '            <a href="' + tool.path + '" class="tool-card" role="listitem" style="display:flex;flex-direction:column;background:#fff;border:1px solid #e6e6e6;border-radius:8px;padding:14px 16px;transition:border-color .15s,background .15s;cursor:pointer;color:#1e1e1e;text-decoration:none;min-height:80px;">';
-            html += '                <span class="tool-name" style="font-weight:600;font-size:1rem;margin-bottom:2px;">' + tool.name + '</span>';
-            html += '                <span class="tool-desc" style="font-size:.85rem;color:#4a4a4a;line-height:1.4;text-align:justify;">' + tool.desc + '</span>';
+            html += '            <a href="' + tool.path + '" class="more-tool-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border:1px solid #e6e6e6;border-radius:8px;padding:12px 8px;transition:border-color .15s,background .15s,transform .15s;cursor:pointer;color:#1e1e1e;text-decoration:none;min-height:80px;text-align:center;">';
+            html += '                <span class="more-tool-icon" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;margin-bottom:4px;">' + tool.icon + '</span>';
+            html += '                <span class="more-tool-name" style="font-weight:600;font-size:.85rem;color:#1a5c3a;letter-spacing:-0.2px;">' + tool.name + '</span>';
             html += '            </a>';
         }
 
@@ -261,7 +256,7 @@
         return html;
     }
 
-    // ----- Insert "Explore More Tools" before footer -----
+    // ----- Insert "More Tools" before footer -----
     function insertMoreTools() {
         var html = buildMoreToolsHTML();
         if (!html) return;
@@ -276,12 +271,27 @@
             footer.parentNode.insertBefore(temp.children[0], footer);
         }
 
-        // ----- Fade-in on scroll using Intersection Observer -----
+        // Hover effect for cards
+        var cards = document.querySelectorAll('.more-tool-card');
+        cards.forEach(function(card) {
+            card.addEventListener('mouseenter', function() {
+                this.style.borderColor = '#1a5c3a';
+                this.style.background = '#f4f8f6';
+                this.style.transform = 'translateY(-2px)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.borderColor = '#e6e6e6';
+                this.style.background = '#fff';
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Fade-in on scroll
         var moreSection = document.querySelector('.more-tools-section');
         if (moreSection) {
             moreSection.style.opacity = '0';
             moreSection.style.transform = 'translateY(20px)';
-            moreSection.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+            moreSection.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
 
             var observer = new IntersectionObserver(function(entries) {
                 entries.forEach(function(entry) {
@@ -292,8 +302,8 @@
                     }
                 });
             }, {
-                threshold: 0.15,
-                rootMargin: '0px 0px -50px 0px'
+                threshold: 0.1,
+                rootMargin: '0px 0px -30px 0px'
             });
 
             observer.observe(moreSection);
