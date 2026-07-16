@@ -407,3 +407,20 @@
 })();
 // ===== SEARCH (Collapsible + Working) =====
 (function(){'use strict';var c=document.querySelector('.search-container');if(!c)return;var t=document.getElementById('searchToggle');var i=document.getElementById('searchInput');var d=document.getElementById('searchDropdown');var al=document.getElementById('allToolsList');var ql=document.getElementById('quickToolsList');if(!t||!i||!d||!al)return;var allTools=[{name:'Age Calculator',path:'/dav/tools/age-calculator/index.html'},{name:'SIP Calculator',path:'/dav/tools/sip-calculator/index.html'},{name:'PDF Editor',path:'/dav/tools/pdf-editor/index.html'},{name:'Image Resizer',path:'/dav/tools/image-resizer/index.html'},{name:'Text Counter',path:'/dav/tools/text-counter/index.html'},{name:'Unit Converter',path:'/dav/tools/unit-converter/index.html'},{name:'Password Generator',path:'/dav/tools/password-generator/index.html'},{name:'QR Generator',path:'/dav/tools/qr-generator/index.html'},{name:'GST Calculator',path:'/dav/tools/gst-calculator/index.html'},{name:'Number Converter',path:'/dav/tools/number-converter/index.html'},{name:'Percentage Calculator',path:'/dav/tools/percentage-calculator/index.html'},{name:'BMI Calculator',path:'/dav/tools/bmi-calculator/index.html'},{name:'Loan Calculator',path:'/dav/tools/loan-calculator/index.html'},{name:'Accessibility Tool',path:'/dav/tools/accessibility-tool/index.html'}];var sb=i.closest('.search-box');function expandSearch(){sb.classList.add('search-expanded');i.focus();d.classList.add('open')}function collapseSearch(){sb.classList.remove('search-expanded');i.value='';i.blur();d.classList.remove('open');showAllTools()}function showAllTools(){var items=al.querySelectorAll('li');items.forEach(function(item){item.style.display='block'});var qs=ql?ql.closest('.dropdown-section'):null;if(qs)qs.style.display='block';var nr=document.getElementById('noResult');if(nr)nr.remove()}t.addEventListener('click',function(e){e.stopPropagation();if(sb.classList.contains('search-expanded')){collapseSearch()}else{expandSearch()}});document.addEventListener('click',function(e){if(!c.contains(e.target)){collapseSearch()}});i.addEventListener('keydown',function(e){if(e.key==='Escape'){collapseSearch()}});i.addEventListener('input',function(){var v=this.value.toLowerCase().trim();var items=al.querySelectorAll('li');var qs=ql?ql.closest('.dropdown-section'):null;if(v===''){items.forEach(function(item){item.style.display='block'});if(qs)qs.style.display='block';var nr=document.getElementById('noResult');if(nr)nr.remove();d.classList.add('open');return}if(qs)qs.style.display='none';var has=false;items.forEach(function(item){var txt=item.textContent.toLowerCase();if(txt.indexOf(v)!==-1){item.style.display='block';has=true}else{item.style.display='none'}});var nr=document.getElementById('noResult');if(has){if(nr)nr.remove()}else{if(!nr){var li=document.createElement('li');li.id='noResult';li.textContent='No tools found. Try a different search.';li.style.cssText='padding:10px 16px;color:#4a6b5a;font-size:.9rem;text-align:center;';al.appendChild(li)}else{nr.style.display='block'}}d.classList.add('open')});d.addEventListener('click',function(e){var link=e.target.closest('a');if(link){collapseSearch()}})})();
+/*----FAVICON-----*/
+(function() {
+    'use strict';
+
+    // Check if favicon already exists
+    var existing = document.querySelector('link[rel="icon"]');
+    if (existing) return;
+
+    // Create favicon link
+    var link = document.createElement('link');
+    link.rel = 'icon';
+    link.type = 'image/svg+xml';
+    link.href = '/dav/favicon.svg';
+
+    // Add to head
+    document.head.appendChild(link);
+})();
