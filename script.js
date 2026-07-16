@@ -316,48 +316,92 @@
 
 })();
 (function(){'use strict';var t=document.getElementById('themeToggle');if(!t)return;var s=sessionStorage.getItem('theme');if(s==='dark'){document.body.classList.add('dark-mode')}t.addEventListener('click',function(){document.body.classList.toggle('dark-mode');var n=document.body.classList.contains('dark-mode');if(n){sessionStorage.setItem('theme','dark')}else{sessionStorage.removeItem('theme')}});})();
-// ===== DYNAMIC TOOL NAME IN NAVBAR =====
+// ===== UNIVERSAL NAVIGATION ACTIVE STATE =====
 (function() {
     'use strict';
 
-    var path = window.location.pathname;
-    if (path.indexOf('/tools/') === -1) return;
-
-    var toolName = '';
-    var title = document.title;
-    var match = title.match(/^(.*?)\s*·\s*Yadav Web Tools$/);
-    if (match) {
-        toolName = match[1].trim();
-    } else {
-        var parts = path.split('/');
-        for (var i = 0; i < parts.length; i++) {
-            if (parts[i] === 'tools' && i + 1 < parts.length) {
-                var folder = parts[i + 1];
-                toolName = folder.replace(/-/g, ' ')
-                    .replace(/\b\w/g, function(l) { return l.toUpperCase(); });
-                break;
-            }
-        }
-    }
-
-    if (!toolName) return;
-
+    var currentPath = window.location.pathname;
     var navList = document.querySelector('.nav-list');
     if (!navList) return;
 
+    // Remove aria-current from all nav links
     var allLinks = navList.querySelectorAll('a');
     allLinks.forEach(function(link) {
         link.removeAttribute('aria-current');
     });
 
-    var li = document.createElement('li');
-    var a = document.createElement('a');
-    a.href = '#';
-    a.textContent = toolName;
-    a.setAttribute('aria-current', 'page');
-    a.style.cursor = 'default';
-    a.style.pointerEvents = 'none';
-    li.appendChild(a);
-    navList.appendChild(li);
+    // ----- CASE 1: Tool Pages (/tools/*) -----
+    if (currentPath.indexOf('/tools/') !== -1) {
+        var toolName = '';
+        var title = document.title;
+        var match = title.match(/^(.*?)\s*·\s*Yadav Web Tools$/);
+        if (match) {
+            toolName = match[1].trim();
+        } else {
+            var parts = currentPath.split('/');
+            for (var i = 0; i < parts.length; i++) {
+                if (parts[i] === 'tools' && i + 1 < parts.length) {
+                    var folder = parts[i + 1];
+                    toolName = folder.replace(/-/g, ' ')
+                        .replace(/\b\w/g, function(l) { return l.toUpperCase(); });
+                    break;
+                }
+            }
+        }
+
+        if (toolName) {
+            var li = document.createElement('li');
+            var a = document.createElement('a');
+            a.href = '#';
+            a.textContent = toolName;
+            a.setAttribute('aria-current', 'page');
+            a.style.cursor = 'default';
+            a.style.pointerEvents = 'none';
+            li.appendChild(a);
+            navList.appendChild(li);
+        }
+        return;
+    }
+
+    // ----- CASE 2: Normal Pages (Home, About, Contact, etc.) -----
+    var navMap = {
+        '/dav/': 'Home',
+        '/dav/index.html': 'Home',
+        '/dav/about/': 'About',
+        '/dav/about/index.html': 'About',
+        '/dav/contact/': 'Contact',
+        '/dav/contact/index.html': 'Contact',
+        '/dav/privacy-policy/': 'Privacy Policy',
+        '/dav/privacy-policy/index.html': 'Privacy Policy',
+        '/dav/disclaimer/': 'Disclaimer',
+        '/dav/disclaimer/index.html': 'Disclaimer',
+        '/dav/terms/': 'Terms',
+        '/dav/terms/index.html': 'Terms'
+    };
+
+    var expectedLabel = null;
+    for (var path in navMap) {
+        if (currentPath === path || currentPath === path + 'index.html') {
+            expectedLabel = navMap[path];
+            break;
+        }
+    }
+
+    if (!expectedLabel) {
+        allLinks.forEach(function(link) {
+            var href = link.getAttribute('href');
+            if (href && currentPath.endsWith(href.replace(/^\//, ''))) {
+                expectedLabel = link.textContent.trim();
+            }
+        });
+    }
+
+    if (expectedLabel) {
+        allLinks.forEach(function(link) {
+            if (link.textContent.trim() === expectedLabel) {
+                link.setAttribute('aria-current', 'page');
+            }
+        });
+    }
 
 })();
