@@ -111,13 +111,13 @@
 })();
 // ============================================================
 //  "Explore More Tools" - Auto Recommendation Module
-//  Shows 4 random tool cards with SVG icons
-//  FULL WIDTH responsive grid: auto adjusts columns
+//  Shows ALL tools in a responsive grid with SVG icons
+//  Excludes the current page, responsive, full width
 // ============================================================
 (function() {
     'use strict';
 
-    // ----- Tool List with SVG Icons (short names) -----
+    // ----- Tool List with SVG Icons (ALL TOOLS) -----
     var tools = [
         {
             name: 'Age',
@@ -196,53 +196,40 @@
         return window.location.pathname;
     }
 
-    // ----- Get 4 random tools (excluding current page) -----
-    function getRandomTools(currentPath, count) {
-        var available = tools.filter(function(t) {
+    // ----- Get all tools (excluding current page) -----
+    function getAvailableTools(currentPath) {
+        return tools.filter(function(t) {
             return t.path !== currentPath;
         });
-
-        if (available.length <= count) {
-            return available;
-        }
-
-        var shuffled = available.slice();
-        for (var i = shuffled.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            var temp = shuffled[i];
-            shuffled[i] = shuffled[j];
-            shuffled[j] = temp;
-        }
-
-        return shuffled.slice(0, count);
     }
 
     // ----- Build "Explore More Tools" HTML -----
     function buildMoreToolsHTML() {
         var currentPath = getCurrentPath();
 
+        // Only show on tool pages
         if (currentPath.indexOf('/tools/') === -1) {
             return null;
         }
 
-        var randomTools = getRandomTools(currentPath, 4);
+        var availableTools = getAvailableTools(currentPath);
 
-        if (randomTools.length === 0) {
+        if (availableTools.length === 0) {
             return null;
         }
 
         var html = '';
         html += '<div class="spacer" style="height:24px;"></div>';
-        html += '<section class="section tools-section more-tools-section" aria-labelledby="more-tools-heading" style="max-width:1200px;margin:0 auto;padding:0 16px;overflow:hidden;">';
-        html += '    <div class="section-title-bar more-tools-title" style="background:#1e1e1e;padding:4px 16px;border-radius:8px 8px 0 0;">';
-        html += '        <h2 id="more-tools-heading" style="color:#fff;font-size:1rem;font-weight:600;margin:0;letter-spacing:-0.2px;">Explore More Tools</h2>';
+        html += '<section class="section tools-section more-tools-section" aria-labelledby="more-tools-heading" style="max-width:1200px;margin:0 auto;padding:0 16px;overflow:visible;">';
+        html += '    <div class="section-title-bar more-tools-title" style="background:#1e1e1e;padding:6px 18px;border-radius:8px 8px 0 0;">';
+        html += '        <h2 id="more-tools-heading" style="color:#fff;font-size:1.1rem;font-weight:600;margin:0;letter-spacing:-0.2px;">Explore All Tools</h2>';
         html += '    </div>';
-        html += '    <div class="section-body" style="border-radius:0 0 8px 8px;padding:14px 14px;width:100%;">';
-        html += '        <div class="more-tools-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(120px, 1fr));gap:12px;width:100%;">';
+        html += '    <div class="section-body" style="border-radius:0 0 8px 8px;padding:16px 16px;width:100%;box-sizing:border-box;">';
+        html += '        <div class="more-tools-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:12px;width:100%;box-sizing:border-box;">';
 
-        for (var i = 0; i < randomTools.length; i++) {
-            var tool = randomTools[i];
-            html += '            <a href="' + tool.path + '" class="more-tool-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border:1px solid #e6e6e6;border-radius:8px;padding:14px 8px;transition:border-color .15s,background .15s,transform .15s;cursor:pointer;color:#1e1e1e;text-decoration:none;min-height:80px;text-align:center;width:100%;">';
+        for (var i = 0; i < availableTools.length; i++) {
+            var tool = availableTools[i];
+            html += '            <a href="' + tool.path + '" class="more-tool-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border:1px solid #e6e6e6;border-radius:8px;padding:16px 10px;transition:border-color .15s,background .15s,transform .15s,box-shadow .15s;cursor:pointer;color:#1e1e1e;text-decoration:none;min-height:82px;text-align:center;width:100%;box-sizing:border-box;">';
             html += '                <span class="more-tool-icon" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;margin-bottom:4px;">' + tool.icon + '</span>';
             html += '                <span class="more-tool-name" style="font-weight:600;font-size:.85rem;color:#1a5c3a;letter-spacing:-0.2px;">' + tool.name + '</span>';
             html += '            </a>';
@@ -277,8 +264,8 @@
             card.addEventListener('mouseenter', function() {
                 this.style.borderColor = '#1a5c3a';
                 this.style.background = '#f4f8f6';
-                this.style.transform = 'translateY(-2px)';
-                this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+                this.style.transform = 'translateY(-3px)';
+                this.style.boxShadow = '0 6px 16px rgba(0,0,0,0.10)';
             });
             card.addEventListener('mouseleave', function() {
                 this.style.borderColor = '#e6e6e6';
