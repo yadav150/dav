@@ -112,7 +112,7 @@
 // ============================================================
 //  "Explore More Tools" - Auto Recommendation Module
 //  Shows 4 random tool cards with SVG icons
-//  Responsive grid: 1 → 2 → 3 → 4 columns
+//  FULL WIDTH responsive grid: auto adjusts columns
 // ============================================================
 (function() {
     'use strict';
@@ -217,7 +217,7 @@
         return shuffled.slice(0, count);
     }
 
-    // ----- Build "More Tools" HTML -----
+    // ----- Build "Explore More Tools" HTML -----
     function buildMoreToolsHTML() {
         var currentPath = getCurrentPath();
 
@@ -237,13 +237,13 @@
         html += '    <div class="section-title-bar more-tools-title" style="background:#1e1e1e;padding:4px 16px;border-radius:8px 8px 0 0;">';
         html += '        <h2 id="more-tools-heading" style="color:#fff;font-size:1rem;font-weight:600;margin:0;letter-spacing:-0.2px;">Explore More Tools</h2>';
         html += '    </div>';
-        html += '    <div class="section-body" style="border-radius:0 0 8px 8px;padding:14px 14px;">';
-        html += '        <div class="more-tools-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(100px, 1fr));gap:10px;max-width:100%;overflow:hidden;">';
+        html += '    <div class="section-body" style="border-radius:0 0 8px 8px;padding:14px 14px;width:100%;">';
+        html += '        <div class="more-tools-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(120px, 1fr));gap:12px;width:100%;">';
 
         for (var i = 0; i < randomTools.length; i++) {
             var tool = randomTools[i];
-            html += '            <a href="' + tool.path + '" class="more-tool-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border:1px solid #e6e6e6;border-radius:8px;padding:12px 8px;transition:border-color .15s,background .15s,transform .15s;cursor:pointer;color:#1e1e1e;text-decoration:none;min-height:80px;text-align:center;">';
-            html += '                <span class="more-tool-icon" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;margin-bottom:4px;">' + tool.icon + '</span>';
+            html += '            <a href="' + tool.path + '" class="more-tool-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border:1px solid #e6e6e6;border-radius:8px;padding:14px 8px;transition:border-color .15s,background .15s,transform .15s;cursor:pointer;color:#1e1e1e;text-decoration:none;min-height:80px;text-align:center;width:100%;">';
+            html += '                <span class="more-tool-icon" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;margin-bottom:4px;">' + tool.icon + '</span>';
             html += '                <span class="more-tool-name" style="font-weight:600;font-size:.85rem;color:#1a5c3a;letter-spacing:-0.2px;">' + tool.name + '</span>';
             html += '            </a>';
         }
@@ -256,7 +256,7 @@
         return html;
     }
 
-    // ----- Insert "More Tools" before footer -----
+    // ----- Insert "Explore More Tools" before footer -----
     function insertMoreTools() {
         var html = buildMoreToolsHTML();
         if (!html) return;
@@ -278,11 +278,13 @@
                 this.style.borderColor = '#1a5c3a';
                 this.style.background = '#f4f8f6';
                 this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
             });
             card.addEventListener('mouseleave', function() {
                 this.style.borderColor = '#e6e6e6';
                 this.style.background = '#fff';
                 this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
             });
         });
 
