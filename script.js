@@ -111,8 +111,8 @@
 })();
 // ============================================================
 //  "Explore More Tools" - Auto Recommendation Module
-//  Shows ALL tools in a responsive grid with SVG icons
-//  Excludes the current page, responsive, full width
+//  Shows 4 random tool cards with SVG icons
+//  Responsive horizontal grid, matches main site width
 // ============================================================
 (function() {
     'use strict';
@@ -196,11 +196,26 @@
         return window.location.pathname;
     }
 
-    // ----- Get all tools (excluding current page) -----
-    function getAvailableTools(currentPath) {
-        return tools.filter(function(t) {
+    // ----- Get 4 random tools (excluding current page) -----
+    function getRandomTools(currentPath, count) {
+        var available = tools.filter(function(t) {
             return t.path !== currentPath;
         });
+
+        if (available.length <= count) {
+            return available;
+        }
+
+        // Fisher-Yates shuffle
+        var shuffled = available.slice();
+        for (var i = shuffled.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var temp = shuffled[i];
+            shuffled[i] = shuffled[j];
+            shuffled[j] = temp;
+        }
+
+        return shuffled.slice(0, count);
     }
 
     // ----- Build "Explore More Tools" HTML -----
@@ -212,9 +227,10 @@
             return null;
         }
 
-        var availableTools = getAvailableTools(currentPath);
+        // Get exactly 4 random tools
+        var randomTools = getRandomTools(currentPath, 4);
 
-        if (availableTools.length === 0) {
+        if (randomTools.length === 0) {
             return null;
         }
 
@@ -222,13 +238,13 @@
         html += '<div class="spacer" style="height:24px;"></div>';
         html += '<section class="section tools-section more-tools-section" aria-labelledby="more-tools-heading" style="max-width:1200px;margin:0 auto;padding:0 16px;overflow:visible;">';
         html += '    <div class="section-title-bar more-tools-title" style="background:#1e1e1e;padding:6px 18px;border-radius:8px 8px 0 0;">';
-        html += '        <h2 id="more-tools-heading" style="color:#fff;font-size:1.1rem;font-weight:600;margin:0;letter-spacing:-0.2px;">Explore All Tools</h2>';
+        html += '        <h2 id="more-tools-heading" style="color:#fff;font-size:1.1rem;font-weight:600;margin:0;letter-spacing:-0.2px;">Explore More Tools</h2>';
         html += '    </div>';
         html += '    <div class="section-body" style="border-radius:0 0 8px 8px;padding:16px 16px;width:100%;box-sizing:border-box;">';
         html += '        <div class="more-tools-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:12px;width:100%;box-sizing:border-box;">';
 
-        for (var i = 0; i < availableTools.length; i++) {
-            var tool = availableTools[i];
+        for (var i = 0; i < randomTools.length; i++) {
+            var tool = randomTools[i];
             html += '            <a href="' + tool.path + '" class="more-tool-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border:1px solid #e6e6e6;border-radius:8px;padding:16px 10px;transition:border-color .15s,background .15s,transform .15s,box-shadow .15s;cursor:pointer;color:#1e1e1e;text-decoration:none;min-height:82px;text-align:center;width:100%;box-sizing:border-box;">';
             html += '                <span class="more-tool-icon" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;margin-bottom:4px;">' + tool.icon + '</span>';
             html += '                <span class="more-tool-name" style="font-weight:600;font-size:.85rem;color:#1a5c3a;letter-spacing:-0.2px;">' + tool.name + '</span>';
