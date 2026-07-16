@@ -12,13 +12,15 @@
 <header class="site-header" role="banner">
     <div class="header-inner">
         <a href="/dav/index.html" class="site-title">Yadav Web Tools</a>
-        <div style="display:flex;align-items:center;gap:4px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <!-- SEARCH -->
+            <div class="search-container header-search"></div>
+
+            <!-- DARK MODE TOGGLE -->
             <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-                <!-- Moon Icon (visible in light mode) -->
                 <svg class="moon-icon" viewBox="0 0 24 24">
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
                 </svg>
-                <!-- Sun Icon (visible in dark mode) -->
                 <svg class="sun-icon" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="5"/>
                     <line x1="12" y1="1" x2="12" y2="3"/>
@@ -31,10 +33,9 @@
                     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
                 </svg>
             </button>
-            <button class="hamburger"
-                    aria-expanded="false"
-                    aria-controls="primary-nav"
-                    aria-label="Toggle navigation menu">
+
+            <!-- HAMBURGER -->
+            <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
@@ -43,13 +44,13 @@
     </div>
     <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
         <ul class="nav-list">
-    <li><a href="/dav/index.html" aria-current="page">Home</a></li>
-    <li><a href="/dav/about/index.html">About</a></li>
-    <li><a href="/dav/contact/index.html">Contact</a></li>
-    <li><a href="/dav/privacy-policy/index.html">Privacy Policy</a></li>
-    <li><a href="/dav/disclaimer/index.html">Disclaimer</a></li>
-    <li><a href="/dav/terms/index.html">Terms</a></li>
-</ul>
+            <li><a href="/dav/index.html" aria-current="page">Home</a></li>
+            <li><a href="/dav/about/index.html">About</a></li>
+            <li><a href="/dav/contact/index.html">Contact</a></li>
+            <li><a href="/dav/privacy-policy/index.html">Privacy Policy</a></li>
+            <li><a href="/dav/disclaimer/index.html">Disclaimer</a></li>
+            <li><a href="/dav/terms/index.html">Terms</a></li>
+        </ul>
     </nav>
 </header>
 
