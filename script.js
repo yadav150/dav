@@ -315,5 +315,32 @@
     }
 
 })();
-// ===== DARK MODE TOGGLE =====
-(function(){'use strict';var toggleBtn=document.getElementById('themeToggle');if(!toggleBtn)return;var savedTheme=localStorage.getItem('theme');var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var isDark=savedTheme==='dark'||(!savedTheme&&prefersDark);if(isDark){document.body.classList.add('dark-mode')}toggleBtn.addEventListener('click',function(){document.body.classList.toggle('dark-mode');var isDarkNow=document.body.classList.contains('dark-mode');localStorage.setItem('theme',isDarkNow?'dark':'light')})})();
+// ===== DARK MODE TOGGLE (Session Only) =====
+(function() {
+    'use strict';
+
+    var toggleBtn = document.getElementById('themeToggle');
+    if (!toggleBtn) return;
+
+    // Check sessionStorage for current session preference
+    var sessionTheme = sessionStorage.getItem('theme');
+
+    // Apply theme if set in this session
+    if (sessionTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+
+    // Toggle on click
+    toggleBtn.addEventListener('click', function() {
+        document.body.classList.toggle('dark-mode');
+        var isDarkNow = document.body.classList.contains('dark-mode');
+
+        // Store in sessionStorage only (clears when tab is closed)
+        if (isDarkNow) {
+            sessionStorage.setItem('theme', 'dark');
+        } else {
+            sessionStorage.removeItem('theme');
+        }
+    });
+
+})();
