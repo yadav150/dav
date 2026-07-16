@@ -59,7 +59,8 @@
 
                         <!-- ===== MODE A: FORMAT CONVERTER ===== -->
                         <div id="modeFormat" class="mode-section">
-                            <div class="field-group">
+                            <!-- ✅ FIX: Added margin-bottom:16px for spacing between the two inputs -->
+                            <div class="field-group" style="margin-bottom:16px;">
                                 <label for="indianInput">Indian Notation</label>
                                 <div class="input-with-copy">
                                     <input type="text" id="indianInput" placeholder="e.g. 1,00,000" />
@@ -263,12 +264,10 @@
 
             // ===== MODE A: FORMAT CONVERTER =====
             function formatIndian(numStr) {
-                // Remove existing commas and non-digits
                 const clean = numStr.replace(/[^0-9]/g, '');
                 if (!clean) return '';
                 const num = parseInt(clean, 10);
                 if (isNaN(num)) return '';
-                // Indian format: first group of 3, then groups of 2
                 const str = num.toString();
                 const lastThree = str.slice(-3);
                 const other = str.slice(0, -3);
@@ -328,7 +327,6 @@
                 const timeStr = String(displayHours).padStart(2, ' ') + ':' + String(tMins).padStart(2, '0') + ' ' + ampm;
                 targetTime.value = timeStr;
 
-                // Day offset badge
                 if (dayOffset === 1) {
                     dayOffsetBadge.textContent = '(+1 Day)';
                     dayOffsetBadge.style.display = 'inline-block';
@@ -344,14 +342,12 @@
 
             istTime.addEventListener('change', convertTime);
             targetZone.addEventListener('change', convertTime);
-            // Initial conversion
             setTimeout(convertTime, 100);
 
             // ===== MODE C: FRACTION ↔ DECIMAL =====
             function updateFractionFromDecimal() {
                 const dec = parseFloat(decimalInput.value);
                 if (isNaN(dec) || dec < 0 || dec > 1) return;
-                // Find fraction using precision slider
                 const precision = parseFloat(precisionSlider.value) || 0.01;
                 const maxDenom = Math.round(1 / precision);
                 let bestNum = 1,
@@ -404,7 +400,6 @@
                 }
             });
 
-            // Initial sync
             setTimeout(function() {
                 updateDecimalFromFraction();
                 precisionVal.textContent = '0.01';
@@ -447,7 +442,6 @@
             }
 
             datePicker.addEventListener('change', calculateAge);
-            // Set default date to 18 years ago
             const defaultDate = new Date();
             defaultDate.setFullYear(defaultDate.getFullYear() - 18);
             datePicker.value = defaultDate.toISOString().split('T')[0];
@@ -499,7 +493,7 @@
                 const months = ageMonths.textContent;
                 const days = ageDays.textContent;
                 const date = datePicker.value || 'Not selected';
-                const summary = `Age Summary:\nDate of Birth/Event: ${date}\nAge in Years: ${years}\nAge in Months: ${months}\nAge in Days: ${days}`;
+                const summary = 'Age Summary:\nDate of Birth/Event: ' + date + '\nAge in Years: ' + years + '\nAge in Months: ' + months + '\nAge in Days: ' + days;
                 navigator.clipboard.writeText(summary).then(function() {
                     const orig = copyAgeBtn.textContent;
                     copyAgeBtn.textContent = '✓ Copied!';
@@ -527,27 +521,22 @@
 
             // ===== CLEAR FIELDS =====
             clearFieldsBtn.addEventListener('click', function() {
-                // Format
                 indianInput.value = '';
                 westernInput.value = '';
-                // Timezone
                 istTime.value = '12:00';
                 targetZone.value = 'UTC';
                 targetTime.value = '';
                 dayOffsetBadge.style.display = 'none';
-                // Fraction
                 numerator.value = '1';
                 denominator.value = '4';
                 decimalInput.value = '0.25';
                 denomWarning.style.display = 'none';
                 precisionSlider.value = '0.01';
                 precisionVal.textContent = '0.01';
-                // Age
                 const today = new Date();
                 today.setFullYear(today.getFullYear() - 18);
                 datePicker.value = today.toISOString().split('T')[0];
                 setTimeout(calculateAge, 50);
-                // Errors
                 hideError();
             });
 
