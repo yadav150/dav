@@ -112,99 +112,95 @@
 // ============================================================
 //  "Explore More Tools" - Auto Recommendation Module
 //  Shows 4 random tool cards on every tool page
-//  Black title bar, fade-in on scroll, 4-column grid
+//  Black title bar, fade-in on scroll, responsive grid
 // ============================================================
 (function() {
     'use strict';
 
     // ----- Tool List (Add new tools here) -----
+    // ⚠️ IMPORTANT: Use ABSOLUTE paths from the root (starting with /dav/)
     var tools = [
         {
             name: 'Age Calculator',
             desc: 'Calculate exact age in years, months and days',
-            path: 'tools/age-calculator/index.html'
+            path: '/dav/tools/age-calculator/index.html'
         },
         {
             name: 'SIP Calculator',
             desc: 'Plan your investments with our comprehensive SIP calculator',
-            path: 'tools/sip-calculator/index.html'
+            path: '/dav/tools/sip-calculator/index.html'
         },
         {
             name: 'PDF Editor',
             desc: 'Reorder and delete pages from your PDF files',
-            path: 'tools/pdf-editor/index.html'
+            path: '/dav/tools/pdf-editor/index.html'
         },
         {
             name: 'Image Resizer',
             desc: 'Resize, compress, and convert images to JPG format',
-            path: 'tools/image-resizer/index.html'
+            path: '/dav/tools/image-resizer/index.html'
         },
         {
             name: 'Text Counter',
             desc: 'Count characters, words, sentences and paragraphs',
-            path: 'tools/text-counter/index.html'
+            path: '/dav/tools/text-counter/index.html'
         },
         {
             name: 'Unit Converter',
             desc: 'Convert length, mass, volume and temperature',
-            path: 'tools/unit-converter/index.html'
+            path: '/dav/tools/unit-converter/index.html'
         },
         {
             name: 'Password Generator',
             desc: 'Generate strong and secure random passwords',
-            path: 'tools/password-generator/index.html'
+            path: '/dav/tools/password-generator/index.html'
         },
         {
             name: 'QR Generator',
             desc: 'Create QR codes from any text or URL',
-            path: 'tools/qr-generator/index.html'
+            path: '/dav/tools/qr-generator/index.html'
         },
         {
             name: 'GST Calculator',
             desc: 'Calculate GST amount, CGST/SGST or IGST breakdown',
-            path: 'tools/gst-calculator/index.html'
+            path: '/dav/tools/gst-calculator/index.html'
         },
         {
             name: 'Number Converter',
             desc: 'Convert between binary, octal, decimal and hex',
-            path: 'tools/number-converter/index.html'
+            path: '/dav/tools/number-converter/index.html'
         },
         {
             name: 'Percentage Calculator',
             desc: 'Calculate percentages quickly and accurately',
-            path: 'tools/percentage-calculator/index.html'
+            path: '/dav/tools/percentage-calculator/index.html'
         },
         {
             name: 'BMI Calculator',
             desc: 'Calculate body mass index from height and weight',
-            path: 'tools/bmi-calculator/index.html'
+            path: '/dav/tools/bmi-calculator/index.html'
         },
         {
             name: 'Loan Calculator',
             desc: 'Estimate monthly payments and total interest',
-            path: 'tools/loan-calculator/index.html'
+            path: '/dav/tools/loan-calculator/index.html'
         },
         {
             name: 'Accessibility Tool',
             desc: 'Voice-to-text, font size controls, and contrast modes',
-            path: 'tools/accessibility-tool/index.html'
+            path: '/dav/tools/accessibility-tool/index.html'
         }
     ];
 
-    // ----- Get current page path (excluding "dav/" prefix if any) -----
+    // ----- Get current page path -----
     function getCurrentPath() {
-        var path = window.location.pathname.replace(/^\/+/, '');
-        if (path.indexOf('dav/') === 0) {
-            path = path.substring(4);
-        }
-        return path;
+        return window.location.pathname;
     }
 
     // ----- Get 4 random tools (excluding current page) -----
     function getRandomTools(currentPath, count) {
-        var normalizedCurrent = currentPath.replace(/\/index\.html$/, '') + '/index.html';
         var available = tools.filter(function(t) {
-            return t.path !== normalizedCurrent;
+            return t.path !== currentPath;
         });
 
         if (available.length <= count) {
@@ -227,8 +223,8 @@
     function buildMoreToolsHTML() {
         var currentPath = getCurrentPath();
 
-        // Only show on tool pages (path contains "tools/")
-        if (currentPath.indexOf('tools/') !== 0) {
+        // Only show on tool pages (path contains "/tools/")
+        if (currentPath.indexOf('/tools/') === -1) {
             return null;
         }
 
@@ -239,21 +235,21 @@
         }
 
         var html = '';
-        // Add a spacer for proper separation from the tool area above
+        // Spacer for proper separation
         html += '<div class="spacer" style="height:28px;"></div>';
-        html += '<section class="section tools-section more-tools-section" aria-labelledby="more-tools-heading">';
+        html += '<section class="section tools-section more-tools-section" aria-labelledby="more-tools-heading" style="max-width:1200px;margin:0 auto;padding:0 16px;overflow:hidden;">';
         // Black title bar with reduced padding
         html += '    <div class="section-title-bar more-tools-title" style="background:#1e1e1e;padding:6px 18px;border-radius:8px 8px 0 0;">';
         html += '        <h2 id="more-tools-heading" style="color:#fff;font-size:1.1rem;font-weight:600;margin:0;letter-spacing:-0.2px;">Explore More Tools</h2>';
         html += '    </div>';
-        html += '    <div class="section-body" style="border-radius:0 0 8px 8px;">';
-        html += '        <div class="tools-grid" role="list" style="grid-template-columns:repeat(4,1fr);">';
+        html += '    <div class="section-body" style="border-radius:0 0 8px 8px;padding:18px 16px;">';
+        html += '        <div class="tools-grid" role="list" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));gap:14px;max-width:100%;overflow:hidden;">';
 
         for (var i = 0; i < randomTools.length; i++) {
             var tool = randomTools[i];
-            html += '            <a href="' + tool.path + '" class="tool-card" role="listitem">';
-            html += '                <span class="tool-name">' + tool.name + '</span>';
-            html += '                <span class="tool-desc">' + tool.desc + '</span>';
+            html += '            <a href="' + tool.path + '" class="tool-card" role="listitem" style="display:flex;flex-direction:column;background:#fff;border:1px solid #e6e6e6;border-radius:8px;padding:14px 16px;transition:border-color .15s,background .15s;cursor:pointer;color:#1e1e1e;text-decoration:none;min-height:80px;">';
+            html += '                <span class="tool-name" style="font-weight:600;font-size:1rem;margin-bottom:2px;">' + tool.name + '</span>';
+            html += '                <span class="tool-desc" style="font-size:.85rem;color:#4a4a4a;line-height:1.4;text-align:justify;">' + tool.desc + '</span>';
             html += '            </a>';
         }
 
@@ -283,7 +279,6 @@
         // ----- Fade-in on scroll using Intersection Observer -----
         var moreSection = document.querySelector('.more-tools-section');
         if (moreSection) {
-            // Start with opacity 0 and a slight translate
             moreSection.style.opacity = '0';
             moreSection.style.transform = 'translateY(20px)';
             moreSection.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
