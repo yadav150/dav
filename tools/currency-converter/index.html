@@ -48,6 +48,7 @@
                                     <li><a href="/dav/tools/bmi-calculator/index.html">BMI Calculator</a></li>
                                     <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
                                     <li><a href="/dav/tools/accessibility-tool/index.html">Accessibility Tool</a></li>
+                                    <li><a href="/dav/tools/currency-converter/index.html">Currency Converter</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -66,7 +67,7 @@
         </div>
         <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
             <ul class="nav-list">
-                <li><a href="/dav/index.html" aria-current="page">Home</a></li>
+                <li><a href="/dav/index.html">Home</a></li>
                 <li><a href="/dav/about/index.html">About</a></li>
                 <li><a href="/dav/contact/index.html">Contact</a></li>
                 <li><a href="/dav/privacy-policy/index.html">Privacy Policy</a></li>
@@ -86,7 +87,7 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Convert between Global Fiat currencies, Cryptocurrencies, and Precious Metals using live exchange rates. All data is fetched in real-time.
+                        Convert between Global Fiat currencies, Cryptocurrencies, and Precious Metals using live exchange rates.
                     </p>
 
                     <form class="currency-form" id="currencyForm" novalidate>
@@ -146,7 +147,7 @@
                                     <label>Converted Amount</label>
                                     <div class="result-display" id="resultDisplay">
                                         <span class="result-value" id="convertedAmount">0.00</span>
-                                        <span class="result-currency" id="convertedCurrency">USD</span>
+                                        <span class="result-currency" id="convertedCurrency">EUR</span>
                                     </div>
                                 </div>
                             </div>
@@ -167,42 +168,40 @@
 
                         <!-- ===== ADVANCED FEATURES ===== -->
                         <div class="advanced-grid">
-
                             <div class="field-group" style="flex-wrap:nowrap; gap:8px;">
                                 <label style="min-width:auto; font-weight:400; display:flex; align-items:center; gap:8px;">
                                     <input type="checkbox" id="autoRefresh" checked />
-                                    Auto-Refresh (live updates)
+                                    Auto-Refresh
                                 </label>
                             </div>
 
                             <div class="field-group">
                                 <label for="rateAlert">Rate Alert</label>
-                                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;flex:1 1 200px;min-width:140px;">
-                                    <input type="number" id="rateAlert" step="0.0001" min="0" placeholder="Target rate" style="flex:1;min-width:80px;" />
-                                    <button type="button" class="btn btn-secondary" id="setAlertBtn" style="min-width:auto;padding:8px 16px;font-size:.85rem;">Set Alert</button>
+                                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;flex:1;">
+                                    <input type="number" id="rateAlert" step="0.0001" min="0" placeholder="Target rate" />
+                                    <button type="button" class="btn btn-secondary" id="setAlertBtn">Set Alert</button>
                                 </div>
                             </div>
-
                         </div>
 
                         <!-- ===== BUTTONS ===== -->
                         <div class="btn-group">
-                            <button type="button" class="btn" id="fetchBtn" style="flex:2;">Calculate Live Conversion</button>
-                            <button type="reset" class="btn btn-secondary" id="resetBtn">Reset</button>
+                            <button type="button" class="btn" id="fetchBtn">Calculate Live Conversion</button>
+                            <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
                         </div>
 
                     </form>
 
                     <div class="error-msg" id="errorMsg"></div>
 
-                    <!-- ===== CHART PLACEHOLDER ===== -->
+                    <!-- ===== CHART ===== -->
                     <div class="chart-container" id="chartContainer">
-                        <div class="chart-placeholder">
+                        <div class="chart-placeholder" id="chartPlaceholder">
                             <svg viewBox="0 0 24 24" fill="none" stroke="#4a6b5a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
                                 <polyline points="17 6 23 6 23 12"/>
                             </svg>
-                            <span>Select currencies and click "Calculate Live Conversion" to view chart</span>
+                            <span>Select currencies and click "Calculate Live Conversion"</span>
                         </div>
                         <canvas id="trendChart" style="display:none;"></canvas>
                     </div>
@@ -227,10 +226,7 @@
         </div>
     </footer>
 
-    <!-- ===== GLOBAL SCRIPTS ===== -->
     <script src="../../script.js"></script>
-
-    <!-- ===== EXTERNAL TOOL SCRIPT ===== -->
     <script src="currency-converter.js"></script>
 
 </body>
