@@ -10,7 +10,7 @@
 
     // ===== CONFIGURATION =====
     // IMPORTANT: Replace with your actual ExchangeRate-API key
-    var API_KEY = 'YOUR_API_KEY_HERE';
+    var API_KEY = 'd4b61ba7b463552f7c64d91b';
 
     // Supported pairs
     var pairs = [
