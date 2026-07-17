@@ -9,92 +9,93 @@
 <body>
 
     <!-- ===== HEADER ===== -->
-<header class="site-header" role="banner">
-    <div class="header-inner">
-    <a href="/dav/index.html" class="site-title">Yadav Web Tools</a>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <!-- SEARCH (Collapsible) -->
-        <div class="search-container header-search">
-            <div class="search-wrapper">
-                <div class="search-box">
-                    <button class="search-toggle" id="searchToggle" aria-label="Search tools">
-                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"/>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                        </svg>
-                    </button>
-                    <input type="text" id="searchInput" placeholder="Search tools..." autocomplete="off" class="search-input-hidden">
-                </div>
-                <div class="search-dropdown" id="searchDropdown">
-                    <div class="dropdown-section">
-                        <span class="dropdown-label">Quick Tools</span>
-                        <ul class="dropdown-list" id="quickToolsList">
-                            <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
-                            <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
-                            <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
-                        </ul>
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="/dav/index.html" class="site-title">Yadav Web Tools</a>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <!-- SEARCH -->
+                <div class="search-container header-search">
+                    <div class="search-wrapper">
+                        <div class="search-box">
+                            <button class="search-toggle" id="searchToggle" aria-label="Search tools">
+                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                </svg>
+                            </button>
+                            <input type="text" id="searchInput" placeholder="Search tools..." autocomplete="off" class="search-input-hidden">
+                        </div>
+                        <div class="search-dropdown" id="searchDropdown">
+                            <div class="dropdown-section">
+                                <span class="dropdown-label">Quick Tools</span>
+                                <ul class="dropdown-list" id="quickToolsList">
+                                    <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
+                                    <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
+                                    <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-section">
+                                <span class="dropdown-label">All Tools</span>
+                                <ul class="dropdown-list" id="allToolsList">
+                                    <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
+                                    <li><a href="/dav/tools/sip-calculator/index.html">SIP Calculator</a></li>
+                                    <li><a href="/dav/tools/pdf-editor/index.html">PDF Editor</a></li>
+                                    <li><a href="/dav/tools/image-resizer/index.html">Image Resizer</a></li>
+                                    <li><a href="/dav/tools/text-counter/index.html">Text Counter</a></li>
+                                    <li><a href="/dav/tools/unit-converter/index.html">Unit Converter</a></li>
+                                    <li><a href="/dav/tools/password-generator/index.html">Password Generator</a></li>
+                                    <li><a href="/dav/tools/qr-generator/index.html">QR Generator</a></li>
+                                    <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
+                                    <li><a href="/dav/tools/number-converter/index.html">Number Converter</a></li>
+                                    <li><a href="/dav/tools/percentage-calculator/index.html">Percentage Calculator</a></li>
+                                    <li><a href="/dav/tools/bmi-calculator/index.html">BMI Calculator</a></li>
+                                    <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
+                                    <li><a href="/dav/tools/accessibility-tool/index.html">Accessibility Tool</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown-section">
-                        <span class="dropdown-label">All Tools</span>
-                        <ul class="dropdown-list" id="allToolsList">
-                            <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
-                            <li><a href="/dav/tools/sip-calculator/index.html">SIP Calculator</a></li>
-                            <li><a href="/dav/tools/pdf-editor/index.html">PDF Editor</a></li>
-                            <li><a href="/dav/tools/image-resizer/index.html">Image Resizer</a></li>
-                            <li><a href="/dav/tools/text-counter/index.html">Text Counter</a></li>
-                            <li><a href="/dav/tools/unit-converter/index.html">Unit Converter</a></li>
-                            <li><a href="/dav/tools/password-generator/index.html">Password Generator</a></li>
-                            <li><a href="/dav/tools/qr-generator/index.html">QR Generator</a></li>
-                            <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
-                            <li><a href="/dav/tools/number-converter/index.html">Number Converter</a></li>
-                            <li><a href="/dav/tools/percentage-calculator/index.html">Percentage Calculator</a></li>
-                            <li><a href="/dav/tools/bmi-calculator/index.html">BMI Calculator</a></li>
-                            <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
-                            <li><a href="/dav/tools/accessibility-tool/index.html">Accessibility Tool</a></li>
-                        </ul>
-                    </div>
                 </div>
+
+                <!-- DARK MODE TOGGLE -->
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <svg class="moon-icon" viewBox="0 0 24 24">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                    <svg class="sun-icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                </button>
+
+                <!-- HAMBURGER -->
+                <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
             </div>
         </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="/dav/index.html" aria-current="page">Home</a></li>
+                <li><a href="/dav/about/index.html">About</a></li>
+                <li><a href="/dav/contact/index.html">Contact</a></li>
+                <li><a href="/dav/privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="/dav/disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="/dav/terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
 
-        <!-- DARK MODE TOGGLE -->
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-            <svg class="moon-icon" viewBox="0 0 24 24">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
-            <svg class="sun-icon" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="5"/>
-                <line x1="12" y1="1" x2="12" y2="3"/>
-                <line x1="12" y1="21" x2="12" y2="23"/>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                <line x1="1" y1="12" x2="3" y2="12"/>
-                <line x1="21" y1="12" x2="23" y2="12"/>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-        </button>
-
-        <!-- HAMBURGER -->
-        <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        </button>
-    </div>
-</div>
-    <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
-        <ul class="nav-list">
-            <li><a href="/dav/index.html" aria-current="page">Home</a></li>
-            <li><a href="/dav/about/index.html">About</a></li>
-            <li><a href="/dav/contact/index.html">Contact</a></li>
-            <li><a href="/dav/privacy-policy/index.html">Privacy Policy</a></li>
-            <li><a href="/dav/disclaimer/index.html">Disclaimer</a></li>
-            <li><a href="/dav/terms/index.html">Terms</a></li>
-        </ul>
-    </nav>
-</header>
     <!-- ===== MAIN ===== -->
     <main id="main-content">
 
@@ -129,7 +130,6 @@
                         <div class="field-group">
                             <label for="presetSelect">Target Size</label>
                             <select id="presetSelect" class="resizer-select">
-                                <option value="custom">Custom Size</option>
                                 <option value="passport">Passport Size (450 × 600)</option>
                                 <option value="adre-photo">ADRE Photo (210 × 310)</option>
                                 <option value="adre-sign">ADRE Sign (210 × 110)</option>
@@ -138,18 +138,19 @@
                                 <option value="facebook-post">Facebook Post (1536 × 1920)</option>
                                 <option value="slprb-photo">SLPRB Photo (413 × 531)</option>
                                 <option value="slprb-sign">SLPRB Sign (472 × 236)</option>
+                                <option value="custom">Custom Size</option>
                             </select>
                         </div>
 
-                        <!-- ===== CUSTOM SIZE INPUTS ===== -->
+                        <!-- ===== CUSTOM SIZE INPUTS (disabled by default) ===== -->
                         <div id="customSizeFields" class="custom-size-fields">
                             <div class="field-group">
                                 <label for="widthInput">Width (px)</label>
-                                <input type="number" id="widthInput" min="1" max="10000" value="800" />
+                                <input type="number" id="widthInput" min="1" max="10000" value="800" disabled />
                             </div>
                             <div class="field-group">
                                 <label for="heightInput">Height (px)</label>
-                                <input type="number" id="heightInput" min="1" max="10000" value="600" />
+                                <input type="number" id="heightInput" min="1" max="10000" value="600" disabled />
                             </div>
                         </div>
 
@@ -210,12 +211,12 @@
     <footer class="site-footer" role="contentinfo">
         <div class="footer-inner">
             <div class="footer-links">
-    <a href="/dav/about/index.html">About</a>
-    <a href="/dav/contact/index.html">Contact</a>
-    <a href="/dav/privacy-policy/index.html">Privacy</a>
-    <a href="/dav/disclaimer/index.html">Disclaimer</a>
-    <a href="/dav/terms/index.html">Terms</a>
-</div>
+                <a href="/dav/about/index.html">About</a>
+                <a href="/dav/contact/index.html">Contact</a>
+                <a href="/dav/privacy-policy/index.html">Privacy</a>
+                <a href="/dav/disclaimer/index.html">Disclaimer</a>
+                <a href="/dav/terms/index.html">Terms</a>
+            </div>
             <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
         </div>
     </footer>
@@ -270,13 +271,19 @@
             let originalHeight = 0;
             let isResizing = false;
 
-            // ===== PRESET HANDLER =====
+            // ===== PRESET HANDLER with Custom Enable/Disable =====
             function updateCustomFields() {
                 const val = presetSelect.value;
-                if (val === 'custom') {
-                    customSizeFields.style.display = 'flex';
-                } else {
-                    customSizeFields.style.display = 'none';
+                const isCustom = (val === 'custom');
+
+                // Show/hide custom fields container
+                customSizeFields.style.display = isCustom ? 'flex' : 'none';
+
+                // Enable/disable width and height inputs
+                widthInput.disabled = !isCustom;
+                heightInput.disabled = !isCustom;
+
+                if (!isCustom) {
                     const preset = presets[val];
                     if (preset) {
                         widthInput.value = preset.w;
@@ -286,13 +293,21 @@
             }
 
             presetSelect.addEventListener('change', updateCustomFields);
-            updateCustomFields();
+            // Set default preset (first option) and disable custom fields
+            // Ensure custom fields are disabled initially
+            window.addEventListener('DOMContentLoaded', function() {
+                // Set a default preset if not already set
+                if (presetSelect.value === 'custom') {
+                    presetSelect.value = 'passport';
+                }
+                updateCustomFields();
+            });
 
             // ===== ASPECT RATIO LOCK =====
             let aspectRatio = 1;
 
             widthInput.addEventListener('input', function() {
-                if (aspectLock.checked && originalWidth > 0 && originalHeight > 0) {
+                if (aspectLock.checked && originalWidth > 0 && originalHeight > 0 && !this.disabled) {
                     const w = parseInt(this.value) || 1;
                     const h = Math.round(w / aspectRatio);
                     heightInput.value = h;
@@ -300,7 +315,7 @@
             });
 
             heightInput.addEventListener('input', function() {
-                if (aspectLock.checked && originalWidth > 0 && originalHeight > 0) {
+                if (aspectLock.checked && originalWidth > 0 && originalHeight > 0 && !this.disabled) {
                     const h = parseInt(this.value) || 1;
                     const w = Math.round(h * aspectRatio);
                     widthInput.value = w;
@@ -366,9 +381,17 @@
                         fileDimensions.textContent = 'Dimensions: ' + originalWidth + ' × ' + originalHeight;
                         fileInfo.style.display = 'block';
 
-                        // Set default width/height
-                        widthInput.value = originalWidth;
-                        heightInput.value = originalHeight;
+                        // Set default width/height based on preset (or original if custom)
+                        if (presetSelect.value === 'custom') {
+                            widthInput.value = originalWidth;
+                            heightInput.value = originalHeight;
+                        } else {
+                            const preset = presets[presetSelect.value];
+                            if (preset) {
+                                widthInput.value = preset.w;
+                                heightInput.value = preset.h;
+                            }
+                        }
 
                         // Show original preview
                         originalPreview.src = e.target.result;
@@ -378,7 +401,7 @@
                         resultDiv.style.display = 'none';
                         hideError();
 
-                        // Trigger aspect ratio lock
+                        // Trigger aspect ratio lock if enabled
                         if (aspectLock.checked) {
                             const w = parseInt(widthInput.value) || originalWidth;
                             heightInput.value = Math.round(w / aspectRatio);
@@ -428,7 +451,6 @@
 
                 // If target KB > 0, compress to meet target
                 if (targetKB > 0 && outputSizeKB > targetKB) {
-                    // Binary search for optimal quality
                     let low = 0.1;
                     let high = 0.95;
                     let bestQuality = 0.95;
@@ -465,7 +487,7 @@
 
                 resultDiv.style.display = 'block';
                 resultDetail.textContent = 'Resized from ' + originalWidth + ' × ' + originalHeight + ' to ' + targetW +
-                    ' × ' + targetH + ' | Quality: ' + Math.round((quality) * 100) + '%';
+                    ' × ' + targetH + ' | Quality: ' + Math.round(quality * 100) + '%';
 
                 // Download
                 const link = document.createElement('a');
@@ -506,7 +528,6 @@
 
             // ===== RESET =====
             resetBtn.addEventListener('click', function(e) {
-                // Let the default reset happen first
                 setTimeout(function() {
                     fileInput.value = '';
                     fileInfo.style.display = 'none';
@@ -514,11 +535,12 @@
                     originalWidth = 0;
                     originalHeight = 0;
                     aspectRatio = 1;
-                    widthInput.value = 800;
-                    heightInput.value = 600;
+                    // Reset to a preset (not custom)
+                    presetSelect.value = 'passport';
+                    updateCustomFields(); // This will set the preset values and disable inputs
+                    widthInput.value = presets['passport'].w;
+                    heightInput.value = presets['passport'].h;
                     targetSize.value = 50;
-                    presetSelect.value = 'custom';
-                    updateCustomFields();
                     resultDiv.style.display = 'none';
                     originalPreview.src = '';
                     resizedPreview.src = '';
@@ -526,10 +548,12 @@
                     resizedDims.textContent = '';
                     resizedSize.textContent = '';
                     hideError();
+                    // Re-enable aspect lock if needed
+                    aspectLock.checked = true;
                 }, 50);
             });
 
-            // Initial state
+            // Initial call to set correct state
             updateCustomFields();
 
         })();
