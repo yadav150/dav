@@ -115,7 +115,7 @@
                                     <label for="fromCurrency">From</label>
                                     <div class="currency-select-wrapper">
                                         <input type="text" id="fromSearch" class="currency-search" placeholder="Search currency..." />
-                                        <select id="fromCurrency" class="currency-select" size="8"></select>
+                                        <select id="fromCurrency" class="currency-select"></select>
                                     </div>
                                 </div>
                             </div>
@@ -138,7 +138,7 @@
                                     <label for="toCurrency">To</label>
                                     <div class="currency-select-wrapper">
                                         <input type="text" id="toSearch" class="currency-search" placeholder="Search currency..." />
-                                        <select id="toCurrency" class="currency-select" size="8"></select>
+                                        <select id="toCurrency" class="currency-select"></select>
                                     </div>
                                 </div>
 
@@ -185,11 +185,10 @@
 
                         </div>
 
-                        <!-- ===== ACTION BUTTON ===== -->
-                        <div class="btn-group" style="margin-top:18px;">
-                            <button type="button" class="btn" id="fetchBtn" style="width:100%;min-width:0;padding:12px 28px;font-size:1.05rem;">
-                                Calculate Live Conversion
-                            </button>
+                        <!-- ===== BUTTONS ===== -->
+                        <div class="btn-group">
+                            <button type="button" class="btn" id="fetchBtn" style="flex:2;">Calculate Live Conversion</button>
+                            <button type="reset" class="btn btn-secondary" id="resetBtn">Reset</button>
                         </div>
 
                     </form>
@@ -227,8 +226,10 @@
             <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
         </div>
     </footer>
-    <!-- ===== MAIN JS ===== -->
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
     <script src="../../script.js"></script>
+
     <!-- ===== EXTERNAL TOOL SCRIPT ===== -->
     <script src="currency-converter.js"></script>
 
