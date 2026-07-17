@@ -60,6 +60,10 @@
     var alertTarget = null;
     var autoRefreshInterval = null;
     var isFetching = false;
+    var chartInstance = null;
+    var currentFrom = 'USD';
+    var currentTo = 'EUR';
+    var currentPeriod = '1W';
 
     // ===== DOM REFS =====
     var assetToggle = document.getElementById('assetToggle');
@@ -80,7 +84,8 @@
     var setAlertBtn = document.getElementById('setAlertBtn');
     var timeframeBtns = document.querySelectorAll('.timeframe-btn');
     var chartCanvas = document.getElementById('trendChart');
-    var chartPlaceholder = document.getElementById('chartPlaceholder');
+    var chartContainer = document.getElementById('chartContainer');
+    var chartLoading = document.getElementById('chartLoading');
 
     // ===== POPULATE CURRENCY DROPDOWNS =====
     function populateCurrencies(asset) {
@@ -110,7 +115,8 @@
         toSelect.value = toExists ? toVal : (list.length > 1 ? list[1].code : list[0].code);
         fromSelect.size = 1;
         toSelect.size = 1;
-
+        currentFrom = fromSelect.value;
+        currentTo = toSelect.value;
         updateResultDisplay();
     }
 
@@ -165,12 +171,18 @@
         var toVal = toSelect.value;
         fromSelect.value = toVal;
         toSelect.value = fromVal;
+        currentFrom = fromSelect.value;
+        currentTo = toSelect.value;
         fromSearch.value = '';
         toSearch.value = '';
         filterCurrencies(fromSearch, fromSelect);
         filterCurrencies(toSearch, toSelect);
         updateResultDisplay();
         hideError();
+        // Update chart with new pair
+        if (rateData && Object.keys(rateData).length > 0) {
+            fetchHistoricalData(currentPeriod);
+        }
     });
 
     // ===== UPDATE RESULT DISPLAY =====
@@ -253,7 +265,10 @@
         convertedCurrency.textContent = toCode;
         resultDisplay.style.opacity = '0.6';
         setTimeout(function() { resultDisplay.style.opacity = '1'; }, 200);
-        generateChart(rate);
+
+        // Fetch historical data for chart
+        fetchHistoricalData(currentPeriod);
+
         hideError();
         if (autoRefresh.checked) scheduleAutoRefresh();
         if (alertTarget && rate >= alertTarget) {
@@ -261,6 +276,143 @@
             alertTarget = null;
             rateAlert.value = '';
         }
+    }
+
+    // ===== FETCH HISTORICAL DATA FOR CHART =====
+    function fetchHistoricalData(period) {
+        var from = fromSelect.value;
+        var to = toSelect.value;
+        if (!from || !to) return;
+
+        var days;
+        switch (period) {
+            case '1D': days = 1; break;
+            case '1W': days = 7; break;
+            case '1M': days = 30; break;
+            default: days = 7;
+        }
+
+        // Calculate date range
+        var endDate = new Date();
+        var startDate = new Date();
+        startDate.setDate(startDate.getDate() - days);
+
+        var startStr = startDate.toISOString().split('T')[0];
+        var endStr = endDate.toISOString().split('T')[0];
+
+        // Use Frankfurter API for historical data (free, no key)
+        var url = 'https://api.frankfurter.app/' + startStr + '..' + endStr + '?from=' + from + '&to=' + to;
+
+        chartLoading.style.display = 'block';
+        chartCanvas.style.display = 'none';
+
+        fetch(url)
+            .then(function(response) {
+                if (!response.ok) throw new Error('Failed to fetch historical data');
+                return response.json();
+            })
+            .then(function(data) {
+                chartLoading.style.display = 'none';
+                chartCanvas.style.display = 'block';
+                renderChart(data, to);
+            })
+            .catch(function(err) {
+                chartLoading.style.display = 'none';
+                showError('Failed to load historical chart data.');
+                console.error('Chart API Error:', err);
+            });
+    }
+
+    // ===== RENDER CHART =====
+    function renderChart(data, targetCurrency) {
+        var rates = data.rates;
+        var labels = Object.keys(rates).sort();
+        var values = labels.map(function(date) {
+            return rates[date][targetCurrency];
+        });
+
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        var ctx = chartCanvas.getContext('2d');
+
+        // Detect dark mode
+        var isDark = document.body.classList.contains('dark-mode');
+        var textColor = isDark ? '#eee' : '#333';
+        var gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+        var fillColor = 'rgba(26, 92, 58, 0.2)';
+        var lineColor = '#1a5c3a';
+
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '1 ' + targetCurrency + ' = ? ' + fromSelect.value,
+                    data: values,
+                    borderColor: lineColor,
+                    backgroundColor: fillColor,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    borderWidth: 2,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: lineColor
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y.toFixed(4);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: textColor,
+                            maxTicksLimit: 8,
+                            font: { size: 10 }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: gridColor
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: { size: 10 }
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    intersect: false
+                }
+            }
+        });
+    }
+
+    // ===== CLEAR CHART =====
+    function clearChart() {
+        if (chartInstance) {
+            chartInstance.destroy();
+            chartInstance = null;
+        }
+        chartCanvas.style.display = 'none';
+        chartLoading.style.display = 'none';
     }
 
     // ===== AUTO-REFRESH =====
@@ -313,52 +465,12 @@
                     timeframeBtns[j].classList.remove('active');
                 }
                 this.classList.add('active');
+                currentPeriod = this.dataset.period;
                 if (rateData && Object.keys(rateData).length > 0) {
-                    generateChart(rateData[toSelect.value] || 1);
+                    fetchHistoricalData(currentPeriod);
                 }
             });
         })(timeframeBtns[i]);
-    }
-
-    // ===== GENERATE CHART =====
-    function generateChart(rate) {
-        chartPlaceholder.style.display = 'none';
-        chartCanvas.style.display = 'block';
-        var ctx = chartCanvas.getContext('2d');
-        var w = chartCanvas.parentElement.clientWidth - 32;
-        var h = 200;
-        chartCanvas.width = w;
-        chartCanvas.height = h;
-        ctx.clearRect(0, 0, w, h);
-        var points = 20;
-        var base = rate * 0.9;
-        var range = rate * 0.2;
-        ctx.beginPath();
-        ctx.strokeStyle = '#1a5c3a';
-        ctx.lineWidth = 2;
-        for (var i = 0; i < points; i++) {
-            var x = (i / (points - 1)) * w;
-            var y = h - ((base + Math.random() * range) / (rate * 1.2)) * h * 0.8 - 10;
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-        ctx.lineTo(w, h);
-        ctx.lineTo(0, h);
-        ctx.closePath();
-        ctx.fillStyle = 'rgba(26, 92, 58, 0.1)';
-        ctx.fill();
-        ctx.fillStyle = '#4a6b5a';
-        ctx.font = '10px Arial';
-        ctx.textAlign = 'center';
-        var activePeriod = document.querySelector('.timeframe-btn.active');
-        var label = activePeriod ? activePeriod.dataset.period : '1D';
-        ctx.fillText('Trend (' + label + ')', w / 2, h - 4);
-    }
-
-    function clearChart() {
-        chartPlaceholder.style.display = 'flex';
-        chartCanvas.style.display = 'none';
     }
 
     // ===== ERROR HANDLING =====
@@ -377,6 +489,8 @@
         var defaultList = currencies.fiat;
         fromSelect.value = 'USD';
         toSelect.value = 'EUR';
+        currentFrom = 'USD';
+        currentTo = 'EUR';
         fromSearch.value = '';
         toSearch.value = '';
         filterCurrencies(fromSearch, fromSelect);
@@ -393,13 +507,18 @@
         clearChart();
         hideError();
         resultDisplay.style.opacity = '1';
-        // Fix: Ensure layout stays expanded
         fromSelect.size = 1;
         toSelect.size = 1;
-        // Remove any inline width overrides
         document.querySelectorAll('.currency-form .field-group input[type="number"]').forEach(function(el) {
             el.style.width = '';
         });
+        // Reset timeframe to default (1W)
+        var btns = document.querySelectorAll('.timeframe-btn');
+        for (var i = 0; i < btns.length; i++) {
+            btns[i].classList.remove('active');
+            if (btns[i].dataset.period === '1W') btns[i].classList.add('active');
+        }
+        currentPeriod = '1W';
     }
 
     // ===== EVENT LISTENERS =====
@@ -411,22 +530,43 @@
     });
 
     fromSelect.addEventListener('change', function() {
+        currentFrom = this.value;
         updateResultDisplay();
         hideError();
+        if (rateData && Object.keys(rateData).length > 0) {
+            fetchHistoricalData(currentPeriod);
+        }
     });
 
     toSelect.addEventListener('change', function() {
+        currentTo = this.value;
         updateResultDisplay();
         hideError();
+        if (rateData && Object.keys(rateData).length > 0) {
+            fetchHistoricalData(currentPeriod);
+        }
     });
 
     amountInput.addEventListener('input', updateResultDisplay);
+
+    // ===== DARK MODE OBSERVER =====
+    var darkModeObserver = new MutationObserver(function() {
+        if (chartInstance) {
+            var isDark = document.body.classList.contains('dark-mode');
+            var textColor = isDark ? '#eee' : '#333';
+            var gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+            chartInstance.options.scales.x.ticks.color = textColor;
+            chartInstance.options.scales.y.ticks.color = textColor;
+            chartInstance.options.scales.y.grid.color = gridColor;
+            chartInstance.update();
+        }
+    });
+    darkModeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
     // ===== INITIALIZATION =====
     populateCurrencies('fiat');
     updateResultDisplay();
 
-    // Ensure layout is fully expanded on load
     setTimeout(function() {
         document.querySelectorAll('.currency-form .field-group input[type="number"]').forEach(function(el) {
             el.style.width = '100%';
@@ -437,8 +577,8 @@
     window.addEventListener('resize', function() {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(function() {
-            if (rateData && Object.keys(rateData).length > 0 && chartCanvas.style.display !== 'none') {
-                generateChart(rateData[toSelect.value] || 1);
+            if (chartInstance) {
+                chartInstance.resize();
             }
         }, 300);
     });
