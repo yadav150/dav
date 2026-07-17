@@ -137,4 +137,22 @@
 /* ===== RESPONSIVE ===== */
 @media(max-width:768px){.upload-preview-grid{grid-template-columns:1fr;gap:16px;padding:16px}.upload-preview-grid .divider{display:none}.upload-section,.preview-section{min-height:auto}}
 @media(max-width:640px){.image-resizer-form .field-group{flex-direction:column;align-items:stretch}.image-resizer-form .field-group label{min-width:auto}.image-resizer-form .btn-group{flex-direction:column}.image-resizer-form .btn{width:100%;justify-content:center}.custom-size-fields{flex-direction:column}.image-resizer-form .resizer-select{padding:8px 12px;font-size:.9rem;min-width:auto;width:100%}.upload-preview-grid{padding:12px}.image-resizer-form .drop-zone{padding:20px 12px;min-height:100px}.image-resizer-form .drop-zone .drop-text{font-size:.85rem}.preview-placeholder{min-height:120px}.preview-placeholder svg{width:36px;height:36px}.preview-image{min-height:120px}}
-/*----END---*/
+/* ===== IMAGE RESIZER – MOBILE FORM CONTROL SIZING ===== */
+@media(max-width:640px){
+.image-resizer-form .resizer-select,
+.image-resizer-form .field-group input[type="number"],
+.image-resizer-form .field-group input[type="text"]{height:38px;padding:6px 10px;font-size:.85rem;min-width:0}
+.image-resizer-form .field-group label{font-size:.85rem;min-width:auto}
+.image-resizer-form .btn{padding:8px 16px;font-size:.9rem;min-width:0}
+.image-resizer-form .field-group .helper-text{font-size:.7rem}
+.image-resizer-form .drop-zone{min-height:90px;padding:16px 12px}
+.image-resizer-form .drop-zone .drop-text{font-size:.8rem}
+.custom-size-fields .field-group input[type="number"]{height:38px;padding:6px 10px;font-size:.85rem}
+.upload-preview-grid{padding:12px}
+.preview-placeholder{min-height:100px;padding:16px}
+.preview-placeholder svg{width:32px;height:32px}
+.preview-image{min-height:100px}
+.preview-image img{max-height:140px}
+.file-info{font-size:.75rem;padding:6px 10px}
+}
+*----END---*/
