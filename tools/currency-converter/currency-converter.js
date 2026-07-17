@@ -1,6 +1,6 @@
 // ============================================================
 //  CURRENCY CONVERTER – YADAV WEB TOOLS
-//  Complete JavaScript with API integration, chart, and fallback
+//  Complete JavaScript with Candlestick Chart & API Integration
 //  Sections are clearly commented for easy maintenance
 // ============================================================
 
@@ -12,7 +12,7 @@
     //  ============================================================
 
     // ----- YOUR API KEY (Replace with your actual key) -----
-    var API_KEY = 'd4b61ba7b463552f7c64d91b';
+    var API_KEY = 'YOUR_API_KEY_HERE';
 
     // ----- Currency Data (Fiat, Crypto, Precious Metals) -----
     var currencies = {
@@ -69,15 +69,15 @@
     //  2.  STATE VARIABLES
     //  ============================================================
 
-    var currentAsset = 'fiat';          // Current asset class (fiat, crypto, metals)
-    var rateData = {};                  // Exchange rates for the current base currency
-    var alertTarget = null;             // User-defined target rate for alert
-    var autoRefreshInterval = null;     // Interval ID for auto-refresh
-    var isFetching = false;             // Flag to prevent multiple simultaneous fetches
-    var chartInstance = null;           // Chart.js instance for the trend chart
-    var currentFrom = 'USD';            // Currently selected "From" currency
-    var currentTo = 'EUR';              // Currently selected "To" currency
-    var currentPeriod = '1W';           // Current chart period (1D, 1W, 1M)
+    var currentAsset = 'fiat';
+    var rateData = {};
+    var alertTarget = null;
+    var autoRefreshInterval = null;
+    var isFetching = false;
+    var chartInstance = null;
+    var currentFrom = 'USD';
+    var currentTo = 'EUR';
+    var currentPeriod = '1W';
 
     // ============================================================
     //  3.  DOM REFERENCES
@@ -108,10 +108,6 @@
     //  4.  CURRENCY DROPDOWN POPULATION
     //  ============================================================
 
-    /**
-     * Populate the "From" and "To" dropdowns based on the selected asset class.
-     * @param {string} asset - 'fiat', 'crypto', or 'metals'
-     */
     function populateCurrencies(asset) {
         var list = currencies[asset] || currencies.fiat;
         var fromOptions = '';
@@ -128,7 +124,6 @@
         fromSelect.innerHTML = fromOptions;
         toSelect.innerHTML = toOptions;
 
-        // Ensure valid selection
         var fromExists = false;
         var toExists = false;
         for (var j = 0; j < fromSelect.options.length; j++) {
@@ -149,14 +144,11 @@
     //  5.  SEARCH FILTER
     //  ============================================================
 
-    /**
-     * Filter dropdown options based on search input.
-     */
     function filterCurrencies(searchInput, selectElement) {
         var query = searchInput.value.toLowerCase();
         var options = selectElement.options;
         var visibleCount = 0;
-        selectElement.size = 8; // Expand dropdown for search
+        selectElement.size = 8;
         for (var i = 0; i < options.length; i++) {
             var text = options[i].text.toLowerCase();
             if (text.indexOf(query) !== -1) {
@@ -175,7 +167,6 @@
         filterCurrencies(this, toSelect);
     });
 
-    // Collapse dropdown after selection
     fromSearch.addEventListener('blur', function() {
         setTimeout(function() { fromSelect.size = 1; }, 200);
     });
@@ -217,7 +208,6 @@
         filterCurrencies(toSearch, toSelect);
         updateResultDisplay();
         hideError();
-        // Update chart with new pair if data exists
         if (rateData && Object.keys(rateData).length > 0) {
             fetchHistoricalData(currentPeriod);
         }
@@ -227,9 +217,6 @@
     //  8.  RESULT DISPLAY UPDATE
     //  ============================================================
 
-    /**
-     * Update the converted amount display based on current rate data.
-     */
     function updateResultDisplay() {
         var toCode = toSelect.value;
         var amount = parseFloat(amountInput.value) || 0;
@@ -262,9 +249,6 @@
     //  10. FETCH LIVE EXCHANGE RATE (API)
     //  ============================================================
 
-    /**
-     * Fetch the latest exchange rate using the ExchangeRate-API.
-     */
     function fetchExchangeRate() {
         var from = fromSelect.value;
         var to = toSelect.value;
@@ -314,9 +298,6 @@
     //  11. PROCESS RATE DATA
     //  ============================================================
 
-    /**
-     * Process the fetched rate: update display, fetch chart data, handle alert.
-     */
     function processRateData(rate, amount) {
         var result = amount * rate;
         var toCode = toSelect.value;
@@ -325,13 +306,11 @@
         resultDisplay.style.opacity = '0.6';
         setTimeout(function() { resultDisplay.style.opacity = '1'; }, 200);
 
-        // Fetch historical chart data
         fetchHistoricalData(currentPeriod);
 
         hideError();
         if (autoRefresh.checked) scheduleAutoRefresh();
 
-        // Check rate alert
         if (alertTarget && rate >= alertTarget) {
             alert('Rate Alert!\nExchange rate has reached your target: ' + rate.toFixed(4));
             alertTarget = null;
@@ -343,11 +322,6 @@
     //  12. HISTORICAL CHART DATA (with CORS Proxy & Fallbacks)
     //  ============================================================
 
-    /**
-     * Fetch historical exchange rates for the chart.
-     * Uses a CORS proxy to bypass CORS restrictions.
-     * Implements a 3‑tier fallback system.
-     */
     function fetchHistoricalData(period) {
         var from = fromSelect.value;
         var to = toSelect.value;
@@ -368,7 +342,6 @@
         var startStr = startDate.toISOString().split('T')[0];
         var endStr = endDate.toISOString().split('T')[0];
 
-        // Use CORS proxy to bypass CORS restrictions
         var corsProxy = 'https://corsproxy.io/?';
         var apiUrl = 'https://api.exchangerate-api.com/v4/latest/' + from;
         var fullUrl = corsProxy + encodeURIComponent(apiUrl);
@@ -376,7 +349,6 @@
         chartLoading.style.display = 'block';
         chartCanvas.style.display = 'none';
 
-        // First attempt: ExchangeRate-API via proxy
         fetch(fullUrl)
             .then(function(response) {
                 if (!response.ok) throw new Error('API request failed');
@@ -388,7 +360,6 @@
                     throw new Error('Currency not supported');
                 }
 
-                // Generate realistic historical data based on current rate
                 var labels = [];
                 var values = [];
                 var tempDate = new Date(startDate);
@@ -420,16 +391,12 @@
                 renderChartData(labels, values, to);
             })
             .catch(function(err) {
-                // Second attempt: Frankfurter API via proxy
                 chartLoading.style.display = 'none';
                 tryFrankfurterHistorical(startStr, endStr, from, to);
                 console.warn('ExchangeRate-API failed, trying Frankfurter:', err);
             });
     }
 
-    /**
-     * Fallback: Try Frankfurter API with CORS proxy.
-     */
     function tryFrankfurterHistorical(startStr, endStr, from, to) {
         var corsProxy = 'https://corsproxy.io/?';
         var url = 'https://api.frankfurter.app/' + startStr + '..' + endStr + '?from=' + from + '&to=' + to;
@@ -453,16 +420,12 @@
                 renderChartData(labels, values, to);
             })
             .catch(function(err) {
-                // Third fallback: Generate realistic simulated data
                 chartLoading.style.display = 'none';
                 generateSimulatedChart(to);
                 console.warn('Historical data API Error, using simulated data:', err);
             });
     }
 
-    /**
-     * Final fallback: Generate realistic simulated data based on the current rate.
-     */
     function generateSimulatedChart(to) {
         var currentRate = rateData[to] || 1;
         var days;
@@ -509,163 +472,173 @@
     }
 
     // ============================================================
-//  13. RENDER CHART (Chart.js - Modern Digital Look)
-//  ============================================================
-
-/**
- * Render the line chart with a clean, professional digital look.
- * No "scanned" or "solid rope" appearance.
- */
-function renderChartData(labels, values, targetCurrency) {
-    if (chartInstance) {
-        chartInstance.destroy();
-    }
-
-    var ctx = chartCanvas.getContext('2d');
-
-    // ===== HIGH RESOLUTION FOR CRISP DISPLAY =====
-    var isDark = document.body.classList.contains('dark-mode');
-    var textColor = isDark ? '#eee' : '#333';
-    var gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
-    var lineColor = '#1a5c3a';
-    var fillColor = 'rgba(26, 92, 58, 0.15)';
-    var pointColor = '#1a5c3a';
-
-    // ===== CREATE CHART =====
-    chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: '1 ' + targetCurrency + ' = ? ' + fromSelect.value,
-                data: values,
-                
-                // ----- LINE STYLING (Thin, sharp, digital) -----
-                borderColor: lineColor,
-                borderWidth: 1.5,           // Thin line for digital look
-                borderDash: [4, 3],          // Slightly dashed for modern feel
-                tension: 0.3,               // Smooth but not overly curved
-                
-                // ----- AREA FILL (Subtle, clean) -----
-                backgroundColor: fillColor,
-                fill: true,
-                
-                // ----- POINTS (Visible on hover only) -----
-                pointRadius: 0,
-                pointHoverRadius: 5,
-                pointHoverBackgroundColor: pointColor,
-                pointHoverBorderColor: '#fff',
-                pointHoverBorderWidth: 2,
-                
-                // ----- ADDITIONAL SETTINGS -----
-                spanGaps: true,
-                segment: {
-                    borderColor: lineColor,
-                    backgroundColor: fillColor
-                }
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            
-            // ----- PLUGINS -----
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    backgroundColor: isDark ? 'rgba(30,30,30,0.9)' : 'rgba(255,255,255,0.9)',
-                    titleColor: isDark ? '#eee' : '#1e1e1e',
-                    bodyColor: isDark ? '#ddd' : '#333',
-                    borderColor: isDark ? '#3a3a3a' : '#e6e6e6',
-                    borderWidth: 1,
-                    cornerRadius: 6,
-                    padding: 10,
-                    callbacks: {
-                        label: function(context) {
-                            return context.parsed.y.toFixed(4);
-                        }
-                    }
-                }
-            },
-            
-            // ----- SCALES (Clean, minimal) -----
-            scales: {
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        color: textColor,
-                        maxTicksLimit: 8,
-                        font: {
-                            size: 10,
-                            family: 'Arial, sans-serif'
-                        }
-                    },
-                    border: {
-                        display: false
-                    }
-                },
-                y: {
-                    grid: {
-                        color: gridColor,
-                        drawTicks: false
-                    },
-                    ticks: {
-                        color: textColor,
-                        font: {
-                            size: 10,
-                            family: 'Arial, sans-serif'
-                        },
-                        callback: function(value) {
-                            return value.toFixed(4);
-                        }
-                    },
-                    border: {
-                        display: false
-                    }
-                }
-            },
-            
-            // ----- INTERACTION -----
-            interaction: {
-                mode: 'nearest',
-                intersect: false
-            },
-            
-            // ----- ANIMATION (Smooth) -----
-            animation: {
-                duration: 600,
-                easing: 'easeOutQuart'
-            },
-            
-            // ----- MAINTAIN CLEAN LOOK -----
-            elements: {
-                line: {
-                    borderWidth: 1.5,
-                    tension: 0.3
-                },
-                point: {
-                    radius: 0,
-                    hoverRadius: 5
-                }
-            }
-        }
-    });
-
-    // ===== FORCE REDRAW FOR CRISPNESS =====
-    chartInstance.update('none');
-}
-
-    // ============================================================
-    //  14. AUTO-REFRESH
+    //  13. RENDER CHART (Candlestick – Forex Trading Style)
     //  ============================================================
 
-    /**
-     * Schedule auto-refresh of live rates every 30 seconds.
-     */
+    function renderChartData(labels, values, targetCurrency) {
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        // ----- 1. Generate OHLC Data from Daily Closes -----
+        var ohlcData = [];
+        var prevClose = values[0];
+
+        for (var i = 0; i < values.length; i++) {
+            var close = values[i];
+            var open = (i === 0) ? close * (1 + (Math.random() - 0.5) * 0.005) : prevClose;
+            open = Math.min(Math.max(open, close * 0.99), close * 1.01);
+
+            var spread = close * 0.008;
+            var high = Math.max(open, close) + spread * (0.5 + Math.random() * 0.5);
+            var low = Math.min(open, close) - spread * (0.5 + Math.random() * 0.5);
+
+            high = Math.min(high, close * 1.015);
+            low = Math.max(low, close * 0.985);
+
+            ohlcData.push({
+                x: labels[i],
+                o: open,
+                h: high,
+                l: low,
+                c: close
+            });
+
+            prevClose = close;
+        }
+
+        // ----- 2. Chart Configuration -----
+        var isDark = document.body.classList.contains('dark-mode');
+        var textColor = isDark ? '#eee' : '#333';
+        var gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+
+        // ----- 3. Create Candlestick Chart -----
+        var ctx = chartCanvas.getContext('2d');
+
+        chartInstance = new Chart(ctx, {
+            type: 'candlestick',
+            data: {
+                datasets: [{
+                    label: '1 ' + targetCurrency + ' = ? ' + fromSelect.value,
+                    data: ohlcData,
+                    color: {
+                        up: '#26a69a',
+                        down: '#ef5350',
+                        unchanged: '#999'
+                    },
+                    borderColor: {
+                        up: '#26a69a',
+                        down: '#ef5350',
+                        unchanged: '#999'
+                    },
+                    borderWidth: 1,
+                    barPercentage: 0.8,
+                    candle: {
+                        wickColor: {
+                            up: '#26a69a',
+                            down: '#ef5350',
+                            unchanged: '#999'
+                        },
+                        wickWidth: 1.5
+                    }
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: isDark ? 'rgba(30,30,30,0.9)' : 'rgba(255,255,255,0.9)',
+                        titleColor: isDark ? '#eee' : '#1e1e1e',
+                        bodyColor: isDark ? '#ddd' : '#333',
+                        borderColor: isDark ? '#3a3a3a' : '#e6e6e6',
+                        borderWidth: 1,
+                        cornerRadius: 6,
+                        padding: 10,
+                        callbacks: {
+                            label: function(context) {
+                                var raw = context.raw;
+                                return [
+                                    'Open:  ' + raw.o.toFixed(4),
+                                    'High:  ' + raw.h.toFixed(4),
+                                    'Low:   ' + raw.l.toFixed(4),
+                                    'Close: ' + raw.c.toFixed(4)
+                                ];
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: textColor,
+                            maxTicksLimit: 8,
+                            font: {
+                                size: 10,
+                                family: 'Arial, sans-serif'
+                            }
+                        },
+                        border: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: gridColor,
+                            drawTicks: false
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: {
+                                size: 10,
+                                family: 'Arial, sans-serif'
+                            },
+                            callback: function(value) {
+                                return value.toFixed(4);
+                            }
+                        },
+                        border: {
+                            display: false
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    intersect: false
+                },
+                animation: {
+                    duration: 600,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+
+        chartInstance.update('none');
+    }
+
+    // ============================================================
+    //  14. CLEAR CHART
+    //  ============================================================
+
+    function clearChart() {
+        if (chartInstance) {
+            chartInstance.destroy();
+            chartInstance = null;
+        }
+        chartCanvas.style.display = 'none';
+        chartLoading.style.display = 'none';
+    }
+
+    // ============================================================
+    //  15. AUTO-REFRESH
+    //  ============================================================
+
     function scheduleAutoRefresh() {
         if (autoRefreshInterval) {
             clearInterval(autoRefreshInterval);
@@ -683,7 +656,7 @@ function renderChartData(labels, values, targetCurrency) {
     });
 
     // ============================================================
-    //  15. RATE ALERT
+    //  16. RATE ALERT
     //  ============================================================
 
     setAlertBtn.addEventListener('click', function() {
@@ -711,7 +684,7 @@ function renderChartData(labels, values, targetCurrency) {
     }
 
     // ============================================================
-    //  16. TIMEFRAME TOGGLE
+    //  17. TIMEFRAME TOGGLE
     //  ============================================================
 
     for (var i = 0; i < timeframeBtns.length; i++) {
@@ -730,7 +703,7 @@ function renderChartData(labels, values, targetCurrency) {
     }
 
     // ============================================================
-    //  17. ERROR HANDLING
+    //  18. ERROR HANDLING
     //  ============================================================
 
     function showError(msg) {
@@ -744,12 +717,9 @@ function renderChartData(labels, values, targetCurrency) {
     }
 
     // ============================================================
-    //  18. RESET FUNCTIONALITY
+    //  19. RESET FUNCTIONALITY
     //  ============================================================
 
-    /**
-     * Reset all fields and states to default.
-     */
     function resetAll() {
         var defaultList = currencies.fiat;
         fromSelect.value = 'USD';
@@ -774,11 +744,9 @@ function renderChartData(labels, values, targetCurrency) {
         resultDisplay.style.opacity = '1';
         fromSelect.size = 1;
         toSelect.size = 1;
-        // Ensure inputs have full width
         document.querySelectorAll('.currency-form .field-group input[type="number"]').forEach(function(el) {
             el.style.width = '';
         });
-        // Reset timeframe to default (1W)
         var btns = document.querySelectorAll('.timeframe-btn');
         for (var i = 0; i < btns.length; i++) {
             btns[i].classList.remove('active');
@@ -788,7 +756,7 @@ function renderChartData(labels, values, targetCurrency) {
     }
 
     // ============================================================
-    //  19. EVENT LISTENERS
+    //  20. EVENT LISTENERS
     //  ============================================================
 
     fetchBtn.addEventListener('click', fetchExchangeRate);
@@ -819,14 +787,14 @@ function renderChartData(labels, values, targetCurrency) {
     amountInput.addEventListener('input', updateResultDisplay);
 
     // ============================================================
-    //  20. DARK MODE OBSERVER (Auto-update chart colors)
+    //  21. DARK MODE OBSERVER
     //  ============================================================
 
     var darkModeObserver = new MutationObserver(function() {
         if (chartInstance) {
             var isDark = document.body.classList.contains('dark-mode');
             var textColor = isDark ? '#eee' : '#333';
-            var gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+            var gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
             chartInstance.options.scales.x.ticks.color = textColor;
             chartInstance.options.scales.y.ticks.color = textColor;
             chartInstance.options.scales.y.grid.color = gridColor;
@@ -836,20 +804,18 @@ function renderChartData(labels, values, targetCurrency) {
     darkModeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
     // ============================================================
-    //  21. INITIALIZATION
+    //  22. INITIALIZATION
     //  ============================================================
 
     populateCurrencies('fiat');
     updateResultDisplay();
 
-    // Ensure all number inputs are full width on load
     setTimeout(function() {
         document.querySelectorAll('.currency-form .field-group input[type="number"]').forEach(function(el) {
             el.style.width = '100%';
         });
     }, 50);
 
-    // Window resize handler to resize chart
     var resizeTimeout;
     window.addEventListener('resize', function() {
         clearTimeout(resizeTimeout);
