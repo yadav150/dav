@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    // ===== YOUR API KEY (REPLACE WITH YOUR ACTUAL KEY) =====
+    // ===== YOUR API KEY =====
     var API_KEY = 'd4b61ba7b463552f7c64d91b';
 
     // ===== CURRENCY DATA =====
@@ -56,11 +56,10 @@
     };
 
     var currentAsset = 'fiat';
-    var currentFrom = 'USD';
-    var currentTo = 'EUR';
     var rateData = {};
     var alertTarget = null;
     var autoRefreshInterval = null;
+    var isFetching = false;
 
     // ===== DOM REFS =====
     var assetToggle = document.getElementById('assetToggle');
@@ -81,7 +80,7 @@
     var setAlertBtn = document.getElementById('setAlertBtn');
     var timeframeBtns = document.querySelectorAll('.timeframe-btn');
     var chartCanvas = document.getElementById('trendChart');
-    var chartPlaceholder = document.querySelector('.chart-placeholder');
+    var chartPlaceholder = document.getElementById('chartPlaceholder');
 
     // ===== POPULATE CURRENCY DROPDOWNS =====
     function populateCurrencies(asset) {
@@ -100,10 +99,6 @@
         fromSelect.innerHTML = fromOptions;
         toSelect.innerHTML = toOptions;
 
-        // Reset size to 1 (collapsed dropdown)
-        fromSelect.size = 1;
-        toSelect.size = 1;
-
         var fromExists = false;
         var toExists = false;
         for (var j = 0; j < fromSelect.options.length; j++) {
@@ -113,9 +108,9 @@
 
         fromSelect.value = fromExists ? fromVal : list[0].code;
         toSelect.value = toExists ? toVal : (list.length > 1 ? list[1].code : list[0].code);
+        fromSelect.size = 1;
+        toSelect.size = 1;
 
-        currentFrom = fromSelect.value;
-        currentTo = toSelect.value;
         updateResultDisplay();
     }
 
@@ -124,10 +119,7 @@
         var query = searchInput.value.toLowerCase();
         var options = selectElement.options;
         var visibleCount = 0;
-
-        // Temporarily increase size to show filtered results
         selectElement.size = 8;
-
         for (var i = 0; i < options.length; i++) {
             var text = options[i].text.toLowerCase();
             if (text.indexOf(query) !== -1) {
@@ -137,45 +129,29 @@
                 options[i].style.display = 'none';
             }
         }
-
-        // If no results, show a placeholder message
-        if (visibleCount === 0) {
-            // Show a "No results" option if needed - we'll just keep dropdown open
-        }
     }
 
     fromSearch.addEventListener('input', function() {
         filterCurrencies(this, fromSelect);
     });
-
     toSearch.addEventListener('input', function() {
         filterCurrencies(this, toSelect);
     });
 
-    // Close dropdown on blur
     fromSearch.addEventListener('blur', function() {
-        setTimeout(function() {
-            fromSelect.size = 1;
-        }, 200);
+        setTimeout(function() { fromSelect.size = 1; }, 200);
     });
-
     toSearch.addEventListener('blur', function() {
-        setTimeout(function() {
-            toSelect.size = 1;
-        }, 200);
+        setTimeout(function() { toSelect.size = 1; }, 200);
     });
 
     // ===== ASSET TOGGLE =====
     assetToggle.addEventListener('click', function(e) {
         var btn = e.target.closest('.toggle-btn');
         if (!btn) return;
-
         var btns = this.querySelectorAll('.toggle-btn');
-        for (var i = 0; i < btns.length; i++) {
-            btns[i].classList.remove('active');
-        }
+        for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
         btn.classList.add('active');
-
         currentAsset = btn.dataset.asset;
         populateCurrencies(currentAsset);
         clearChart();
@@ -189,14 +165,10 @@
         var toVal = toSelect.value;
         fromSelect.value = toVal;
         toSelect.value = fromVal;
-        currentFrom = fromSelect.value;
-        currentTo = toSelect.value;
-
         fromSearch.value = '';
         toSearch.value = '';
         filterCurrencies(fromSearch, fromSelect);
         filterCurrencies(toSearch, toSelect);
-
         updateResultDisplay();
         hideError();
     });
@@ -205,19 +177,29 @@
     function updateResultDisplay() {
         var toCode = toSelect.value;
         var amount = parseFloat(amountInput.value) || 0;
-
         convertedCurrency.textContent = toCode;
-
         if (rateData && rateData[toCode]) {
-            var rate = rateData[toCode] || 1;
-            var result = amount * rate;
+            var result = amount * rateData[toCode];
             convertedAmount.textContent = result.toFixed(4);
         } else {
             convertedAmount.textContent = '0.00';
         }
     }
 
-    // ===== FETCH EXCHANGE RATE (REAL API) =====
+    // ===== LOADING SPINNER =====
+    function showLoading() {
+        fetchBtn.textContent = 'Loading...';
+        fetchBtn.disabled = true;
+        isFetching = true;
+    }
+
+    function hideLoading() {
+        fetchBtn.textContent = 'Calculate Live Conversion';
+        fetchBtn.disabled = false;
+        isFetching = false;
+    }
+
+    // ===== FETCH EXCHANGE RATE =====
     function fetchExchangeRate() {
         var from = fromSelect.value;
         var to = toSelect.value;
@@ -227,10 +209,9 @@
             showError('Please select both currencies.');
             return;
         }
+        if (isFetching) return;
 
-        // Show loading state
-        fetchBtn.textContent = 'Loading...';
-        fetchBtn.disabled = true;
+        showLoading();
 
         var apiUrl = 'https://v6.exchangerate-api.com/v6/' + API_KEY + '/latest/' + from;
 
@@ -244,19 +225,15 @@
                     showError(data['error-type'] || 'API error occurred.');
                     return;
                 }
-
                 var rate = data.conversion_rates[to];
                 if (!rate) {
                     showError('Currency not supported by the API.');
                     return;
                 }
-
-                // Build rateData for all currencies
                 rateData = {};
                 for (var key in data.conversion_rates) {
                     rateData[key] = data.conversion_rates[key];
                 }
-
                 processRateData(rate, amount);
             })
             .catch(function(err) {
@@ -264,8 +241,7 @@
                 console.error('API Error:', err);
             })
             .finally(function() {
-                fetchBtn.textContent = 'Calculate Live Conversion';
-                fetchBtn.disabled = false;
+                hideLoading();
             });
     }
 
@@ -273,23 +249,13 @@
     function processRateData(rate, amount) {
         var result = amount * rate;
         var toCode = toSelect.value;
-
         convertedAmount.textContent = result.toFixed(4);
         convertedCurrency.textContent = toCode;
-
         resultDisplay.style.opacity = '0.6';
-        setTimeout(function() {
-            resultDisplay.style.opacity = '1';
-        }, 200);
-
+        setTimeout(function() { resultDisplay.style.opacity = '1'; }, 200);
         generateChart(rate);
         hideError();
-
-        if (autoRefresh.checked) {
-            scheduleAutoRefresh();
-        }
-
-        // Check alert
+        if (autoRefresh.checked) scheduleAutoRefresh();
         if (alertTarget && rate >= alertTarget) {
             alert('Rate Alert!\nExchange rate has reached your target: ' + rate.toFixed(4));
             alertTarget = null;
@@ -297,28 +263,21 @@
         }
     }
 
-    // ===== SCHEDULE AUTO-REFRESH =====
+    // ===== AUTO-REFRESH =====
     function scheduleAutoRefresh() {
         if (autoRefreshInterval) {
             clearInterval(autoRefreshInterval);
             autoRefreshInterval = null;
         }
         if (autoRefresh.checked) {
-            autoRefreshInterval = setInterval(function() {
-                fetchExchangeRate();
-            }, 30000);
+            autoRefreshInterval = setInterval(fetchExchangeRate, 30000);
         }
     }
 
     autoRefresh.addEventListener('change', function() {
-        if (this.checked) {
-            scheduleAutoRefresh();
-        } else {
-            if (autoRefreshInterval) {
-                clearInterval(autoRefreshInterval);
-                autoRefreshInterval = null;
-            }
-        }
+        if (this.checked) scheduleAutoRefresh();
+        else { if (autoRefreshInterval) { clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null; } }
     });
 
     // ===== RATE ALERT =====
@@ -365,23 +324,18 @@
     function generateChart(rate) {
         chartPlaceholder.style.display = 'none';
         chartCanvas.style.display = 'block';
-
         var ctx = chartCanvas.getContext('2d');
         var w = chartCanvas.parentElement.clientWidth - 32;
         var h = 200;
         chartCanvas.width = w;
         chartCanvas.height = h;
-
         ctx.clearRect(0, 0, w, h);
-
         var points = 20;
         var base = rate * 0.9;
         var range = rate * 0.2;
-
         ctx.beginPath();
         ctx.strokeStyle = '#1a5c3a';
         ctx.lineWidth = 2;
-
         for (var i = 0; i < points; i++) {
             var x = (i / (points - 1)) * w;
             var y = h - ((base + Math.random() * range) / (rate * 1.2)) * h * 0.8 - 10;
@@ -389,13 +343,11 @@
             else ctx.lineTo(x, y);
         }
         ctx.stroke();
-
         ctx.lineTo(w, h);
         ctx.lineTo(0, h);
         ctx.closePath();
         ctx.fillStyle = 'rgba(26, 92, 58, 0.1)';
         ctx.fill();
-
         ctx.fillStyle = '#4a6b5a';
         ctx.font = '10px Arial';
         ctx.textAlign = 'center';
@@ -420,54 +372,38 @@
         errorMsg.textContent = '';
     }
 
-    // ===== RESET FUNCTION =====
+    // ===== RESET =====
     function resetAll() {
-        // Reset dropdowns to default
         var defaultList = currencies.fiat;
         fromSelect.value = 'USD';
         toSelect.value = 'EUR';
-        currentFrom = 'USD';
-        currentTo = 'EUR';
-
-        // Reset search fields
         fromSearch.value = '';
         toSearch.value = '';
         filterCurrencies(fromSearch, fromSelect);
         filterCurrencies(toSearch, toSelect);
-
-        // Reset amount
         amountInput.value = '1.00';
-
-        // Reset rate data
         rateData = {};
         convertedAmount.textContent = '0.00';
         convertedCurrency.textContent = 'EUR';
-
-        // Reset alert
         resetAlert();
-
-        // Reset auto-refresh
         autoRefresh.checked = true;
-        if (autoRefreshInterval) {
-            clearInterval(autoRefreshInterval);
-            autoRefreshInterval = null;
-        }
+        if (autoRefreshInterval) { clearInterval(autoRefreshInterval);
+            autoRefreshInterval = null; }
         scheduleAutoRefresh();
-
-        // Reset chart
         clearChart();
-
-        // Reset error
         hideError();
-
-        // Reset result display
         resultDisplay.style.opacity = '1';
+        // Fix: Ensure layout stays expanded
+        fromSelect.size = 1;
+        toSelect.size = 1;
+        // Remove any inline width overrides
+        document.querySelectorAll('.currency-form .field-group input[type="number"]').forEach(function(el) {
+            el.style.width = '';
+        });
     }
 
     // ===== EVENT LISTENERS =====
-    fetchBtn.addEventListener('click', function() {
-        fetchExchangeRate();
-    });
+    fetchBtn.addEventListener('click', fetchExchangeRate);
 
     resetBtn.addEventListener('click', function(e) {
         e.preventDefault();
@@ -475,24 +411,27 @@
     });
 
     fromSelect.addEventListener('change', function() {
-        currentFrom = this.value;
         updateResultDisplay();
         hideError();
     });
 
     toSelect.addEventListener('change', function() {
-        currentTo = this.value;
         updateResultDisplay();
         hideError();
     });
 
-    amountInput.addEventListener('input', function() {
-        updateResultDisplay();
-    });
+    amountInput.addEventListener('input', updateResultDisplay);
 
     // ===== INITIALIZATION =====
     populateCurrencies('fiat');
     updateResultDisplay();
+
+    // Ensure layout is fully expanded on load
+    setTimeout(function() {
+        document.querySelectorAll('.currency-form .field-group input[type="number"]').forEach(function(el) {
+            el.style.width = '100%';
+        });
+    }, 50);
 
     var resizeTimeout;
     window.addEventListener('resize', function() {
