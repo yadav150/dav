@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Forex Dashboard · Yadav Web Tools</title>
     <link rel="stylesheet" href="../../style.css" />
-    <!-- Lightweight Charts (TradingView) -->
     <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.0.0/dist/lightweight-charts.standalone.production.js">
     </script>
 </head>
@@ -94,7 +93,7 @@
                         Live candlestick chart for major currency pairs. Data updates every 10 seconds.
                     </p>
 
-                    <!-- ===== PAIR SELECTOR & TIMEFRAME ===== -->
+                    <!-- ===== CONTROLS ===== -->
                     <div class="forex-controls">
                         <div class="pair-selector">
                             <button type="button" class="pair-btn active" data-pair="EUR/USD">EUR/USD</button>
@@ -110,31 +109,39 @@
                             <button type="button" class="tf-btn" data-period="1M">1M</button>
                             <button type="button" class="tf-btn" data-period="3M">3M</button>
                             <button type="button" class="tf-btn" data-period="1Y">1Y</button>
+                            <button type="button" class="tf-btn refresh-btn" id="refreshBtn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;">
+                                    <polyline points="23 4 23 10 17 10"/>
+                                    <polyline points="1 20 1 14 7 14"/>
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                                </svg>
+                                Refresh
+                            </button>
                         </div>
                     </div>
 
                     <!-- ===== PRICE CARDS ===== -->
-<div class="price-cards" id="priceCards">
-    <!-- Will be populated by JavaScript -->
-</div>
+                    <div class="price-cards" id="priceCards">
+                        <!-- Populated by JavaScript -->
+                    </div>
 
-<!-- ===== CHART CONTAINER (Dark theme) ===== -->
-<div class="chart-wrapper">
-    <div id="forexChart" style="width:100%;height:450px;"></div>
-</div>
+                    <!-- ===== CHART CONTAINER ===== -->
+                    <div class="chart-wrapper">
+                        <div id="forexChart" style="width:100%;height:450px;"></div>
+                    </div>
 
-<div class="error-msg" id="errorMsg"></div>
+                    <div class="error-msg" id="errorMsg"></div>
 
-<!-- ===== DISCLAIMER ===== -->
-<div class="disclaimer-box">
-    <strong>Disclaimer:</strong> Exchange rates are for informational purposes only. May not be real-time or fully accurate. This is not financial advice. Use at your own risk.
-</div>
+                    <!-- ===== DISCLAIMER ===== -->
+                    <div class="disclaimer-box">
+                        <strong>Disclaimer:</strong> Exchange rates are for informational purposes only. May not be real-time or fully accurate. This is not financial advice. Use at your own risk.
+                    </div>
 
-</div>
-</div>
-</section>
-<div class="spacer"></div>
-</main>
+                </div>
+            </div>
+        </section>
+        <div class="spacer"></div>
+    </main>
 
     <!-- ===== FOOTER ===== -->
     <footer class="site-footer" role="contentinfo">
@@ -150,10 +157,8 @@
         </div>
     </footer>
 
-    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <!-- ===== SCRIPTS ===== -->
     <script src="../../script.js"></script>
-
-    <!-- ===== TOOL SCRIPT ===== -->
     <script src="forex-dashboard.js"></script>
 
 </body>
