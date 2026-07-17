@@ -194,12 +194,19 @@
 
                     <div class="error-msg" id="errorMsg"></div>
 
-                    <!-- ===== CHART CONTAINER ===== -->
+                                        <!-- ===== CHART CONTAINER ===== -->
                     <div class="chart-container" id="chartContainer">
                         <div class="chart-loading" id="chartLoading" style="display:none;">
                             <span>Loading chart data...</span>
                         </div>
                         <canvas id="trendChart"></canvas>
+                    </div>
+
+                    <!-- ===== DISCLAIMER ===== -->
+                    <div class="disclaimer-box">
+                        <p>
+                            <strong>Disclaimer:</strong> Based on developer research and expertise, this tool provides exchange rate estimations with <strong>70–80% accuracy</strong> for general informational purposes. The rates may not reflect real-time market movements and should not be used for critical financial decisions. For accurate and up-to-date rates, please verify through official sources such as your bank, financial institution, or a certified currency exchange provider.
+                        </p>
                     </div>
 
                 </div>
@@ -209,21 +216,29 @@
     </main>
 
     <!-- ===== FOOTER ===== -->
-    <footer class="site-footer" role="contentinfo">
-        <div class="footer-inner">
-            <div class="footer-links">
-                <a href="/dav/about/index.html">About</a>
-                <a href="/dav/contact/index.html">Contact</a>
-                <a href="/dav/privacy-policy/index.html">Privacy</a>
-                <a href="/dav/disclaimer/index.html">Disclaimer</a>
-                <a href="/dav/terms/index.html">Terms</a>
-            </div>
-            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+<footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+        <div class="footer-links">
+            <a href="/dav/about/index.html">About</a>
+            <a href="/dav/contact/index.html">Contact</a>
+            <a href="/dav/privacy-policy/index.html">Privacy</a>
+            <a href="/dav/disclaimer/index.html">Disclaimer</a>
+            <a href="/dav/terms/index.html">Terms</a>
         </div>
-    </footer>
+        <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+    </div>
+</footer>
 
-    <script src="../../script.js"></script>
-    <script src="currency-converter.js"></script>
+<!-- ===== SCRIPTS ===== -->
+<!-- 1. Global Script -->
+<script src="../../script.js"></script>
+
+<!-- 2. Chart.js Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-financial"></script>
+
+<!-- 3. Tool-Specific Script -->
+<script src="currency-converter.js"></script>
 
 </body>
 </html>
