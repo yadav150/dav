@@ -12,7 +12,7 @@
     //  ============================================================
 
     // ----- YOUR API KEY (Replace with your actual key) -----
-    var API_KEY = 'YOUR_API_KEY_HERE';
+    var API_KEY = 'd4b61ba7b463552f7c64d91b';
 
     // ----- Currency Data (Fiat, Crypto, Precious Metals) -----
     var currencies = {
