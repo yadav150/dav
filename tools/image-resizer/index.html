@@ -112,17 +112,41 @@
 
                     <form class="image-resizer-form" id="resizerForm" novalidate>
 
-                        <!-- ===== UPLOAD AREA ===== -->
-                        <div class="field-group upload-area">
-                            <label>Upload Image</label>
-                            <div class="drop-zone" id="dropZone">
-                                <span class="drop-text">Drag &amp; drop an image here, or click to browse</span>
-                                <input type="file" id="fileInput" accept="image/*" />
+                        <!-- ===== UPLOAD & PREVIEW – 50/50 SPLIT ===== -->
+                        <div class="upload-preview-grid">
+
+                            <!-- LEFT: Upload Section -->
+                            <div class="upload-section">
+                                <label class="upload-label">Upload Image</label>
+                                <div class="drop-zone" id="dropZone">
+                                    <span class="drop-text">Drag &amp; drop an image here, or click to browse</span>
+                                    <input type="file" id="fileInput" accept="image/*" />
+                                </div>
+                                <div class="file-info" id="fileInfo" style="display:none;">
+                                    <span id="fileName"></span>
+                                    <span id="fileSize"></span>
+                                    <span id="fileDimensions"></span>
+                                </div>
                             </div>
-                            <div class="file-info" id="fileInfo" style="display:none;">
-                                <span id="fileName"></span>
-                                <span id="fileSize"></span>
-                                <span id="fileDimensions"></span>
+
+                            <!-- DIVIDER -->
+                            <div class="divider"></div>
+
+                            <!-- RIGHT: Preview Section -->
+                            <div class="preview-section">
+                                <label class="preview-label">Image Preview</label>
+                                <div class="preview-placeholder" id="previewPlaceholder">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#4a6b5a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                                        <polyline points="21 15 16 10 5 21"/>
+                                    </svg>
+                                    <span>No image selected</span>
+                                </div>
+                                <div class="preview-image" id="previewImage" style="display:none;">
+                                    <img id="originalPreview" alt="Uploaded image preview" />
+                                    <span class="preview-dims" id="originalDims"></span>
+                                </div>
                             </div>
                         </div>
 
@@ -176,19 +200,14 @@
                             <button type="button" class="btn" id="resizeBtn">Resize &amp; Download</button>
                             <button type="reset" class="btn btn-secondary">Reset</button>
                         </div>
+
                     </form>
 
                     <div class="error-msg" id="errorMsg"></div>
 
-                    <!-- ===== PREVIEW ===== -->
+                    <!-- ===== RESIZED PREVIEW ===== -->
                     <div class="resizer-result" id="resizerResult" style="display:none;">
                         <div class="preview-container">
-                            <div class="preview-box">
-                                <span class="preview-label">Original</span>
-                                <img id="originalPreview" alt="Original image preview" />
-                                <span class="preview-dims" id="originalDims"></span>
-                            </div>
-                            <div class="preview-arrow">→</div>
                             <div class="preview-box">
                                 <span class="preview-label">Resized</span>
                                 <img id="resizedPreview" alt="Resized image preview" />
@@ -247,9 +266,11 @@
             const resetBtn = document.querySelector('button[type="reset"]');
             const errorMsg = document.getElementById('errorMsg');
             const resultDiv = document.getElementById('resizerResult');
+            const previewPlaceholder = document.getElementById('previewPlaceholder');
+            const previewImage = document.getElementById('previewImage');
             const originalPreview = document.getElementById('originalPreview');
-            const resizedPreview = document.getElementById('resizedPreview');
             const originalDims = document.getElementById('originalDims');
+            const resizedPreview = document.getElementById('resizedPreview');
             const resizedDims = document.getElementById('resizedDims');
             const resizedSize = document.getElementById('resizedSize');
             const resultDetail = document.getElementById('resultDetail');
@@ -271,15 +292,12 @@
             let originalHeight = 0;
             let isResizing = false;
 
-            // ===== PRESET HANDLER with Custom Enable/Disable =====
+            // ===== PRESET HANDLER =====
             function updateCustomFields() {
                 const val = presetSelect.value;
                 const isCustom = (val === 'custom');
 
-                // Show/hide custom fields container
                 customSizeFields.style.display = isCustom ? 'flex' : 'none';
-
-                // Enable/disable width and height inputs
                 widthInput.disabled = !isCustom;
                 heightInput.disabled = !isCustom;
 
@@ -293,10 +311,7 @@
             }
 
             presetSelect.addEventListener('change', updateCustomFields);
-            // Set default preset (first option) and disable custom fields
-            // Ensure custom fields are disabled initially
             window.addEventListener('DOMContentLoaded', function() {
-                // Set a default preset if not already set
                 if (presetSelect.value === 'custom') {
                     presetSelect.value = 'passport';
                 }
@@ -381,7 +396,7 @@
                         fileDimensions.textContent = 'Dimensions: ' + originalWidth + ' × ' + originalHeight;
                         fileInfo.style.display = 'block';
 
-                        // Set default width/height based on preset (or original if custom)
+                        // Set default width/height
                         if (presetSelect.value === 'custom') {
                             widthInput.value = originalWidth;
                             heightInput.value = originalHeight;
@@ -393,7 +408,9 @@
                             }
                         }
 
-                        // Show original preview
+                        // Show preview – replace placeholder
+                        previewPlaceholder.style.display = 'none';
+                        previewImage.style.display = 'block';
                         originalPreview.src = e.target.result;
                         originalDims.textContent = originalWidth + ' × ' + originalHeight;
 
@@ -401,7 +418,7 @@
                         resultDiv.style.display = 'none';
                         hideError();
 
-                        // Trigger aspect ratio lock if enabled
+                        // Trigger aspect ratio lock
                         if (aspectLock.checked) {
                             const w = parseInt(widthInput.value) || originalWidth;
                             heightInput.value = Math.round(w / aspectRatio);
@@ -432,24 +449,20 @@
                     return;
                 }
 
-                // Create canvas
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 canvas.width = targetW;
                 canvas.height = targetH;
 
-                // Draw resized image (high quality)
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(originalImage, 0, 0, targetW, targetH);
 
-                // Determine quality for JPG
                 let quality = 0.95;
                 let outputDataUrl = canvas.toDataURL('image/jpeg', quality);
                 let outputBlob = dataURLToBlob(outputDataUrl);
                 let outputSizeKB = outputBlob.size / 1024;
 
-                // If target KB > 0, compress to meet target
                 if (targetKB > 0 && outputSizeKB > targetKB) {
                     let low = 0.1;
                     let high = 0.95;
@@ -480,7 +493,6 @@
                     outputDataUrl = URL.createObjectURL(outputBlob);
                 }
 
-                // Show resized preview
                 resizedPreview.src = outputDataUrl;
                 resizedDims.textContent = targetW + ' × ' + targetH;
                 resizedSize.textContent = (outputSizeKB).toFixed(1) + ' KB';
@@ -489,7 +501,6 @@
                 resultDetail.textContent = 'Resized from ' + originalWidth + ' × ' + originalHeight + ' to ' + targetW +
                     ' × ' + targetH + ' | Quality: ' + Math.round(quality * 100) + '%';
 
-                // Download
                 const link = document.createElement('a');
                 link.download = 'resized_image.jpg';
                 link.href = URL.createObjectURL(outputBlob);
@@ -535,25 +546,28 @@
                     originalWidth = 0;
                     originalHeight = 0;
                     aspectRatio = 1;
-                    // Reset to a preset (not custom)
+
+                    // Reset preview placeholder
+                    previewPlaceholder.style.display = 'flex';
+                    previewImage.style.display = 'none';
+                    originalPreview.src = '';
+                    originalDims.textContent = '';
+
                     presetSelect.value = 'passport';
-                    updateCustomFields(); // This will set the preset values and disable inputs
+                    updateCustomFields();
                     widthInput.value = presets['passport'].w;
                     heightInput.value = presets['passport'].h;
                     targetSize.value = 50;
                     resultDiv.style.display = 'none';
-                    originalPreview.src = '';
                     resizedPreview.src = '';
-                    originalDims.textContent = '';
                     resizedDims.textContent = '';
                     resizedSize.textContent = '';
                     hideError();
-                    // Re-enable aspect lock if needed
                     aspectLock.checked = true;
                 }, 50);
             });
 
-            // Initial call to set correct state
+            // Initial call
             updateCustomFields();
 
         })();
