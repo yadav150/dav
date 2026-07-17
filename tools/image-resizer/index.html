@@ -179,7 +179,6 @@
                                         <img id="originalPreview" alt="Uploaded image preview" />
                                         <span class="preview-dims" id="originalDims"></span>
                                     </div>
-                                    <!-- Resized preview overlay (appears after processing) -->
                                     <div class="resized-overlay" id="resizedOverlay" style="display:none;">
                                         <span class="resized-badge">Resized</span>
                                         <img id="resizedPreview" alt="Resized image preview" />
@@ -218,6 +217,7 @@
 
     <script src="../../script.js"></script>
 
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
     <script>
         (function() {
             'use strict';
@@ -349,11 +349,9 @@
                         originalPreview.src = e.target.result;
                         originalDims.textContent = originalWidth + ' × ' + originalHeight;
                         resizedOverlay.style.display = 'none';
-
-                        hideError();
                         resultDetail.style.display = 'none';
-                        // Reset button text
                         actionBtn.textContent = 'Resize & Download';
+                        hideError();
 
                         if (aspectLock.checked) {
                             const w = parseInt(widthInput.value) || originalWidth;
@@ -374,7 +372,6 @@
 
                 if (isResizing) return;
 
-                // If button says "Download", trigger download
                 if (this.textContent === 'Download') {
                     downloadResized();
                     return;
@@ -427,10 +424,8 @@
                     outputSizeKB = bestSize;
                 }
 
-                // Store for download
                 window._resizedBlob = outputBlob;
 
-                // Show resized preview
                 resizedOverlay.style.display = 'flex';
                 resizedPreview.src = URL.createObjectURL(outputBlob);
                 resizedDims.textContent = targetW + ' × ' + targetH;
@@ -440,7 +435,6 @@
                 resultDetail.textContent = 'Resized from ' + originalWidth + ' × ' + originalHeight + ' to ' + targetW +
                     ' × ' + targetH + ' | Quality: ' + Math.round(quality * 100) + '%';
 
-                // Change button to Download
                 actionBtn.textContent = 'Download';
                 hideError();
                 isResizing = false;
@@ -515,7 +509,6 @@
                 }, 50);
             });
 
-            // Initial state
             updateCustomFields();
 
         })();
