@@ -13,15 +13,11 @@
         <div class="header-inner">
             <a href="/dav/index.html" class="site-title">Yadav Web Tools</a>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <!-- SEARCH -->
                 <div class="search-container header-search">
                     <div class="search-wrapper">
                         <div class="search-box">
                             <button class="search-toggle" id="searchToggle" aria-label="Search tools">
-                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="11" cy="11" r="8"/>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                                </svg>
+                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                             </button>
                             <input type="text" id="searchInput" placeholder="Search tools..." autocomplete="off" class="search-input-hidden">
                         </div>
@@ -57,26 +53,10 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- DARK MODE TOGGLE -->
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-                    <svg class="moon-icon" viewBox="0 0 24 24">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                    </svg>
-                    <svg class="sun-icon" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="5"/>
-                        <line x1="12" y1="1" x2="12" y2="3"/>
-                        <line x1="12" y1="21" x2="12" y2="23"/>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                        <line x1="1" y1="12" x2="3" y2="12"/>
-                        <line x1="21" y1="12" x2="23" y2="12"/>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
                 </button>
-
-                <!-- HAMBURGER -->
                 <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
@@ -98,7 +78,6 @@
 
     <!-- ===== MAIN ===== -->
     <main id="main-content">
-
         <section class="section tools-section" aria-labelledby="tool-heading">
             <div class="section-title-bar">
                 <h2 id="tool-heading">Image Resizer</h2>
@@ -112,118 +91,115 @@
 
                     <form class="image-resizer-form" id="resizerForm" novalidate>
 
-                        <!-- ===== UPLOAD & PREVIEW – 50/50 SPLIT ===== -->
-                        <div class="upload-preview-grid">
+                        <!-- TWO COLUMN LAYOUT -->
+                        <div class="resizer-grid">
 
-                            <!-- LEFT: Upload Section -->
-                            <div class="upload-section">
-                                <label class="upload-label">Upload Image</label>
-                                <div class="drop-zone" id="dropZone">
-                                    <span class="drop-text">Drag &amp; drop an image here, or click to browse</span>
-                                    <input type="file" id="fileInput" accept="image/*" />
+                            <!-- LEFT COLUMN: Controls -->
+                            <div class="controls-column">
+
+                                <!-- Target Size -->
+                                <div class="field-group">
+                                    <label for="presetSelect">Target Size</label>
+                                    <select id="presetSelect" class="resizer-select">
+                                        <option value="passport">Passport Size (450 × 600)</option>
+                                        <option value="adre-photo">ADRE Photo (210 × 310)</option>
+                                        <option value="adre-sign">ADRE Sign (210 × 110)</option>
+                                        <option value="dhs-photo">DHS Photo (210 × 310)</option>
+                                        <option value="dhs-sign">DHS Sign (210 × 110)</option>
+                                        <option value="facebook-post">Facebook Post (1536 × 1920)</option>
+                                        <option value="slprb-photo">SLPRB Photo (413 × 531)</option>
+                                        <option value="slprb-sign">SLPRB Sign (472 × 236)</option>
+                                        <option value="custom">Custom Size</option>
+                                    </select>
                                 </div>
-                                <div class="file-info" id="fileInfo" style="display:none;">
-                                    <span id="fileName"></span>
-                                    <span id="fileSize"></span>
-                                    <span id="fileDimensions"></span>
+
+                                <!-- Custom Size (hidden/disabled by default) -->
+                                <div id="customSizeFields" class="custom-size-fields">
+                                    <div class="field-group">
+                                        <label for="widthInput">Width (px)</label>
+                                        <input type="number" id="widthInput" min="1" max="10000" value="800" disabled />
+                                    </div>
+                                    <div class="field-group">
+                                        <label for="heightInput">Height (px)</label>
+                                        <input type="number" id="heightInput" min="1" max="10000" value="600" disabled />
+                                    </div>
+                                </div>
+
+                                <!-- Upload -->
+                                <div class="field-group upload-group">
+                                    <label>Upload Image</label>
+                                    <div class="drop-zone" id="dropZone">
+                                        <span class="drop-text">Drag &amp; drop here, or click to browse</span>
+                                        <input type="file" id="fileInput" accept="image/*" />
+                                    </div>
+                                    <div class="file-info" id="fileInfo" style="display:none;">
+                                        <span id="fileName"></span>
+                                        <span id="fileSize"></span>
+                                        <span id="fileDimensions"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Aspect Ratio -->
+                                <div class="field-group" style="flex-wrap:nowrap; gap:8px;">
+                                    <label style="min-width:auto; font-weight:400; display:flex; align-items:center; gap:8px;">
+                                        <input type="checkbox" id="aspectLock" checked />
+                                        Lock Aspect Ratio
+                                    </label>
+                                </div>
+
+                                <!-- Target File Size -->
+                                <div class="field-group">
+                                    <label for="targetSize">Target File Size (KB)</label>
+                                    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;flex:1 1 200px;min-width:140px;">
+                                        <input type="number" id="targetSize" min="5" max="500" value="50" style="flex:1;min-width:60px;" />
+                                        <span class="helper-text">(0 = no compression)</span>
+                                    </div>
+                                </div>
+
+                                <!-- Buttons -->
+                                <div class="btn-group">
+                                    <button type="button" class="btn" id="actionBtn">Resize &amp; Download</button>
+                                    <button type="reset" class="btn btn-secondary">Reset</button>
+                                </div>
+
+                            </div>
+
+                            <!-- RIGHT COLUMN: Preview -->
+                            <div class="preview-column">
+                                <div class="preview-panel">
+                                    <div class="preview-placeholder" id="previewPlaceholder">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="#4a6b5a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                                            <polyline points="21 15 16 10 5 21"/>
+                                        </svg>
+                                        <span>No image selected</span>
+                                    </div>
+                                    <div class="preview-image" id="previewImage" style="display:none;">
+                                        <img id="originalPreview" alt="Uploaded image preview" />
+                                        <span class="preview-dims" id="originalDims"></span>
+                                    </div>
+                                    <!-- Resized preview overlay (appears after processing) -->
+                                    <div class="resized-overlay" id="resizedOverlay" style="display:none;">
+                                        <span class="resized-badge">Resized</span>
+                                        <img id="resizedPreview" alt="Resized image preview" />
+                                        <span class="preview-dims" id="resizedDims"></span>
+                                        <span class="preview-size" id="resizedSize"></span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- DIVIDER -->
-                            <div class="divider"></div>
-
-                            <!-- RIGHT: Preview Section -->
-                            <div class="preview-section">
-                                <label class="preview-label">Image Preview</label>
-                                <div class="preview-placeholder" id="previewPlaceholder">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="#4a6b5a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                        <circle cx="8.5" cy="8.5" r="1.5"/>
-                                        <polyline points="21 15 16 10 5 21"/>
-                                    </svg>
-                                    <span>No image selected</span>
-                                </div>
-                                <div class="preview-image" id="previewImage" style="display:none;">
-                                    <img id="originalPreview" alt="Uploaded image preview" />
-                                    <span class="preview-dims" id="originalDims"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ===== TARGET SELECTION ===== -->
-                        <div class="field-group">
-                            <label for="presetSelect">Target Size</label>
-                            <select id="presetSelect" class="resizer-select">
-                                <option value="passport">Passport Size (450 × 600)</option>
-                                <option value="adre-photo">ADRE Photo (210 × 310)</option>
-                                <option value="adre-sign">ADRE Sign (210 × 110)</option>
-                                <option value="dhs-photo">DHS Photo (210 × 310)</option>
-                                <option value="dhs-sign">DHS Sign (210 × 110)</option>
-                                <option value="facebook-post">Facebook Post (1536 × 1920)</option>
-                                <option value="slprb-photo">SLPRB Photo (413 × 531)</option>
-                                <option value="slprb-sign">SLPRB Sign (472 × 236)</option>
-                                <option value="custom">Custom Size</option>
-                            </select>
-                        </div>
-
-                        <!-- ===== CUSTOM SIZE INPUTS (disabled by default) ===== -->
-                        <div id="customSizeFields" class="custom-size-fields">
-                            <div class="field-group">
-                                <label for="widthInput">Width (px)</label>
-                                <input type="number" id="widthInput" min="1" max="10000" value="800" disabled />
-                            </div>
-                            <div class="field-group">
-                                <label for="heightInput">Height (px)</label>
-                                <input type="number" id="heightInput" min="1" max="10000" value="600" disabled />
-                            </div>
-                        </div>
-
-                        <!-- ===== ASPECT RATIO LOCK ===== -->
-                        <div class="field-group" style="flex-wrap:nowrap; gap:8px;">
-                            <label style="min-width:auto; font-weight:400; display:flex; align-items:center; gap:8px;">
-                                <input type="checkbox" id="aspectLock" checked />
-                                Lock Aspect Ratio
-                            </label>
-                        </div>
-
-                        <!-- ===== COMPRESSION CONTROL ===== -->
-                        <div class="field-group">
-                            <label for="targetSize">Target File Size (KB)</label>
-                            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;flex:1 1 200px;min-width:160px;">
-                                <input type="number" id="targetSize" min="5" max="500" value="50" style="flex:1;min-width:80px;" />
-                                <span class="helper-text">(0 = no compression)</span>
-                            </div>
-                        </div>
-
-                        <!-- ===== BUTTONS ===== -->
-                        <div class="btn-group">
-                            <button type="button" class="btn" id="resizeBtn">Resize &amp; Download</button>
-                            <button type="reset" class="btn btn-secondary">Reset</button>
                         </div>
 
                     </form>
 
                     <div class="error-msg" id="errorMsg"></div>
-
-                    <!-- ===== RESIZED PREVIEW ===== -->
-                    <div class="resizer-result" id="resizerResult" style="display:none;">
-                        <div class="preview-container">
-                            <div class="preview-box">
-                                <span class="preview-label">Resized</span>
-                                <img id="resizedPreview" alt="Resized image preview" />
-                                <span class="preview-dims" id="resizedDims"></span>
-                                <span class="preview-size" id="resizedSize"></span>
-                            </div>
-                        </div>
-                        <div class="result-detail" id="resultDetail"></div>
-                    </div>
+                    <div class="result-detail" id="resultDetail" style="display:none;"></div>
 
                 </div>
             </div>
         </section>
-
         <div class="spacer"></div>
-
     </main>
 
     <!-- ===== FOOTER ===== -->
@@ -240,16 +216,13 @@
         </div>
     </footer>
 
-    <!-- ===== GLOBAL SCRIPTS ===== -->
     <script src="../../script.js"></script>
 
-    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
     <script>
         (function() {
             'use strict';
 
             // DOM refs
-            const form = document.getElementById('resizerForm');
             const fileInput = document.getElementById('fileInput');
             const dropZone = document.getElementById('dropZone');
             const fileInfo = document.getElementById('fileInfo');
@@ -262,18 +235,18 @@
             const heightInput = document.getElementById('heightInput');
             const aspectLock = document.getElementById('aspectLock');
             const targetSize = document.getElementById('targetSize');
-            const resizeBtn = document.getElementById('resizeBtn');
+            const actionBtn = document.getElementById('actionBtn');
             const resetBtn = document.querySelector('button[type="reset"]');
             const errorMsg = document.getElementById('errorMsg');
-            const resultDiv = document.getElementById('resizerResult');
+            const resultDetail = document.getElementById('resultDetail');
             const previewPlaceholder = document.getElementById('previewPlaceholder');
             const previewImage = document.getElementById('previewImage');
             const originalPreview = document.getElementById('originalPreview');
             const originalDims = document.getElementById('originalDims');
+            const resizedOverlay = document.getElementById('resizedOverlay');
             const resizedPreview = document.getElementById('resizedPreview');
             const resizedDims = document.getElementById('resizedDims');
             const resizedSize = document.getElementById('resizedSize');
-            const resultDetail = document.getElementById('resultDetail');
 
             // Preset definitions
             const presets = {
@@ -290,89 +263,56 @@
             let originalImage = null;
             let originalWidth = 0;
             let originalHeight = 0;
+            let aspectRatio = 1;
             let isResizing = false;
 
             // ===== PRESET HANDLER =====
             function updateCustomFields() {
                 const val = presetSelect.value;
                 const isCustom = (val === 'custom');
-
                 customSizeFields.style.display = isCustom ? 'flex' : 'none';
                 widthInput.disabled = !isCustom;
                 heightInput.disabled = !isCustom;
-
-                if (!isCustom) {
-                    const preset = presets[val];
-                    if (preset) {
-                        widthInput.value = preset.w;
-                        heightInput.value = preset.h;
-                    }
+                if (!isCustom && presets[val]) {
+                    widthInput.value = presets[val].w;
+                    heightInput.value = presets[val].h;
                 }
             }
-
             presetSelect.addEventListener('change', updateCustomFields);
-            window.addEventListener('DOMContentLoaded', function() {
-                if (presetSelect.value === 'custom') {
-                    presetSelect.value = 'passport';
-                }
-                updateCustomFields();
-            });
+            updateCustomFields();
 
             // ===== ASPECT RATIO LOCK =====
-            let aspectRatio = 1;
-
             widthInput.addEventListener('input', function() {
                 if (aspectLock.checked && originalWidth > 0 && originalHeight > 0 && !this.disabled) {
                     const w = parseInt(this.value) || 1;
-                    const h = Math.round(w / aspectRatio);
-                    heightInput.value = h;
+                    heightInput.value = Math.round(w / aspectRatio);
                 }
             });
-
             heightInput.addEventListener('input', function() {
                 if (aspectLock.checked && originalWidth > 0 && originalHeight > 0 && !this.disabled) {
                     const h = parseInt(this.value) || 1;
-                    const w = Math.round(h * aspectRatio);
-                    widthInput.value = w;
+                    widthInput.value = Math.round(h * aspectRatio);
                 }
             });
-
             aspectLock.addEventListener('change', function() {
                 if (this.checked && originalWidth > 0 && originalHeight > 0) {
                     aspectRatio = originalWidth / originalHeight;
                     const w = parseInt(widthInput.value) || originalWidth;
-                    const h = Math.round(w / aspectRatio);
-                    heightInput.value = h;
+                    heightInput.value = Math.round(w / aspectRatio);
                 }
             });
 
             // ===== FILE UPLOAD =====
-            dropZone.addEventListener('click', function() {
-                fileInput.click();
-            });
-
-            dropZone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('dragover');
-            });
-
-            dropZone.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                this.classList.remove('dragover');
-            });
-
+            dropZone.addEventListener('click', function() { fileInput.click(); });
+            dropZone.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('dragover'); });
+            dropZone.addEventListener('dragleave', function(e) { e.preventDefault(); this.classList.remove('dragover'); });
             dropZone.addEventListener('drop', function(e) {
                 e.preventDefault();
                 this.classList.remove('dragover');
-                if (e.dataTransfer.files.length) {
-                    handleFile(e.dataTransfer.files[0]);
-                }
+                if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
             });
-
             fileInput.addEventListener('change', function() {
-                if (this.files.length) {
-                    handleFile(this.files[0]);
-                }
+                if (this.files.length) handleFile(this.files[0]);
             });
 
             function handleFile(file) {
@@ -380,7 +320,6 @@
                     showError('Please upload a valid image file.');
                     return;
                 }
-
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const img = new Image();
@@ -390,35 +329,32 @@
                         originalHeight = img.height;
                         aspectRatio = originalWidth / originalHeight;
 
-                        // Update file info
                         fileName.textContent = 'File: ' + file.name;
                         fileSize.textContent = 'Size: ' + (file.size / 1024).toFixed(1) + ' KB';
                         fileDimensions.textContent = 'Dimensions: ' + originalWidth + ' × ' + originalHeight;
                         fileInfo.style.display = 'block';
 
-                        // Set default width/height
                         if (presetSelect.value === 'custom') {
                             widthInput.value = originalWidth;
                             heightInput.value = originalHeight;
                         } else {
                             const preset = presets[presetSelect.value];
-                            if (preset) {
-                                widthInput.value = preset.w;
-                                heightInput.value = preset.h;
-                            }
+                            if (preset) { widthInput.value = preset.w;
+                                heightInput.value = preset.h; }
                         }
 
-                        // Show preview – replace placeholder
+                        // Show preview
                         previewPlaceholder.style.display = 'none';
-                        previewImage.style.display = 'block';
+                        previewImage.style.display = 'flex';
                         originalPreview.src = e.target.result;
                         originalDims.textContent = originalWidth + ' × ' + originalHeight;
+                        resizedOverlay.style.display = 'none';
 
-                        // Hide result
-                        resultDiv.style.display = 'none';
                         hideError();
+                        resultDetail.style.display = 'none';
+                        // Reset button text
+                        actionBtn.textContent = 'Resize & Download';
 
-                        // Trigger aspect ratio lock
                         if (aspectLock.checked) {
                             const w = parseInt(widthInput.value) || originalWidth;
                             heightInput.value = Math.round(w / aspectRatio);
@@ -429,16 +365,22 @@
                 reader.readAsDataURL(file);
             }
 
-            // ===== RESIZE & DOWNLOAD =====
-            resizeBtn.addEventListener('click', function() {
+            // ===== RESIZE / DOWNLOAD =====
+            actionBtn.addEventListener('click', function() {
                 if (!originalImage) {
                     showError('Please upload an image first.');
                     return;
                 }
 
                 if (isResizing) return;
-                isResizing = true;
 
+                // If button says "Download", trigger download
+                if (this.textContent === 'Download') {
+                    downloadResized();
+                    return;
+                }
+
+                isResizing = true;
                 const targetW = parseInt(widthInput.value) || originalWidth;
                 const targetH = parseInt(heightInput.value) || originalHeight;
                 const targetKB = parseInt(targetSize.value) || 0;
@@ -453,7 +395,6 @@
                 const ctx = canvas.getContext('2d');
                 canvas.width = targetW;
                 canvas.height = targetH;
-
                 ctx.imageSmoothingEnabled = true;
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(originalImage, 0, 0, targetW, targetH);
@@ -464,54 +405,58 @@
                 let outputSizeKB = outputBlob.size / 1024;
 
                 if (targetKB > 0 && outputSizeKB > targetKB) {
-                    let low = 0.1;
-                    let high = 0.95;
-                    let bestQuality = 0.95;
-                    let bestBlob = outputBlob;
-                    let bestSize = outputSizeKB;
-
+                    let low = 0.1,
+                        high = 0.95,
+                        bestQuality = 0.95,
+                        bestBlob = outputBlob,
+                        bestSize = outputSizeKB;
                     for (let i = 0; i < 12; i++) {
                         const mid = (low + high) / 2;
                         const testDataUrl = canvas.toDataURL('image/jpeg', mid);
                         const testBlob = dataURLToBlob(testDataUrl);
                         const testSize = testBlob.size / 1024;
-
                         if (testSize <= targetKB) {
                             bestQuality = mid;
                             bestBlob = testBlob;
                             bestSize = testSize;
                             high = mid;
-                        } else {
-                            low = mid;
-                        }
-
+                        } else { low = mid; }
                         if (Math.abs(testSize - targetKB) < 1) break;
                     }
-
                     outputBlob = bestBlob;
                     outputSizeKB = bestSize;
-                    outputDataUrl = URL.createObjectURL(outputBlob);
                 }
 
-                resizedPreview.src = outputDataUrl;
+                // Store for download
+                window._resizedBlob = outputBlob;
+
+                // Show resized preview
+                resizedOverlay.style.display = 'flex';
+                resizedPreview.src = URL.createObjectURL(outputBlob);
                 resizedDims.textContent = targetW + ' × ' + targetH;
                 resizedSize.textContent = (outputSizeKB).toFixed(1) + ' KB';
 
-                resultDiv.style.display = 'block';
+                resultDetail.style.display = 'block';
                 resultDetail.textContent = 'Resized from ' + originalWidth + ' × ' + originalHeight + ' to ' + targetW +
                     ' × ' + targetH + ' | Quality: ' + Math.round(quality * 100) + '%';
 
+                // Change button to Download
+                actionBtn.textContent = 'Download';
+                hideError();
+                isResizing = false;
+            });
+
+            function downloadResized() {
+                if (!window._resizedBlob) {
+                    showError('Please resize the image first.');
+                    return;
+                }
                 const link = document.createElement('a');
                 link.download = 'resized_image.jpg';
-                link.href = URL.createObjectURL(outputBlob);
+                link.href = URL.createObjectURL(window._resizedBlob);
                 link.click();
-                setTimeout(function() {
-                    URL.revokeObjectURL(link.href);
-                }, 5000);
-
-                isResizing = false;
-                hideError();
-            });
+                setTimeout(function() { URL.revokeObjectURL(link.href); }, 5000);
+            }
 
             // ===== HELPERS =====
             function dataURLToBlob(dataUrl) {
@@ -529,7 +474,6 @@
             function showError(msg) {
                 errorMsg.textContent = msg;
                 errorMsg.classList.add('show');
-                resultDiv.style.display = 'none';
             }
 
             function hideError() {
@@ -538,7 +482,7 @@
             }
 
             // ===== RESET =====
-            resetBtn.addEventListener('click', function(e) {
+            resetBtn.addEventListener('click', function() {
                 setTimeout(function() {
                     fileInput.value = '';
                     fileInfo.style.display = 'none';
@@ -546,28 +490,32 @@
                     originalWidth = 0;
                     originalHeight = 0;
                     aspectRatio = 1;
+                    window._resizedBlob = null;
 
-                    // Reset preview placeholder
                     previewPlaceholder.style.display = 'flex';
                     previewImage.style.display = 'none';
+                    resizedOverlay.style.display = 'none';
                     originalPreview.src = '';
+                    resizedPreview.src = '';
                     originalDims.textContent = '';
+                    resizedDims.textContent = '';
+                    resizedSize.textContent = '';
+                    resultDetail.style.display = 'none';
 
                     presetSelect.value = 'passport';
                     updateCustomFields();
-                    widthInput.value = presets['passport'].w;
-                    heightInput.value = presets['passport'].h;
+                    if (presets['passport']) {
+                        widthInput.value = presets['passport'].w;
+                        heightInput.value = presets['passport'].h;
+                    }
                     targetSize.value = 50;
-                    resultDiv.style.display = 'none';
-                    resizedPreview.src = '';
-                    resizedDims.textContent = '';
-                    resizedSize.textContent = '';
-                    hideError();
                     aspectLock.checked = true;
+                    actionBtn.textContent = 'Resize & Download';
+                    hideError();
                 }, 50);
             });
 
-            // Initial call
+            // Initial state
             updateCustomFields();
 
         })();
