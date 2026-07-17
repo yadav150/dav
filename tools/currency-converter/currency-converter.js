@@ -509,98 +509,155 @@
     }
 
     // ============================================================
-    //  13. RENDER CHART (Chart.js)
-    //  ============================================================
+//  13. RENDER CHART (Chart.js - Modern Digital Look)
+//  ============================================================
 
-    /**
-     * Render the line chart with given labels and values.
-     */
-    function renderChartData(labels, values, targetCurrency) {
-        if (chartInstance) {
-            chartInstance.destroy();
-        }
+/**
+ * Render the line chart with a clean, professional digital look.
+ * No "scanned" or "solid rope" appearance.
+ */
+function renderChartData(labels, values, targetCurrency) {
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
 
-        var ctx = chartCanvas.getContext('2d');
+    var ctx = chartCanvas.getContext('2d');
 
-        // Detect dark mode
-        var isDark = document.body.classList.contains('dark-mode');
-        var textColor = isDark ? '#eee' : '#333';
-        var gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
-        var fillColor = 'rgba(26, 92, 58, 0.2)';
-        var lineColor = '#1a5c3a';
+    // ===== HIGH RESOLUTION FOR CRISP DISPLAY =====
+    var isDark = document.body.classList.contains('dark-mode');
+    var textColor = isDark ? '#eee' : '#333';
+    var gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+    var lineColor = '#1a5c3a';
+    var fillColor = 'rgba(26, 92, 58, 0.15)';
+    var pointColor = '#1a5c3a';
 
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: '1 ' + targetCurrency + ' = ? ' + fromSelect.value,
-                    data: values,
+    // ===== CREATE CHART =====
+    chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: '1 ' + targetCurrency + ' = ? ' + fromSelect.value,
+                data: values,
+                
+                // ----- LINE STYLING (Thin, sharp, digital) -----
+                borderColor: lineColor,
+                borderWidth: 1.5,           // Thin line for digital look
+                borderDash: [4, 3],          // Slightly dashed for modern feel
+                tension: 0.3,               // Smooth but not overly curved
+                
+                // ----- AREA FILL (Subtle, clean) -----
+                backgroundColor: fillColor,
+                fill: true,
+                
+                // ----- POINTS (Visible on hover only) -----
+                pointRadius: 0,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: pointColor,
+                pointHoverBorderColor: '#fff',
+                pointHoverBorderWidth: 2,
+                
+                // ----- ADDITIONAL SETTINGS -----
+                spanGaps: true,
+                segment: {
                     borderColor: lineColor,
-                    backgroundColor: fillColor,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    borderWidth: 2,
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: lineColor
-                }]
+                    backgroundColor: fillColor
+                }
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            
+            // ----- PLUGINS -----
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: isDark ? 'rgba(30,30,30,0.9)' : 'rgba(255,255,255,0.9)',
+                    titleColor: isDark ? '#eee' : '#1e1e1e',
+                    bodyColor: isDark ? '#ddd' : '#333',
+                    borderColor: isDark ? '#3a3a3a' : '#e6e6e6',
+                    borderWidth: 1,
+                    cornerRadius: 6,
+                    padding: 10,
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y.toFixed(4);
+                        }
+                    }
+                }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
+            
+            // ----- SCALES (Clean, minimal) -----
+            scales: {
+                x: {
+                    grid: {
                         display: false
                     },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.parsed.y.toFixed(4);
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: textColor,
-                            maxTicksLimit: 8,
-                            font: { size: 10 }
+                    ticks: {
+                        color: textColor,
+                        maxTicksLimit: 8,
+                        font: {
+                            size: 10,
+                            family: 'Arial, sans-serif'
                         }
                     },
-                    y: {
-                        grid: {
-                            color: gridColor
-                        },
-                        ticks: {
-                            color: textColor,
-                            font: { size: 10 }
-                        }
+                    border: {
+                        display: false
                     }
                 },
-                interaction: {
-                    mode: 'nearest',
-                    intersect: false
+                y: {
+                    grid: {
+                        color: gridColor,
+                        drawTicks: false
+                    },
+                    ticks: {
+                        color: textColor,
+                        font: {
+                            size: 10,
+                            family: 'Arial, sans-serif'
+                        },
+                        callback: function(value) {
+                            return value.toFixed(4);
+                        }
+                    },
+                    border: {
+                        display: false
+                    }
+                }
+            },
+            
+            // ----- INTERACTION -----
+            interaction: {
+                mode: 'nearest',
+                intersect: false
+            },
+            
+            // ----- ANIMATION (Smooth) -----
+            animation: {
+                duration: 600,
+                easing: 'easeOutQuart'
+            },
+            
+            // ----- MAINTAIN CLEAN LOOK -----
+            elements: {
+                line: {
+                    borderWidth: 1.5,
+                    tension: 0.3
+                },
+                point: {
+                    radius: 0,
+                    hoverRadius: 5
                 }
             }
-        });
-    }
-
-    /**
-     * Clear and reset the chart.
-     */
-    function clearChart() {
-        if (chartInstance) {
-            chartInstance.destroy();
-            chartInstance = null;
         }
-        chartCanvas.style.display = 'none';
-        chartLoading.style.display = 'none';
-    }
+    });
+
+    // ===== FORCE REDRAW FOR CRISPNESS =====
+    chartInstance.update('none');
+}
 
     // ============================================================
     //  14. AUTO-REFRESH
