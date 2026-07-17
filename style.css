@@ -100,16 +100,13 @@
 .dark-mode .timeframe-btn{background:#2a2a2a;border-color:#3a3a3a;color:#8a9a8a}
 .dark-mode .timeframe-btn.active{background:#1a5c3a;color:#fff;border-color:#1a5c3a}
 .advanced-grid{display:grid;grid-template-columns:1fr 2fr;gap:12px;align-items:center}
-.chart-container{margin-top:16px;padding:16px;background:#f4f8f6;border:1px solid #d4e4dc;border-radius:8px;min-height:180px}
-.chart-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;color:#4a6b5a;min-height:160px;text-align:center}
-.chart-placeholder svg{width:48px;height:48px;stroke:#4a6b5a}
-.chart-placeholder span{font-size:.95rem}
-.chart-container canvas{width:100%;height:200px;display:none}
-.dark-mode .chart-container{background:#1a1a1a;border-color:#3a3a3a}
-.dark-mode .chart-placeholder{color:#8a9a8a}
-.dark-mode .chart-placeholder svg{stroke:#8a9a8a}
 .currency-form .btn-group{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;padding-top:12px;border-top:1px solid #e6e6e6}
 .currency-form .btn{min-width:120px;padding:10px 28px;font-size:1rem}
 .dark-mode .currency-form .btn-group{border-top-color:#3a3a3a}
+.chart-container{margin-top:16px;padding:16px;background:#f4f8f6;border:1px solid #d4e4dc;border-radius:8px;min-height:200px;position:relative}
+.chart-loading{display:flex;align-items:center;justify-content:center;min-height:180px;color:#4a6b5a;font-size:.95rem}
+.chart-container canvas{width:100%!important;height:200px!important}
+.dark-mode .chart-container{background:#1a1a1a;border-color:#3a3a3a}
+.dark-mode .chart-loading{color:#8a9a8a}
 @media(max-width:768px){.converter-grid{grid-template-columns:1fr;gap:12px}.swap-column{padding-top:0;padding-bottom:4px;display:flex;justify-content:center}.advanced-grid{grid-template-columns:1fr;gap:8px}}
-@media(max-width:640px){.asset-toggle .toggle-btn{padding:6px 12px;font-size:.8rem}.result-display .result-value{font-size:1.2rem}.result-display .result-currency{font-size:1rem}.timeframe-btn{padding:4px 10px;font-size:.75rem}.currency-search{padding:6px 10px;font-size:.8rem}.currency-select{padding:6px 8px;font-size:.8rem;min-height:34px}.currency-form .field-group input[type="number"]{padding:6px 10px;font-size:.85rem}.chart-container{padding:12px;min-height:140px}.chart-placeholder{padding:12px;min-height:120px}.chart-placeholder svg{width:32px;height:32px}.currency-form .btn{width:100%;justify-content:center}}
+@media(max-width:640px){.asset-toggle .toggle-btn{padding:6px 12px;font-size:.8rem}.result-display .result-value{font-size:1.2rem}.result-display .result-currency{font-size:1rem}.timeframe-btn{padding:4px 10px;font-size:.75rem}.currency-search{padding:6px 10px;font-size:.8rem}.currency-select{padding:6px 8px;font-size:.8rem;min-height:34px}.currency-form .field-group input[type="number"]{padding:6px 10px;font-size:.85rem}.chart-container{padding:12px;min-height:160px}.chart-loading{min-height:140px;font-size:.8rem}.currency-form .btn{width:100%;justify-content:center}}
