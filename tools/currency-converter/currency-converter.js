@@ -278,7 +278,7 @@
         }
     }
 
-    // ===== FETCH HISTORICAL DATA FOR CHART =====
+    // ===== FETCH HISTORICAL DATA FOR CHART (FIXED) =====
     function fetchHistoricalData(period) {
         var from = fromSelect.value;
         var to = toSelect.value;
@@ -292,7 +292,6 @@
             default: days = 7;
         }
 
-        // Calculate date range
         var endDate = new Date();
         var startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
@@ -300,37 +299,73 @@
         var startStr = startDate.toISOString().split('T')[0];
         var endStr = endDate.toISOString().split('T')[0];
 
-        // Use Frankfurter API for historical data (free, no key)
-        var url = 'https://api.frankfurter.app/' + startStr + '..' + endStr + '?from=' + from + '&to=' + to;
+        // Use ExchangeRate-API historical endpoint (same API key)
+        var url = 'https://v6.exchangerate-api.com/v6/' + API_KEY + '/history/' + from + '/' + startStr + '/' + endStr;
 
         chartLoading.style.display = 'block';
         chartCanvas.style.display = 'none';
 
         fetch(url)
             .then(function(response) {
-                if (!response.ok) throw new Error('Failed to fetch historical data');
+                if (!response.ok) throw new Error('Historical API request failed');
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.result === 'error') {
+                    showError('Historical data error: ' + (data['error-type'] || 'Unknown'));
+                    chartLoading.style.display = 'none';
+                    return;
+                }
+                chartLoading.style.display = 'none';
+                chartCanvas.style.display = 'block';
+
+                var rates = data.conversion_rates;
+                var sortedDates = Object.keys(rates).sort();
+                var labels = sortedDates;
+                var values = sortedDates.map(function(date) {
+                    return rates[date][to] || 0;
+                });
+
+                renderChartData(labels, values, to);
+            })
+            .catch(function(err) {
+                // If ExchangeRate-API fails, try Frankfurter as fallback
+                chartLoading.style.display = 'none';
+                tryFrankfurterHistorical(from, to, startStr, endStr);
+                console.warn('ExchangeRate-API historical failed, trying Frankfurter:', err);
+            });
+    }
+
+    // ===== FALLBACK: FRANKFURTER API =====
+    function tryFrankfurterHistorical(from, to, startStr, endStr) {
+        var url = 'https://api.frankfurter.app/' + startStr + '..' + endStr + '?from=' + from + '&to=' + to;
+
+        fetch(url)
+            .then(function(response) {
+                if (!response.ok) throw new Error('Frankfurter API failed');
                 return response.json();
             })
             .then(function(data) {
                 chartLoading.style.display = 'none';
                 chartCanvas.style.display = 'block';
-                renderChart(data, to);
+
+                var rates = data.rates;
+                var labels = Object.keys(rates).sort();
+                var values = labels.map(function(date) {
+                    return rates[date][to];
+                });
+
+                renderChartData(labels, values, to);
             })
             .catch(function(err) {
                 chartLoading.style.display = 'none';
-                showError('Failed to load historical chart data.');
-                console.error('Chart API Error:', err);
+                showError('Unable to load historical chart data. Please try again later.');
+                console.error('Historical data API Error:', err);
             });
     }
 
     // ===== RENDER CHART =====
-    function renderChart(data, targetCurrency) {
-        var rates = data.rates;
-        var labels = Object.keys(rates).sort();
-        var values = labels.map(function(date) {
-            return rates[date][targetCurrency];
-        });
-
+    function renderChartData(labels, values, targetCurrency) {
         if (chartInstance) {
             chartInstance.destroy();
         }
