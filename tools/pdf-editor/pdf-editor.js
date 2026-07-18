@@ -1,7 +1,7 @@
 // ============================================================
 //  PDF EDITOR – Yadav Web Tools
 //  Upload, reorder, delete pages, and download edited PDF.
-//  Fully consistent with PDF Merger's upload style.
+//  Controls are always visible.
 // ============================================================
 
 (function() {
@@ -28,7 +28,7 @@
     function showError(msg) {
         errorMsg.textContent = msg;
         errorMsg.classList.add('show');
-        workspace.style.display = 'none';
+        // workspace stays visible – do NOT hide it
     }
 
     function hideError() {
@@ -101,7 +101,7 @@
             });
         }
 
-        // Show workspace
+        // Show file info
         workspace.style.display = 'block';
         fileName.textContent = currentFile.name + ' (' + formatFileSize(currentFile.size) + ')';
         pageCount.textContent = pdfDoc.numPages + ' pages';
@@ -191,8 +191,9 @@
             card.remove();
             updatePageNumbers();
             if (pageData.length === 0) {
-                workspace.style.display = 'none';
-                pagesGrid.innerHTML = '';
+                // Clear file info but keep workspace visible
+                fileName.textContent = '';
+                pageCount.textContent = '0 pages';
             } else {
                 pageCount.textContent = pageData.length + ' pages';
             }
@@ -249,10 +250,12 @@
         pdfDoc = null;
         pageData = [];
         pagesGrid.innerHTML = '';
-        workspace.style.display = 'none';
+        fileName.textContent = '';
+        pageCount.textContent = '';
+        outputFileName.value = '';
         hideError();
         dropZone.classList.remove('dragover');
-        outputFileName.value = '';
+        // workspace stays visible
     });
 
 })();
