@@ -1,5 +1,5 @@
 // ============================================================
-//  PDF MERGER – Grid + Drag & Drop + CopyPages Fix
+//  PDF MERGER – Grid + Drag & Drop (FIXED copyPages)
 // ============================================================
 
 (function() {
@@ -66,7 +66,7 @@
         });
         fileGrid.innerHTML = html;
 
-        // Remove event listeners
+        // Remove listeners
         document.querySelectorAll('.file-remove').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -78,7 +78,7 @@
             });
         });
 
-        // Re-init Sortable
+        // Sortable
         if (sortableInstance) {
             sortableInstance.destroy();
         }
@@ -91,7 +91,6 @@
                 if (oldIndex !== newIndex) {
                     var moved = selectedFiles.splice(oldIndex, 1)[0];
                     selectedFiles.splice(newIndex, 0, moved);
-                    // Update data-index attributes
                     var items = fileGrid.querySelectorAll('.file-card');
                     items.forEach(function(item, idx) {
                         item.dataset.index = idx;
@@ -163,7 +162,7 @@
         fileInput.click();
     });
 
-    // ===== MERGE PDFs (NO COMPRESSION) =====
+    // ===== MERGE PDFs (FIXED copyPages) =====
     mergeBtn.addEventListener('click', function() {
         if (selectedFiles.length === 0) {
             showError('Please add at least one PDF file.');
@@ -188,27 +187,55 @@
         mergeBtn.disabled = true;
         hideError();
 
-        var PDFDocument = window.PDFLib.PDFDocument;
-        if (!PDFDocument) {
+        // Check library
+        if (typeof window.PDFLib === 'undefined' || typeof window.PDFLib.PDFDocument === 'undefined') {
             showError('PDF library not loaded. Please refresh and try again.');
             mergeBtn.disabled = false;
             progressContainer.style.display = 'none';
             return;
         }
 
+        var PDFDocument = window.PDFLib.PDFDocument;
         var mergedPdf = PDFDocument.create();
         var totalFiles = selectedFiles.length;
         var processed = 0;
 
-        selectedFiles.forEach(function(file, fileIndex) {
+        // Use a queue to process one file at a time to avoid race conditions
+        var processQueue = function(index) {
+            if (index >= totalFiles) {
+                // All files processed
+                progressLabel.textContent = 'Generating merged PDF...';
+                mergedPdf.save({ compress: false })
+                    .then(function(pdfBytes) {
+                        var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                        mergedBlob = blob;
+                        progressBar.style.width = '100%';
+                        progressPercent.textContent = '100%';
+                        progressLabel.textContent = 'Done!';
+                        mergeBtn.disabled = false;
+                        downloadBlob(blob, name);
+                    })
+                    .catch(function(err) {
+                        showError('Failed to merge PDFs: ' + err.message);
+                        mergeBtn.disabled = false;
+                        progressContainer.style.display = 'none';
+                        console.error(err);
+                    });
+                return;
+            }
+
+            var file = selectedFiles[index];
             var reader = new FileReader();
             reader.onload = function(e) {
                 var bytes = new Uint8Array(e.target.result);
                 PDFDocument.load(bytes)
                     .then(function(doc) {
-                        var pages = doc.getPages();
-                        var pageIndices = pages.map(function(_, idx) { return idx; });
-                        // Copy all pages at once
+                        var pageCount = doc.getPageCount();
+                        var pageIndices = [];
+                        for (var i = 0; i < pageCount; i++) {
+                            pageIndices.push(i);
+                        }
+                        // Copy all pages from this document
                         return mergedPdf.copyPages(doc, pageIndices)
                             .then(function(copies) {
                                 copies.forEach(function(page) {
@@ -221,26 +248,8 @@
                         var pct = Math.round((processed / totalFiles) * 100);
                         progressBar.style.width = pct + '%';
                         progressPercent.textContent = pct + '%';
-
-                        if (processed === totalFiles) {
-                            progressLabel.textContent = 'Generating merged PDF...';
-                            mergedPdf.save({ compress: false })
-                                .then(function(pdfBytes) {
-                                    var blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                                    mergedBlob = blob;
-                                    progressBar.style.width = '100%';
-                                    progressPercent.textContent = '100%';
-                                    progressLabel.textContent = 'Done!';
-                                    mergeBtn.disabled = false;
-                                    downloadBlob(blob, name);
-                                })
-                                .catch(function(err) {
-                                    showError('Failed to merge PDFs: ' + err.message);
-                                    mergeBtn.disabled = false;
-                                    progressContainer.style.display = 'none';
-                                    console.error(err);
-                                });
-                        }
+                        // Process next file
+                        processQueue(index + 1);
                     })
                     .catch(function(err) {
                         showError('Failed to load PDF: ' + file.name + ' - ' + err.message);
@@ -250,7 +259,10 @@
                     });
             };
             reader.readAsArrayBuffer(file);
-        });
+        };
+
+        // Start processing from the first file
+        processQueue(0);
     });
 
     // ===== DOWNLOAD =====
