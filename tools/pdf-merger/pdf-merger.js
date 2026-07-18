@@ -1,6 +1,7 @@
 // ============================================================
 //  PDF MERGER – Yadav Web Tools
-//  Merges multiple PDFs into one using pdf-lib
+//  Merges multiple PDFs with drag‑and‑drop reordering.
+//  NO COMPRESSION – preserves original quality.
 // ============================================================
 
 (function() {
@@ -25,8 +26,7 @@
     // ===== STATE =====
     var selectedFiles = [];
     var mergedBlob = null;
-    var pdfjsLib = window['pdfjs-dist/build/pdf'];
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    var sortableInstance = null;
 
     // ===== HELPERS =====
     function showError(msg) {
@@ -49,6 +49,10 @@
     function updateFileList() {
         if (selectedFiles.length === 0) {
             fileListContainer.style.display = 'none';
+            if (sortableInstance) {
+                sortableInstance.destroy();
+                sortableInstance = null;
+            }
             return;
         }
         fileListContainer.style.display = 'block';
@@ -64,7 +68,6 @@
         });
         fileList.innerHTML = html;
 
-        // Attach remove event listeners
         document.querySelectorAll('.file-remove').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var index = parseInt(this.dataset.index);
@@ -73,6 +76,26 @@
                 resetMergeState();
                 hideError();
             });
+        });
+
+        if (sortableInstance) {
+            sortableInstance.destroy();
+        }
+        sortableInstance = Sortable.create(fileList, {
+            animation: 150,
+            handle: '.file-item',
+            onEnd: function(evt) {
+                var oldIndex = evt.oldIndex;
+                var newIndex = evt.newIndex;
+                if (oldIndex !== newIndex) {
+                    var moved = selectedFiles.splice(oldIndex, 1)[0];
+                    selectedFiles.splice(newIndex, 0, moved);
+                    var items = fileList.querySelectorAll('.file-item');
+                    items.forEach(function(item, idx) {
+                        item.dataset.index = idx;
+                    });
+                }
+            }
         });
     }
 
@@ -138,7 +161,7 @@
         fileInput.click();
     });
 
-    // ===== MERGE PDFS =====
+    // ===== MERGE PDFS (WITHOUT COMPRESSION) =====
     mergeBtn.addEventListener('click', function() {
         if (selectedFiles.length === 0) {
             showError('Please add at least one PDF file.');
@@ -146,7 +169,6 @@
         }
 
         if (selectedFiles.length === 1) {
-            // Just download the single file
             var singleBlob = new Blob([selectedFiles[0]], { type: 'application/pdf' });
             downloadBlob(singleBlob, outputName.value.trim() || 'merged.pdf');
             return;
@@ -170,15 +192,15 @@
         var totalFiles = selectedFiles.length;
         var processed = 0;
 
-        selectedFiles.forEach(function(file, index) {
+        selectedFiles.forEach(function(file, fileIndex) {
             var reader = new FileReader();
             reader.onload = function(e) {
                 var bytes = new Uint8Array(e.target.result);
                 PDFDocument.load(bytes)
                     .then(function(doc) {
                         var pages = doc.getPages();
-                        var copyPromises = pages.map(function(page) {
-                            return mergedPdf.copyPages(doc, [page.getPageNumber() - 1])
+                        var copyPromises = pages.map(function(page, pageIndex) {
+                            return mergedPdf.copyPages(doc, [pageIndex])
                                 .then(function(copies) {
                                     mergedPdf.addPage(copies[0]);
                                 });
@@ -192,9 +214,9 @@
                         progressPercent.textContent = pct + '%';
 
                         if (processed === totalFiles) {
-                            // All pages merged
                             progressLabel.textContent = 'Generating merged PDF...';
-                            mergedPdf.save()
+                            // ===== NO COMPRESSION =====
+                            mergedPdf.save({ compress: false })
                                 .then(function(pdfBytes) {
                                     var blob = new Blob([pdfBytes], { type: 'application/pdf' });
                                     mergedBlob = blob;
