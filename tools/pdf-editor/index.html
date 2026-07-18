@@ -9,92 +9,75 @@
 <body>
 
     <!-- ===== HEADER ===== -->
-<header class="site-header" role="banner">
-    <div class="header-inner">
-    <a href="/dav/index.html" class="site-title">Yadav Web Tools</a>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <!-- SEARCH (Collapsible) -->
-        <div class="search-container header-search">
-            <div class="search-wrapper">
-                <div class="search-box">
-                    <button class="search-toggle" id="searchToggle" aria-label="Search tools">
-                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"/>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                        </svg>
-                    </button>
-                    <input type="text" id="searchInput" placeholder="Search tools..." autocomplete="off" class="search-input-hidden">
-                </div>
-                <div class="search-dropdown" id="searchDropdown">
-                    <div class="dropdown-section">
-                        <span class="dropdown-label">Quick Tools</span>
-                        <ul class="dropdown-list" id="quickToolsList">
-                            <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
-                            <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
-                            <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
-                        </ul>
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="/dav/index.html" class="site-title">Yadav Web Tools</a>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <div class="search-container header-search">
+                    <div class="search-wrapper">
+                        <div class="search-box">
+                            <button class="search-toggle" id="searchToggle" aria-label="Search tools">
+                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                </svg>
+                            </button>
+                            <input type="text" id="searchInput" placeholder="Search tools..." autocomplete="off" class="search-input-hidden">
+                        </div>
+                        <div class="search-dropdown" id="searchDropdown">
+                            <div class="dropdown-section">
+                                <span class="dropdown-label">Quick Tools</span>
+                                <ul class="dropdown-list" id="quickToolsList">
+                                    <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
+                                    <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
+                                    <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-section">
+                                <span class="dropdown-label">All Tools</span>
+                                <ul class="dropdown-list" id="allToolsList">
+                                    <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
+                                    <li><a href="/dav/tools/sip-calculator/index.html">SIP Calculator</a></li>
+                                    <li><a href="/dav/tools/pdf-editor/index.html">PDF Editor</a></li>
+                                    <li><a href="/dav/tools/image-resizer/index.html">Image Resizer</a></li>
+                                    <li><a href="/dav/tools/text-counter/index.html">Text Counter</a></li>
+                                    <li><a href="/dav/tools/unit-converter/index.html">Unit Converter</a></li>
+                                    <li><a href="/dav/tools/password-generator/index.html">Password Generator</a></li>
+                                    <li><a href="/dav/tools/qr-generator/index.html">QR Generator</a></li>
+                                    <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
+                                    <li><a href="/dav/tools/number-converter/index.html">Number Converter</a></li>
+                                    <li><a href="/dav/tools/percentage-calculator/index.html">Percentage Calculator</a></li>
+                                    <li><a href="/dav/tools/bmi-calculator/index.html">BMI Calculator</a></li>
+                                    <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
+                                    <li><a href="/dav/tools/accessibility-tool/index.html">Accessibility Tool</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="dropdown-divider"></div>
-                    <div class="dropdown-section">
-                        <span class="dropdown-label">All Tools</span>
-                        <ul class="dropdown-list" id="allToolsList">
-                            <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
-                            <li><a href="/dav/tools/sip-calculator/index.html">SIP Calculator</a></li>
-                            <li><a href="/dav/tools/pdf-editor/index.html">PDF Editor</a></li>
-                            <li><a href="/dav/tools/image-resizer/index.html">Image Resizer</a></li>
-                            <li><a href="/dav/tools/text-counter/index.html">Text Counter</a></li>
-                            <li><a href="/dav/tools/unit-converter/index.html">Unit Converter</a></li>
-                            <li><a href="/dav/tools/password-generator/index.html">Password Generator</a></li>
-                            <li><a href="/dav/tools/qr-generator/index.html">QR Generator</a></li>
-                            <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
-                            <li><a href="/dav/tools/number-converter/index.html">Number Converter</a></li>
-                            <li><a href="/dav/tools/percentage-calculator/index.html">Percentage Calculator</a></li>
-                            <li><a href="/dav/tools/bmi-calculator/index.html">BMI Calculator</a></li>
-                            <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
-                            <li><a href="/dav/tools/accessibility-tool/index.html">Accessibility Tool</a></li>
-                        </ul>
-                    </div>
                 </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </button>
+                <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
             </div>
         </div>
-
-        <!-- DARK MODE TOGGLE -->
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-            <svg class="moon-icon" viewBox="0 0 24 24">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-            </svg>
-            <svg class="sun-icon" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="5"/>
-                <line x1="12" y1="1" x2="12" y2="3"/>
-                <line x1="12" y1="21" x2="12" y2="23"/>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-                <line x1="1" y1="12" x2="3" y2="12"/>
-                <line x1="21" y1="12" x2="23" y2="12"/>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-            </svg>
-        </button>
-
-        <!-- HAMBURGER -->
-        <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        </button>
-    </div>
-</div>
-    <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
-        <ul class="nav-list">
-            <li><a href="/dav/index.html" aria-current="page">Home</a></li>
-            <li><a href="/dav/about/index.html">About</a></li>
-            <li><a href="/dav/contact/index.html">Contact</a></li>
-            <li><a href="/dav/privacy-policy/index.html">Privacy Policy</a></li>
-            <li><a href="/dav/disclaimer/index.html">Disclaimer</a></li>
-            <li><a href="/dav/terms/index.html">Terms</a></li>
-        </ul>
-    </nav>
-</header>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="/dav/index.html">Home</a></li>
+                <li><a href="/dav/about/index.html">About</a></li>
+                <li><a href="/dav/contact/index.html">Contact</a></li>
+                <li><a href="/dav/privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="/dav/disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="/dav/terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <!-- ===== MAIN ===== -->
     <main id="main-content">
@@ -107,17 +90,23 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Upload a PDF, reorder pages by dragging, and delete unwanted pages.
+                        Upload a PDF, reorder pages by dragging, and delete unwanted pages. All processing happens locally in your browser.
                     </p>
 
-                    <!-- Upload area -->
-                    <div class="field-group" style="margin-bottom:12px;">
+                    <!-- ===== UPLOAD AREA (Updated - SVG Icon) ===== -->
+                    <div class="field-group upload-group" style="margin-bottom:12px;">
                         <label for="fileInput" style="min-width:120px;">Select PDF</label>
                         <div class="drop-zone" id="dropZone">
-                            <div class="drop-icon">📄</div>
+                            <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="16 16 12 12 8 16"/>
+                                <line x1="12" y1="12" x2="12" y2="21"/>
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
                             <div class="drop-text"><strong>Drop your PDF here</strong> or click to browse</div>
                             <input type="file" id="fileInput" accept=".pdf" />
                         </div>
+                        <span class="helper-text">Supports single PDF files</span>
                     </div>
 
                     <!-- Error message -->
@@ -161,12 +150,12 @@
     <footer class="site-footer" role="contentinfo">
         <div class="footer-inner">
             <div class="footer-links">
-    <a href="/dav/about/index.html">About</a>
-    <a href="/dav/contact/index.html">Contact</a>
-    <a href="/dav/privacy-policy/index.html">Privacy</a>
-    <a href="/dav/disclaimer/index.html">Disclaimer</a>
-    <a href="/dav/terms/index.html">Terms</a>
-</div>
+                <a href="/dav/about/index.html">About</a>
+                <a href="/dav/contact/index.html">Contact</a>
+                <a href="/dav/privacy-policy/index.html">Privacy</a>
+                <a href="/dav/disclaimer/index.html">Disclaimer</a>
+                <a href="/dav/terms/index.html">Terms</a>
+            </div>
             <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
         </div>
     </footer>
@@ -179,261 +168,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
-    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
-    <script>
-        (function() {
-            'use strict';
-
-            // ----- DOM refs -----
-            const dropZone = document.getElementById('dropZone');
-            const fileInput = document.getElementById('fileInput');
-            const workspace = document.getElementById('workspace');
-            const fileName = document.getElementById('fileName');
-            const pageCount = document.getElementById('pageCount');
-            const pagesGrid = document.getElementById('pagesGrid');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const resetBtn = document.getElementById('resetBtn');
-            const errorMsg = document.getElementById('errorMsg');
-            const outputFileName = document.getElementById('outputFileName');
-
-            // ----- State -----
-            let pdfDoc = null;
-            let pageData = [];
-            let currentFile = null;
-
-            // ----- Error handling -----
-            function showError(msg) {
-                errorMsg.textContent = msg;
-                errorMsg.classList.add('show');
-                workspace.style.display = 'none';
-            }
-
-            function hideError() {
-                errorMsg.classList.remove('show');
-                errorMsg.textContent = '';
-            }
-
-            // ----- Helpers -----
-            function formatFileSize(bytes) {
-                if (bytes < 1024) return bytes + ' B';
-                if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-                return (bytes / 1048576).toFixed(1) + ' MB';
-            }
-
-            // ----- Render thumbnails using pdf.js -----
-            async function renderThumbnails() {
-                pagesGrid.innerHTML = '';
-                for (let i = 0; i < pdfDoc.numPages; i++) {
-                    const pageNum = i + 1;
-                    const page = await pdfDoc.getPage(pageNum);
-                    const viewport = page.getViewport({ scale: 0.5 });
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
-                    await page.render({ canvasContext: context, viewport: viewport }).promise;
-
-                    const card = document.createElement('div');
-                    card.className = 'page-card';
-                    card.dataset.index = i;
-
-                    const thumbDiv = document.createElement('div');
-                    thumbDiv.className = 'page-thumb';
-                    thumbDiv.appendChild(canvas);
-
-                    const numSpan = document.createElement('span');
-                    numSpan.className = 'page-number';
-                    numSpan.textContent = 'Page ' + (i + 1);
-
-                    const actions = document.createElement('div');
-                    actions.className = 'page-actions';
-
-                    const delBtn = document.createElement('button');
-                    delBtn.className = 'btn-sm btn-delete';
-                    delBtn.textContent = 'Delete';
-                    delBtn.dataset.index = i;
-
-                    actions.appendChild(delBtn);
-
-                    card.appendChild(thumbDiv);
-                    card.appendChild(numSpan);
-                    card.appendChild(actions);
-
-                    pagesGrid.appendChild(card);
-                    pageData[i] = { pageNum: pageNum };
-                }
-
-                updatePageNumbers();
-
-                // Init Sortable
-                if (typeof Sortable !== 'undefined') {
-                    Sortable.create(pagesGrid, {
-                        animation: 150,
-                        handle: '.page-card',
-                        onEnd: function(evt) {
-                            const [moved] = pageData.splice(evt.oldIndex, 1);
-                            pageData.splice(evt.newIndex, 0, moved);
-                            updatePageNumbers();
-                        }
-                    });
-                }
-
-                // Show workspace
-                workspace.style.display = 'block';
-                fileName.textContent = currentFile.name + ' (' + formatFileSize(currentFile.size) + ')';
-                pageCount.textContent = pdfDoc.numPages + ' pages';
-                hideError();
-
-                // Set default file name
-                const baseName = currentFile.name.replace(/\.pdf$/i, '');
-                outputFileName.value = baseName + '_edited';
-            }
-
-            function updatePageNumbers() {
-                const cards = pagesGrid.querySelectorAll('.page-card');
-                cards.forEach((card, idx) => {
-                    const numSpan = card.querySelector('.page-number');
-                    if (numSpan) numSpan.textContent = 'Page ' + (idx + 1);
-                    card.dataset.index = idx;
-                });
-            }
-
-            // ----- Load PDF -----
-            async function loadPDF(file) {
-                try {
-                    hideError();
-                    const arrayBuffer = await file.arrayBuffer();
-                    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
-                    pdfDoc = await loadingTask.promise;
-                    pageData = [];
-                    currentFile = file;
-                    await renderThumbnails();
-                } catch (err) {
-                    showError('Unable to load PDF. Please make sure the file is valid.');
-                    console.error(err);
-                }
-            }
-
-            // ----- Handle file selection -----
-            function handleFile(file) {
-                if (!file) {
-                    showError('Please select a valid PDF file.');
-                    return;
-                }
-                if (file.type !== 'application/pdf') {
-                    showError('Please select a valid PDF file.');
-                    return;
-                }
-                loadPDF(file);
-            }
-
-            // ----- Event listeners for upload -----
-            dropZone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                dropZone.classList.add('dragover');
-            });
-
-            dropZone.addEventListener('dragleave', function() {
-                dropZone.classList.remove('dragover');
-            });
-
-            dropZone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                dropZone.classList.remove('dragover');
-                if (e.dataTransfer.files.length > 0) {
-                    handleFile(e.dataTransfer.files[0]);
-                }
-            });
-
-            dropZone.addEventListener('click', function() {
-                fileInput.click();
-            });
-
-            fileInput.addEventListener('change', function() {
-                if (fileInput.files.length > 0) {
-                    handleFile(fileInput.files[0]);
-                }
-            });
-
-            // ----- Page actions (delegated) -----
-            pagesGrid.addEventListener('click', function(e) {
-                const target = e.target.closest('button');
-                if (!target) return;
-                const card = target.closest('.page-card');
-                if (!card) return;
-                const index = parseInt(card.dataset.index);
-
-                if (target.classList.contains('btn-delete')) {
-                    pageData.splice(index, 1);
-                    card.remove();
-                    updatePageNumbers();
-                    if (pageData.length === 0) {
-                        workspace.style.display = 'none';
-                        pagesGrid.innerHTML = '';
-                    } else {
-                        pageCount.textContent = pageData.length + ' pages';
-                    }
-                }
-            });
-
-            // ----- Download -----
-            downloadBtn.addEventListener('click', async function() {
-                if (!pdfDoc || pageData.length === 0) {
-                    showError('Please upload a PDF file first.');
-                    return;
-                }
-
-                try {
-                    const { PDFDocument } = PDFLib;
-                    const existingPdfBytes = await currentFile.arrayBuffer();
-                    const srcDoc = await PDFDocument.load(existingPdfBytes);
-                    const newDoc = await PDFDocument.create();
-
-                    for (let i = 0; i < pageData.length; i++) {
-                        const data = pageData[i];
-                        const [srcPage] = await newDoc.copyPages(srcDoc, [data.pageNum - 1]);
-                        newDoc.addPage(srcPage);
-                    }
-
-                    const pdfBytes = await newDoc.save();
-                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-                    const url = URL.createObjectURL(blob);
-
-                    // Get file name
-                    let name = outputFileName.value.trim() || 'edited';
-                    if (!name.toLowerCase().endsWith('.pdf')) {
-                        name += '.pdf';
-                    }
-
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = name;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    hideError();
-                } catch (err) {
-                    showError('Error generating PDF. Please try again.');
-                    console.error(err);
-                }
-            });
-
-            // ----- Reset -----
-            resetBtn.addEventListener('click', function() {
-                fileInput.value = '';
-                currentFile = null;
-                pdfDoc = null;
-                pageData = [];
-                pagesGrid.innerHTML = '';
-                workspace.style.display = 'none';
-                hideError();
-                dropZone.classList.remove('dragover');
-                outputFileName.value = '';
-            });
-
-        })();
-    </script>
+    <!-- ===== EXTERNAL TOOL SCRIPT ===== -->
+    <script src="pdf-editor.js"></script>
 
 </body>
 </html>
