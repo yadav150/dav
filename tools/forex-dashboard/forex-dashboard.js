@@ -1,6 +1,7 @@
 // ============================================================
-//  FOREX DASHBOARD – FIXED (No .data() errors)
-//  Uses Frankfurter API with simulation fallback.
+//  FOREX DASHBOARD – FINAL FIX (Live Updates Working)
+//  Uses ExchangeRate-API for both live and historical.
+//  Frankfurter fallback if ExchangeRate-API fails.
 // ============================================================
 
 (function() {
@@ -26,7 +27,8 @@
     var candlestickSeries = null;
     var liveUpdateInterval = null;
     var rateData = {};
-    var lastCandleData = null; // Store the last candle for updates
+    var lastCandleData = null;
+    var isFirstLoad = true;
 
     // ===== DOM REFS =====
     var chartContainer = document.getElementById('forexChart');
@@ -74,7 +76,7 @@
         if (loadingOverlay) loadingOverlay.style.display = 'none';
     }
 
-    // ===== FETCH LIVE RATES (ExchangeRate-API) =====
+    // ===== FETCH LIVE RATES =====
     function fetchLiveRates(base) {
         var url = 'https://v6.exchangerate-api.com/v6/' + API_KEY + '/latest/' + base;
         return fetch(url)
@@ -89,7 +91,7 @@
             });
     }
 
-    // ===== FETCH HISTORICAL RATES (Frankfurter) =====
+    // ===== FETCH HISTORICAL RATES (Frankfurter - CORS friendly) =====
     function fetchHistoricalRates(from, to, startDate, endDate) {
         var startStr = startDate.toISOString().split('T')[0];
         var endStr = endDate.toISOString().split('T')[0];
@@ -200,6 +202,7 @@
             lastCandleData = data[data.length - 1];
         }
         chart.timeScale().fitContent();
+        isFirstLoad = false;
         return chart;
     }
 
@@ -249,8 +252,12 @@
                     });
                 }
                 createChart(ohlcData);
-                // Update live candle
-                fetchLiveRateAndUpdate(pair);
+                // Update live candle after chart is created
+                if (candlestickSeries) {
+                    setTimeout(function() {
+                        fetchLiveRateAndUpdate(pair);
+                    }, 500);
+                }
             })
             .catch(function(err) {
                 hideLoading();
@@ -259,14 +266,14 @@
             });
     }
 
-    // ===== FETCH LIVE & UPDATE LAST CANDLE (FIXED) =====
+    // ===== FETCH LIVE & UPDATE LAST CANDLE =====
     function fetchLiveRateAndUpdate(pair) {
+        if (!pair) pair = currentPair;
         fetchLiveRates(pair.base)
             .then(function(rates) {
                 var rate = rates[pair.quote];
                 if (rate && candlestickSeries) {
                     var now = Math.floor(Date.now() / 1000);
-                    // Use the stored last candle instead of calling .data()
                     if (lastCandleData) {
                         var timeSinceLast = now - lastCandleData.time;
                         if (timeSinceLast > 60) {
@@ -280,6 +287,7 @@
                             };
                             candlestickSeries.update(newCandle);
                             lastCandleData = newCandle;
+                            // console.log('New candle added:', newCandle);
                         } else {
                             // Update the existing candle
                             var updatedCandle = {
@@ -291,6 +299,7 @@
                             };
                             candlestickSeries.update(updatedCandle);
                             lastCandleData = updatedCandle;
+                            // console.log('Candle updated:', updatedCandle);
                         }
                     }
                 }
@@ -378,7 +387,7 @@
     function startLiveUpdates() {
         if (liveUpdateInterval) clearInterval(liveUpdateInterval);
         liveUpdateInterval = setInterval(function() {
-            if (currentPair && candlestickSeries) {
+            if (currentPair && candlestickSeries && lastCandleData) {
                 fetchLiveRateAndUpdate(currentPair);
             }
             updatePriceCards();
@@ -398,9 +407,17 @@
             return '<option value="' + p.id + '">' + p.id + '</option>';
         }).join('');
 
+        // Set default pair active
+        var defaultPair = pairs[0];
+        pairSelect.value = defaultPair.id;
+
         initPriceCards();
         updateChart();
-        startLiveUpdates();
+
+        // Start live updates after chart is loaded
+        setTimeout(function() {
+            startLiveUpdates();
+        }, 2000);
     }
 
     if (document.readyState === 'loading') {
