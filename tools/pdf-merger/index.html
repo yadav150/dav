@@ -11,6 +11,9 @@
     <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js">
     </script>
+    <!-- SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js">
+    </script>
 </head>
 <body>
 
@@ -96,12 +99,12 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Upload multiple PDF files and merge them into a single document. Reorder files by dragging. All processing happens locally in your browser.
+                        Upload multiple PDF files, drag to reorder, and merge into a single PDF. All processing is client‑side.
                     </p>
 
                     <form class="pdf-merger-form" id="mergerForm" novalidate>
 
-                        <!-- ===== UPLOAD AREA ===== -->
+                        <!-- ===== UPLOAD ===== -->
                         <div class="field-group upload-group">
                             <label>Upload PDFs</label>
                             <div class="drop-zone" id="dropZone">
@@ -114,17 +117,17 @@
                                 <div class="drop-text"><strong>Drop PDF files here</strong> or click to browse</div>
                                 <input type="file" id="fileInput" accept=".pdf" multiple />
                             </div>
-                            <span class="helper-text">Supports multiple PDF files</span>
+                            <span class="helper-text">Supports multiple PDFs</span>
                         </div>
 
-                        <!-- ===== FILE LIST ===== -->
+                        <!-- ===== FILE GRID ===== -->
                         <div id="fileListContainer" style="display:none;">
                             <div class="file-list-header">
-                                <span style="font-weight:500;font-size:.9rem;color:#1a5c3a;">Selected PDFs</span>
+                                <span style="font-weight:500;font-size:.9rem;color:#1a5c3a;">Uploaded PDFs</span>
                                 <span id="fileCount" style="font-size:.8rem;color:#4a6b5a;">0 files</span>
                             </div>
-                            <div id="fileList" class="file-list"></div>
-                            <button type="button" class="btn btn-secondary" id="addMoreBtn" style="min-width:auto;padding:6px 16px;font-size:.85rem;margin-top:6px;">+ Add More PDFs</button>
+                            <div id="fileGrid" class="file-grid"></div>
+                            <button type="button" class="btn btn-secondary" id="addMoreBtn" style="min-width:auto;padding:6px 16px;font-size:.85rem;margin-top:8px;">+ Add More PDFs</button>
                         </div>
 
                         <!-- ===== OUTPUT NAME ===== -->
