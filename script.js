@@ -1,30 +1,29 @@
-/* global script.js – Yadav Web Tools */
+// ============================================================
+//  YADAV WEB TOOLS – GLOBAL SCRIPT (FINAL)
+//  Includes: Hamburger · Search · Dark Mode · Ripple · Reveal
+//            Explore More Tools · Universal Navigation
+// ============================================================
 
 (function() {
     'use strict';
 
-    // ===== HAMBURGER NAV =====
-    const hamburger = document.querySelector('.hamburger');
-    const nav = document.getElementById('primary-nav');
-
+    // ===== 1. HAMBURGER MENU =====
+    var hamburger = document.querySelector('.hamburger');
+    var nav = document.getElementById('primary-nav');
     if (hamburger && nav) {
-        // Close nav on outside click
-        const closeNav = function(e) {
+        hamburger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var isOpen = nav.classList.toggle('open');
+            hamburger.setAttribute('aria-expanded', isOpen);
+        });
+
+        document.addEventListener('click', function(e) {
             if (nav.classList.contains('open') && !nav.contains(e.target) && !hamburger.contains(e.target)) {
                 nav.classList.remove('open');
                 hamburger.setAttribute('aria-expanded', 'false');
             }
-        };
-
-        hamburger.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const isOpen = nav.classList.toggle('open');
-            hamburger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
         });
 
-        document.addEventListener('click', closeNav);
-
-        // Close nav on Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && nav.classList.contains('open')) {
                 nav.classList.remove('open');
@@ -32,192 +31,253 @@
                 hamburger.focus();
             }
         });
+    }
 
-        // Close nav on link click (single-page nav)
-        nav.querySelectorAll('a').forEach(function(link) {
-            link.addEventListener('click', function() {
-                nav.classList.remove('open');
-                hamburger.setAttribute('aria-expanded', 'false');
+    // ===== 2. SEARCH TOGGLE & DROPDOWN =====
+    var searchToggle = document.getElementById('searchToggle');
+    var searchBox = document.querySelector('.search-box');
+    var searchInput = document.getElementById('searchInput');
+    var searchDropdown = document.getElementById('searchDropdown');
+
+    if (searchToggle && searchBox && searchInput && searchDropdown) {
+        searchToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var isExpanded = searchBox.classList.toggle('search-expanded');
+            if (isExpanded) {
+                searchInput.focus();
+                searchDropdown.classList.add('open');
+            } else {
+                searchDropdown.classList.remove('open');
+            }
+        });
+
+        searchInput.addEventListener('focus', function() {
+            searchDropdown.classList.add('open');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchBox.contains(e.target)) {
+                searchBox.classList.remove('search-expanded');
+                searchDropdown.classList.remove('open');
+            }
+        });
+
+        searchInput.addEventListener('input', function() {
+            var query = this.value.toLowerCase().trim();
+            var items = searchDropdown.querySelectorAll('.dropdown-list li');
+            var hasResults = false;
+            items.forEach(function(item) {
+                var text = item.textContent.toLowerCase();
+                if (text.indexOf(query) !== -1) {
+                    item.style.display = '';
+                    hasResults = true;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            var noResult = document.getElementById('noResult');
+            if (!hasResults && query.length > 0) {
+                if (!noResult) {
+                    var li = document.createElement('li');
+                    li.id = 'noResult';
+                    li.textContent = 'No tools found. Try a different search.';
+                    li.style.cssText = 'padding:10px 16px;color:#4a6b5a;font-size:.9rem;text-align:center;';
+                    searchDropdown.querySelector('.dropdown-list:last-child').appendChild(li);
+                } else {
+                    noResult.style.display = 'block';
+                }
+            } else {
+                if (noResult) noResult.style.display = 'none';
+            }
+        });
+
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                searchBox.classList.remove('search-expanded');
+                searchDropdown.classList.remove('open');
+                this.blur();
+            }
+        });
+
+        searchDropdown.addEventListener('click', function(e) {
+            if (e.target.closest('a')) {
+                searchBox.classList.remove('search-expanded');
+                searchDropdown.classList.remove('open');
+                searchInput.value = '';
+                var items = searchDropdown.querySelectorAll('.dropdown-list li');
+                items.forEach(function(item) {
+                    item.style.display = '';
+                });
+            }
+        });
+    }
+
+    // ===== 3. DARK MODE TOGGLE (session-only) =====
+    var toggleBtn = document.getElementById('themeToggle');
+    if (toggleBtn) {
+        var sessionTheme = sessionStorage.getItem('theme');
+        if (sessionTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        toggleBtn.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            var isDark = document.body.classList.contains('dark-mode');
+            sessionStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    }
+
+    // ===== 4. BUTTON RIPPLE EFFECT =====
+    var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!prefersReducedMotion.matches) {
+        document.addEventListener('click', function(e) {
+            var btn = e.target.closest('.btn');
+            if (!btn || btn.disabled) return;
+            var rect = btn.getBoundingClientRect();
+            var size = Math.max(rect.width, rect.height) * 0.6;
+            var x = e.clientX - rect.left - size / 2;
+            var y = e.clientY - rect.top - size / 2;
+            var ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            btn.appendChild(ripple);
+            ripple.addEventListener('animationend', function() {
+                ripple.remove();
             });
         });
     }
 
-    // ===== BUTTON RIPPLE =====
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-    document.addEventListener('click', function(e) {
-        // Only if reduced motion is not preferred
-        if (prefersReducedMotion.matches) return;
-
-        const btn = e.target.closest('.btn');
-        if (!btn) return;
-
-        // Prevent ripples on disabled buttons
-        if (btn.disabled) return;
-
-        const rect = btn.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height) * 0.6;
-        const x = e.clientX - rect.left - size / 2;
-        const y = e.clientY - rect.top - size / 2;
-
-        const ripple = document.createElement('span');
-        ripple.className = 'ripple';
-        ripple.style.width = ripple.style.height = size + 'px';
-        ripple.style.left = x + 'px';
-        ripple.style.top = y + 'px';
-
-        btn.appendChild(ripple);
-
-        // Remove ripple after animation ends
-        ripple.addEventListener('animationend', function() {
-            ripple.remove();
-        });
-    });
-
-    // ===== SCROLL REVEAL =====
-    const revealElements = document.querySelectorAll('.reveal');
-
-    if (revealElements.length > 0 && 'IntersectionObserver' in window) {
-        // If reduced motion, just make all visible immediately
+    // ===== 5. SCROLL REVEAL =====
+    var revealElements = document.querySelectorAll('.reveal');
+    if (revealElements.length > 0) {
         if (prefersReducedMotion.matches) {
-            revealElements.forEach(function(el) {
-                el.classList.add('visible');
-            });
-        } else {
-            const observer = new IntersectionObserver(function(entries) {
+            revealElements.forEach(function(el) { el.classList.add('visible'); });
+        } else if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function(entries) {
                 entries.forEach(function(entry) {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('visible');
-                        // Optionally unobserve after reveal to improve performance
                         observer.unobserve(entry.target);
                     }
                 });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -20px 0px'
-            });
-
-            revealElements.forEach(function(el) {
-                observer.observe(el);
-            });
+            }, { threshold: 0.1, rootMargin: '0px 0px -20px 0px' });
+            revealElements.forEach(function(el) { observer.observe(el); });
+        } else {
+            revealElements.forEach(function(el) { el.classList.add('visible'); });
         }
-    } else {
-        // Fallback: show all if no observer support
-        revealElements.forEach(function(el) {
-            el.classList.add('visible');
-        });
     }
 
 })();
+
 // ============================================================
-//  "Explore More Tools" - Full Width, Responsive, 4 Cards
-//  Parent container spans full content width
+//  EXPLORE MORE TOOLS – Dynamic Injection (Full Width, 4 Cards)
 // ============================================================
 (function() {
     'use strict';
 
-    // ----- Tool List (SVG icons, short names) -----
+    // ===== TOOL LIST (All 18 Tools with SVG Icons) =====
     var tools = [
         {
-    name: 'Archive',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1" ry="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg>',
-    path: '/dav/tools/file-archiver/index.html'
-},
-{
-    name: 'Merge',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6a2 2 0 0 0-2 2z"/><polyline points="14 2 14 8 20 8"/><polyline points="8 13 11 16 8 19"/><polyline points="16 13 13 16 16 19"/></svg>',
-    path: '/dav/tools/pdf-merger/index.html'
-}
-    {
-        name: 'Access',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
-        path: '/dav/tools/accessibility-tool/index.html'
-    },
-    {
-        name: 'Age',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
-        path: '/dav/tools/age-calculator/index.html'
-    },
-    {
-        name: 'Base',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
-        path: '/dav/tools/number-converter/index.html'
-    },
-    {
-        name: 'BMI',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><line x1="8" y1="6" x2="8" y2="18"/><line x1="12" y1="6" x2="12" y2="18"/><line x1="16" y1="6" x2="16" y2="18"/></svg>',
-        path: '/dav/tools/bmi-calculator/index.html'
-    },
-    // ===== NEW: Currency Converter =====
-    {
-        name: 'Curr',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/><polyline points="15 9 18 9 18 12"/><line x1="18" y1="9" x2="14" y2="9"/><polyline points="9 15 6 15 6 12"/><line x1="6" y1="15" x2="10" y2="15"/></svg>',
-        path: '/dav/tools/currency-converter/index.html'
-    },
-    // ===== NEW: Forex Dashboard =====
-    {
-        name: 'Forex',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="4" height="12" rx="1"/><line x1="5" y1="6" x2="5" y2="8"/><line x1="5" y1="20" x2="5" y2="22"/><rect x="10" y="12" width="4" height="8" rx="1"/><line x1="12" y1="10" x2="12" y2="12"/><line x1="12" y1="20" x2="12" y2="22"/><rect x="17" y="6" width="4" height="14" rx="1"/><line x1="19" y1="4" x2="19" y2="6"/><line x1="19" y1="20" x2="19" y2="22"/></svg>',
-        path: '/dav/tools/forex-dashboard/index.html'
-    },
-    {
-        name: 'GST',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
-        path: '/dav/tools/gst-calculator/index.html'
-    },
-    {
-        name: 'Image',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
-        path: '/dav/tools/image-resizer/index.html'
-    },
-    {
-        name: 'Loan',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
-        path: '/dav/tools/loan-calculator/index.html'
-    },
-    {
-        name: 'Pass',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
-        path: '/dav/tools/password-generator/index.html'
-    },
-    {
-        name: 'PDF',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>',
-        path: '/dav/tools/pdf-editor/index.html'
-    },
-    {
-        name: 'Percent',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><line x1="5" y1="5" x2="19" y2="19"/></svg>',
-        path: '/dav/tools/percentage-calculator/index.html'
-    },
-    {
-        name: 'QR',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><line x1="14" y1="14" x2="14" y2="21"/><line x1="17" y1="14" x2="17" y2="21"/><line x1="14" y1="17" x2="21" y2="17"/></svg>',
-        path: '/dav/tools/qr-generator/index.html'
-    },
-    {
-        name: 'SIP',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
-        path: '/dav/tools/sip-calculator/index.html'
-    },
-    {
-        name: 'Text',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>',
-        path: '/dav/tools/text-counter/index.html'
-    },
-    {
-        name: 'Unit',
-        icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
-        path: '/dav/tools/unit-converter/index.html'
-    }
-];
+            name: 'Access',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+            path: '/dav/tools/accessibility-tool/index.html'
+        },
+        {
+            name: 'Age',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+            path: '/dav/tools/age-calculator/index.html'
+        },
+        {
+            name: 'Archive',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1" ry="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg>',
+            path: '/dav/tools/file-archiver/index.html'
+        },
+        {
+            name: 'Base',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+            path: '/dav/tools/number-converter/index.html'
+        },
+        {
+            name: 'BMI',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><line x1="8" y1="6" x2="8" y2="18"/><line x1="12" y1="6" x2="12" y2="18"/><line x1="16" y1="6" x2="16" y2="18"/></svg>',
+            path: '/dav/tools/bmi-calculator/index.html'
+        },
+        {
+            name: 'Curr',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/><polyline points="15 9 18 9 18 12"/><line x1="18" y1="9" x2="14" y2="9"/><polyline points="9 15 6 15 6 12"/><line x1="6" y1="15" x2="10" y2="15"/></svg>',
+            path: '/dav/tools/currency-converter/index.html'
+        },
+        {
+            name: 'Forex',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="4" height="12" rx="1"/><line x1="5" y1="6" x2="5" y2="8"/><line x1="5" y1="20" x2="5" y2="22"/><rect x="10" y="12" width="4" height="8" rx="1"/><line x1="12" y1="10" x2="12" y2="12"/><line x1="12" y1="20" x2="12" y2="22"/><rect x="17" y="6" width="4" height="14" rx="1"/><line x1="19" y1="4" x2="19" y2="6"/><line x1="19" y1="20" x2="19" y2="22"/></svg>',
+            path: '/dav/tools/forex-dashboard/index.html'
+        },
+        {
+            name: 'GST',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+            path: '/dav/tools/gst-calculator/index.html'
+        },
+        {
+            name: 'Image',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',
+            path: '/dav/tools/image-resizer/index.html'
+        },
+        {
+            name: 'Loan',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
+            path: '/dav/tools/loan-calculator/index.html'
+        },
+        {
+            name: 'Merge',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6a2 2 0 0 0-2 2z"/><polyline points="14 2 14 8 20 8"/><polyline points="8 13 11 16 8 19"/><polyline points="16 13 13 16 16 19"/></svg>',
+            path: '/dav/tools/pdf-merger/index.html'
+        },
+        {
+            name: 'Pass',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+            path: '/dav/tools/password-generator/index.html'
+        },
+        {
+            name: 'PDF',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>',
+            path: '/dav/tools/pdf-editor/index.html'
+        },
+        {
+            name: 'Percent',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><line x1="5" y1="5" x2="19" y2="19"/></svg>',
+            path: '/dav/tools/percentage-calculator/index.html'
+        },
+        {
+            name: 'QR',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><line x1="14" y1="14" x2="14" y2="21"/><line x1="17" y1="14" x2="17" y2="21"/><line x1="14" y1="17" x2="21" y2="17"/></svg>',
+            path: '/dav/tools/qr-generator/index.html'
+        },
+        {
+            name: 'SIP',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+            path: '/dav/tools/sip-calculator/index.html'
+        },
+        {
+            name: 'Text',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>',
+            path: '/dav/tools/text-counter/index.html'
+        },
+        {
+            name: 'Unit',
+            icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+            path: '/dav/tools/unit-converter/index.html'
+        }
+    ];
 
-    // ----- Get current page path -----
+    // ===== HELPER: Get current page path =====
     function getCurrentPath() {
         return window.location.pathname;
     }
 
-    // ----- Get 4 random tools excluding current -----
+    // ===== Get 4 random tools excluding current =====
     function getRandomTools(currentPath, count) {
         var available = tools.filter(function(t) {
             return t.path !== currentPath;
@@ -225,7 +285,6 @@
 
         if (available.length <= count) return available;
 
-        // Shuffle
         var shuffled = available.slice();
         for (var i = shuffled.length - 1; i > 0; i--) {
             var j = Math.floor(Math.random() * (i + 1));
@@ -236,7 +295,7 @@
         return shuffled.slice(0, count);
     }
 
-    // ----- Build HTML -----
+    // ===== Build HTML =====
     function buildMoreToolsHTML() {
         var currentPath = getCurrentPath();
 
@@ -248,19 +307,11 @@
 
         var html = '';
         html += '<div class="spacer" style="height:24px;"></div>';
-
-        // SECTION - full width, matches your site's container
         html += '<section class="section tools-section more-tools-section" style="max-width:1200px;margin:0 auto;padding:0 16px;display:block;width:100%;box-sizing:border-box;">';
-
-        // BLACK TITLE BAR - spans full container width
         html += '  <div class="section-title-bar more-tools-title" style="background:#1e1e1e;padding:6px 18px;border-radius:8px 8px 0 0;display:block;width:100%;box-sizing:border-box;">';
         html += '    <h2 style="color:#fff;font-size:1.1rem;font-weight:600;margin:0;letter-spacing:-0.2px;">Explore More Tools</h2>';
         html += '  </div>';
-
-        // WHITE BODY - spans full container width
         html += '  <div class="section-body" style="border-radius:0 0 8px 8px;padding:16px 16px;display:block;width:100%;box-sizing:border-box;background:#fff;border:1px solid #e6e6e6;border-top:0;">';
-
-        // GRID - full width, responsive, auto-fill
         html += '    <div class="more-tools-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));gap:12px;width:100%;box-sizing:border-box;">';
 
         for (var i = 0; i < randomTools.length; i++) {
@@ -279,7 +330,7 @@
         return html;
     }
 
-    // ----- Insert before footer -----
+    // ===== Insert before footer =====
     function insertMoreTools() {
         var html = buildMoreToolsHTML();
         if (!html) return;
@@ -329,7 +380,7 @@
         }
     }
 
-    // ----- Run when page is ready -----
+    // ===== Run when page is ready =====
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', insertMoreTools);
     } else {
@@ -337,8 +388,11 @@
     }
 
 })();
-(function(){'use strict';var t=document.getElementById('themeToggle');if(!t)return;var s=sessionStorage.getItem('theme');if(s==='dark'){document.body.classList.add('dark-mode')}t.addEventListener('click',function(){document.body.classList.toggle('dark-mode');var n=document.body.classList.contains('dark-mode');if(n){sessionStorage.setItem('theme','dark')}else{sessionStorage.removeItem('theme')}});})();
-// ===== UNIVERSAL NAVIGATION ACTIVE STATE =====
+
+// ============================================================
+//  UNIVERSAL NAVIGATION ACTIVE STATE
+//  (Dynamic Tool Name + Correct Active Link)
+// ============================================================
 (function() {
     'use strict';
 
@@ -382,7 +436,7 @@
             li.appendChild(a);
             navList.appendChild(li);
         }
-        return;
+        return; // Stop here for tool pages
     }
 
     // ----- CASE 2: Normal Pages (Home, About, Contact, etc.) -----
@@ -426,23 +480,4 @@
         });
     }
 
-})();
-// ===== SEARCH (Collapsible + Working) =====
-(function(){'use strict';var c=document.querySelector('.search-container');if(!c)return;var t=document.getElementById('searchToggle');var i=document.getElementById('searchInput');var d=document.getElementById('searchDropdown');var al=document.getElementById('allToolsList');var ql=document.getElementById('quickToolsList');if(!t||!i||!d||!al)return;var allTools=[{name:'Age Calculator',path:'/dav/tools/age-calculator/index.html'},{name:'SIP Calculator',path:'/dav/tools/sip-calculator/index.html'},{name:'PDF Editor',path:'/dav/tools/pdf-editor/index.html'},{name:'Image Resizer',path:'/dav/tools/image-resizer/index.html'},{name:'Text Counter',path:'/dav/tools/text-counter/index.html'},{name:'Unit Converter',path:'/dav/tools/unit-converter/index.html'},{name:'Password Generator',path:'/dav/tools/password-generator/index.html'},{name:'QR Generator',path:'/dav/tools/qr-generator/index.html'},{name:'GST Calculator',path:'/dav/tools/gst-calculator/index.html'},{name:'Number Converter',path:'/dav/tools/number-converter/index.html'},{name:'Percentage Calculator',path:'/dav/tools/percentage-calculator/index.html'},{name:'BMI Calculator',path:'/dav/tools/bmi-calculator/index.html'},{name:'Loan Calculator',path:'/dav/tools/loan-calculator/index.html'},{name:'Accessibility Tool',path:'/dav/tools/accessibility-tool/index.html'}];var sb=i.closest('.search-box');function expandSearch(){sb.classList.add('search-expanded');i.focus();d.classList.add('open')}function collapseSearch(){sb.classList.remove('search-expanded');i.value='';i.blur();d.classList.remove('open');showAllTools()}function showAllTools(){var items=al.querySelectorAll('li');items.forEach(function(item){item.style.display='block'});var qs=ql?ql.closest('.dropdown-section'):null;if(qs)qs.style.display='block';var nr=document.getElementById('noResult');if(nr)nr.remove()}t.addEventListener('click',function(e){e.stopPropagation();if(sb.classList.contains('search-expanded')){collapseSearch()}else{expandSearch()}});document.addEventListener('click',function(e){if(!c.contains(e.target)){collapseSearch()}});i.addEventListener('keydown',function(e){if(e.key==='Escape'){collapseSearch()}});i.addEventListener('input',function(){var v=this.value.toLowerCase().trim();var items=al.querySelectorAll('li');var qs=ql?ql.closest('.dropdown-section'):null;if(v===''){items.forEach(function(item){item.style.display='block'});if(qs)qs.style.display='block';var nr=document.getElementById('noResult');if(nr)nr.remove();d.classList.add('open');return}if(qs)qs.style.display='none';var has=false;items.forEach(function(item){var txt=item.textContent.toLowerCase();if(txt.indexOf(v)!==-1){item.style.display='block';has=true}else{item.style.display='none'}});var nr=document.getElementById('noResult');if(has){if(nr)nr.remove()}else{if(!nr){var li=document.createElement('li');li.id='noResult';li.textContent='No tools found. Try a different search.';li.style.cssText='padding:10px 16px;color:#4a6b5a;font-size:.9rem;text-align:center;';al.appendChild(li)}else{nr.style.display='block'}}d.classList.add('open')});d.addEventListener('click',function(e){var link=e.target.closest('a');if(link){collapseSearch()}})})();
-/*----FAVICON-----*/
-(function() {
-    'use strict';
-
-    // Check if favicon already exists
-    var existing = document.querySelector('link[rel="icon"]');
-    if (existing) return;
-
-    // Create favicon link
-    var link = document.createElement('link');
-    link.rel = 'icon';
-    link.type = 'image/svg+xml';
-    link.href = '/dav/favicon.svg';
-
-    // Add to head
-    document.head.appendChild(link);
 })();
