@@ -1,18 +1,16 @@
 // ============================================================
-//  FOREX DASHBOARD – LIVE CANDLESTICK CHART (FIXED)
-//  Uses ExchangeRate-API with your key.
-//  Features: Loading spinner, blur overlay, refresh button.
-//  Bullish: Yellow, Bearish: Red.
+//  FOREX DASHBOARD – DROPDOWN + RELIABLE DATA
+//  Uses ExchangeRate-API for live rates (key required)
+//  Uses Frankfurter for historical data (no key, no CORS)
 // ============================================================
 
 (function() {
     'use strict';
 
-    // ===== CONFIGURATION =====
-    // IMPORTANT: Replace with your actual ExchangeRate-API key
-    var API_KEY = 'd4b61ba7b463552f7c64d91b';
+    // ===== YOUR API KEY (same as Currency Converter) =====
+    var API_KEY = 'd4b61ba7b463552f7c64d91b';  // <-- Replace with your key
 
-    // Supported pairs
+    // ===== PAIRS =====
     var pairs = [
         { id: 'EUR/USD', base: 'EUR', quote: 'USD' },
         { id: 'GBP/USD', base: 'GBP', quote: 'USD' },
@@ -32,41 +30,30 @@
     // ===== DOM REFS =====
     var chartContainer = document.getElementById('forexChart');
     var priceCardsContainer = document.getElementById('priceCards');
-    var pairBtns = document.querySelectorAll('.pair-btn');
+    var pairSelect = document.getElementById('pairSelect');
     var tfBtns = document.querySelectorAll('.tf-btn');
     var refreshBtn = document.getElementById('refreshBtn');
     var errorMsg = document.getElementById('errorMsg');
 
     // ===== LOADING OVERLAY =====
+    var chartWrapper = document.querySelector('.chart-wrapper');
     var loadingOverlay = document.createElement('div');
     loadingOverlay.id = 'chartLoadingOverlay';
     loadingOverlay.style.cssText = 'position:absolute;inset:0;background:rgba(19,23,34,0.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:10;border-radius:8px;';
     loadingOverlay.innerHTML = '<div class="spinner"></div>';
-    // Append to chart wrapper
-    var chartWrapper = document.querySelector('.chart-wrapper');
     if (chartWrapper) {
         chartWrapper.style.position = 'relative';
         chartWrapper.appendChild(loadingOverlay);
     }
 
-    // ===== CSS SPINNER (injected) =====
+    // ===== INJECT SPINNER CSS =====
     var style = document.createElement('style');
     style.textContent = `
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-top-color: #f0b90b;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .dark-mode .spinner {
-            border-color: rgba(255,255,255,0.15);
-            border-top-color: #f0b90b;
-        }
+        .spinner { width:40px; height:40px; border:4px solid rgba(255,255,255,0.1); border-top-color:#f0b90b; border-radius:50%; animation:spin 0.8s linear infinite; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        .dark-mode .spinner { border-color:rgba(255,255,255,0.15); border-top-color:#f0b90b; }
+        #chartLoadingOverlay { display:none; }
+        .chart-wrapper { position:relative; }
     `;
     document.head.appendChild(style);
 
@@ -75,21 +62,18 @@
         errorMsg.textContent = msg;
         errorMsg.classList.add('show');
     }
-
     function hideError() {
         errorMsg.classList.remove('show');
         errorMsg.textContent = '';
     }
-
     function showLoading() {
         if (loadingOverlay) loadingOverlay.style.display = 'flex';
     }
-
     function hideLoading() {
         if (loadingOverlay) loadingOverlay.style.display = 'none';
     }
 
-    // ===== FETCH LIVE RATES =====
+    // ===== FETCH LIVE RATES (ExchangeRate-API) =====
     function fetchLiveRates(base) {
         var url = 'https://v6.exchangerate-api.com/v6/' + API_KEY + '/latest/' + base;
         return fetch(url)
@@ -103,23 +87,18 @@
             });
     }
 
-    // ===== FETCH HISTORICAL DAILY RATES (ExchangeRate-API) =====
+    // ===== FETCH HISTORICAL RATES (Frankfurter – no key, no CORS) =====
     function fetchHistoricalRates(from, to, startDate, endDate) {
         var startStr = startDate.toISOString().split('T')[0];
         var endStr = endDate.toISOString().split('T')[0];
-        // Use ExchangeRate-API historical endpoint with CORS proxy
-        var corsProxy = 'https://corsproxy.io/?';
-        var url = 'https://v6.exchangerate-api.com/v6/' + API_KEY + '/history/' + from + '/' + startStr + '/' + endStr;
-        var fullUrl = corsProxy + encodeURIComponent(url);
-
-        return fetch(fullUrl)
+        var url = 'https://api.frankfurter.app/' + startStr + '..' + endStr + '?from=' + from + '&to=' + to;
+        return fetch(url)
             .then(function(response) {
-                if (!response.ok) throw new Error('Historical API request failed');
+                if (!response.ok) throw new Error('Frankfurter API error');
                 return response.json();
             })
             .then(function(data) {
-                if (data.result === 'error') throw new Error(data['error-type']);
-                var rates = data.conversion_rates;
+                var rates = data.rates;
                 var dates = Object.keys(rates).sort();
                 return dates.map(function(date) {
                     return { date: new Date(date), close: rates[date][to] };
@@ -127,7 +106,7 @@
             });
     }
 
-    // ===== GENERATE OHLC FROM DAILY CLOSE =====
+    // ===== GENERATE OHLC =====
     function generateOHLC(dailyData) {
         if (dailyData.length === 0) return [];
         var ohlc = [];
@@ -158,45 +137,24 @@
 
     // ===== CREATE CHART =====
     function createChart(data) {
-        if (chart) {
-            chart.remove();
-            chart = null;
-            candlestickSeries = null;
-        }
-
+        if (chart) { chart.remove(); chart = null; candlestickSeries = null; }
         chart = LightweightCharts.createChart(chartContainer, {
             width: chartContainer.clientWidth,
             height: 450,
-            layout: {
-                background: { color: '#131722' },
-                textColor: '#d1d4dc',
-            },
-            grid: {
-                vertLines: { color: '#2a2e39' },
-                horzLines: { color: '#2a2e39' },
-            },
-            crosshair: {
-                mode: LightweightCharts.CrosshairMode.Normal,
-            },
-            rightPriceScale: {
-                borderColor: '#2a2e39',
-            },
-            timeScale: {
-                borderColor: '#2a2e39',
-                timeVisible: true,
-                secondsVisible: false,
-            },
+            layout: { background: { color: '#131722' }, textColor: '#d1d4dc' },
+            grid: { vertLines: { color: '#2a2e39' }, horzLines: { color: '#2a2e39' } },
+            crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+            rightPriceScale: { borderColor: '#2a2e39' },
+            timeScale: { borderColor: '#2a2e39', timeVisible: true, secondsVisible: false }
         });
-
         candlestickSeries = chart.addCandlestickSeries({
             upColor: '#f0b90b',
             downColor: '#ef5350',
             borderUpColor: '#f0b90b',
             borderDownColor: '#ef5350',
             wickUpColor: '#f0b90b',
-            wickDownColor: '#ef5350',
+            wickDownColor: '#ef5350'
         });
-
         candlestickSeries.setData(data);
         chart.timeScale().fitContent();
         return chart;
@@ -205,9 +163,8 @@
     // ===== UPDATE CHART =====
     function updateChart() {
         var pair = currentPair;
-        var period = currentPeriod;
-        var days = 0;
-        switch (period) {
+        var days;
+        switch (currentPeriod) {
             case '1D': days = 1; break;
             case '1W': days = 7; break;
             case '1M': days = 30; break;
@@ -216,7 +173,6 @@
             default: days = 7;
         }
         if (days < 2) days = 2;
-
         var endDate = new Date();
         var startDate = new Date();
         startDate.setDate(startDate.getDate() - days);
@@ -233,7 +189,6 @@
                 }
                 var ohlcData = generateOHLC(dailyData);
                 if (ohlcData.length < 2) {
-                    // Duplicate to have at least 2 bars
                     ohlcData.push({
                         time: ohlcData[0].time + 86400,
                         open: ohlcData[0].close,
@@ -253,13 +208,11 @@
             });
     }
 
-    // ===== FETCH LIVE RATE & UPDATE LAST CANDLE =====
+    // ===== FETCH LIVE & UPDATE LAST CANDLE =====
     function fetchLiveRateAndUpdate(pair) {
-        var base = pair.base;
-        var quote = pair.quote;
-        fetchLiveRates(base)
+        fetchLiveRates(pair.base)
             .then(function(rates) {
-                var rate = rates[quote];
+                var rate = rates[pair.quote];
                 if (rate && candlestickSeries) {
                     var now = Math.floor(Date.now() / 1000);
                     var lastData = candlestickSeries.data();
@@ -267,23 +220,21 @@
                         var last = lastData[lastData.length - 1];
                         var timeSinceLast = now - last.time;
                         if (timeSinceLast > 60) {
-                            var newCandle = {
+                            candlestickSeries.update({
                                 time: now,
                                 open: last.close,
                                 high: Math.max(last.close, rate),
                                 low: Math.min(last.close, rate),
                                 close: rate
-                            };
-                            candlestickSeries.update(newCandle);
+                            });
                         } else {
-                            var updated = {
+                            candlestickSeries.update({
                                 time: last.time,
                                 open: last.open,
                                 high: Math.max(last.high, rate),
                                 low: Math.min(last.low, rate),
                                 close: rate
-                            };
-                            candlestickSeries.update(updated);
+                            });
                         }
                     }
                 }
@@ -301,8 +252,8 @@
             bases[p.base].push(p);
         });
 
-        var promises = Object.keys(bases).map(function(base) {
-            return fetchLiveRates(base)
+        Object.keys(bases).forEach(function(base) {
+            fetchLiveRates(base)
                 .then(function(rates) {
                     bases[base].forEach(function(pair) {
                         var rate = rates[pair.quote];
@@ -328,7 +279,7 @@
         });
     }
 
-    // ===== INITIALIZE PRICE CARDS =====
+    // ===== INIT PRICE CARDS =====
     function initPriceCards() {
         var html = '';
         pairs.forEach(function(pair) {
@@ -343,15 +294,11 @@
         setInterval(updatePriceCards, 10000);
     }
 
-    // ===== PAIR SELECTION =====
-    pairBtns.forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            pairBtns.forEach(function(b) { b.classList.remove('active'); });
-            this.classList.add('active');
-            var pairId = this.dataset.pair;
-            currentPair = pairs.find(function(p) { return p.id === pairId; }) || pairs[0];
-            updateChart();
-        });
+    // ===== PAIR SELECTION (Dropdown) =====
+    pairSelect.addEventListener('change', function() {
+        var pairId = this.value;
+        currentPair = pairs.find(function(p) { return p.id === pairId; }) || pairs[0];
+        updateChart();
     });
 
     // ===== TIMEFRAME SELECTION =====
@@ -382,24 +329,23 @@
         }, 10000);
     }
 
-    // ===== RESIZE HANDLER =====
-    function handleResize() {
+    // ===== RESIZE =====
+    window.addEventListener('resize', function() {
         if (chart) {
             chart.resize(chartContainer.clientWidth, 450);
         }
-    }
+    });
 
-    // ===== INITIALIZATION =====
+    // ===== INIT =====
     function init() {
-        // Set default active pair
-        var defaultPair = pairs[0];
-        document.querySelector('.pair-btn[data-pair="' + defaultPair.id + '"]').classList.add('active');
+        // Populate dropdown
+        pairSelect.innerHTML = pairs.map(function(p) {
+            return '<option value="' + p.id + '">' + p.id + '</option>';
+        }).join('');
 
         initPriceCards();
         updateChart();
         startLiveUpdates();
-
-        window.addEventListener('resize', handleResize);
     }
 
     if (document.readyState === 'loading') {
