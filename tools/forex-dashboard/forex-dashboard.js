@@ -1,14 +1,13 @@
 // ============================================================
-//  FOREX DASHBOARD – DROPDOWN + RELIABLE DATA
-//  Uses Frankfurter API for historical data (with simulation fallback)
-//  Uses ExchangeRate-API for live rates.
+//  FOREX DASHBOARD – FIXED (No .data() errors)
+//  Uses Frankfurter API with simulation fallback.
 // ============================================================
 
 (function() {
     'use strict';
 
-    // ===== YOUR API KEY (same as Currency Converter) =====
-    var API_KEY = 'd4b61ba7b463552f7c64d91b';  // <-- Replace with your key
+    // ===== YOUR API KEY =====
+    var API_KEY = 'd4b61ba7b463552f7c64d91b';
 
     // ===== PAIRS =====
     var pairs = [
@@ -26,7 +25,8 @@
     var chart = null;
     var candlestickSeries = null;
     var liveUpdateInterval = null;
-    var rateData = {};  // Store latest rates for fallback
+    var rateData = {};
+    var lastCandleData = null; // Store the last candle for updates
 
     // ===== DOM REFS =====
     var chartContainer = document.getElementById('forexChart');
@@ -84,13 +84,12 @@
             })
             .then(function(data) {
                 if (data.result === 'error') throw new Error(data['error-type']);
-                // Store rates for fallback
                 rateData = data.conversion_rates;
                 return rateData;
             });
     }
 
-    // ===== FETCH HISTORICAL RATES (Frankfurter – no proxy) =====
+    // ===== FETCH HISTORICAL RATES (Frankfurter) =====
     function fetchHistoricalRates(from, to, startDate, endDate) {
         var startStr = startDate.toISOString().split('T')[0];
         var endStr = endDate.toISOString().split('T')[0];
@@ -109,7 +108,6 @@
                 });
             })
             .catch(function(err) {
-                // Fallback: generate realistic simulated data
                 console.warn('Frankfurter failed, using simulation:', err);
                 return generateSimulatedData(from, to, startDate, endDate);
             });
@@ -120,17 +118,15 @@
         var days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
         if (days < 1) days = 1;
         var data = [];
-        // Get a base rate from stored live data, or use a default
         var baseRate = 1.0;
         if (rateData && rateData[to]) {
             baseRate = rateData[to];
         } else {
-            // Approximate fallback
             var approx = { 'USD': 1, 'EUR': 0.92, 'GBP': 0.78, 'JPY': 149, 'INR': 83, 'AUD': 1.5, 'CAD': 1.36 };
             baseRate = approx[to] || 1;
         }
-        var volatility = 0.008; // 0.8% daily volatility
-        var current = baseRate * (0.95 + Math.random() * 0.1); // start near base
+        var volatility = 0.008;
+        var current = baseRate * (0.95 + Math.random() * 0.1);
         var date = new Date(startDate);
         for (var i = 0; i <= days; i++) {
             var change = (Math.random() - 0.5) * 2 * volatility * current;
@@ -142,7 +138,6 @@
             });
             date.setDate(date.getDate() + 1);
         }
-        // Ensure the last value is close to current rate
         if (rateData && rateData[to]) {
             data[data.length - 1].close = rateData[to];
         }
@@ -166,13 +161,14 @@
                 if (open > high) high = open * 1.001;
                 if (open < low) low = open * 0.999;
             }
-            ohlc.push({
+            var candle = {
                 time: dailyData[i].date.getTime() / 1000,
                 open: open,
                 high: high,
                 low: low,
                 close: close
-            });
+            };
+            ohlc.push(candle);
             prevClose = close;
         }
         return ohlc;
@@ -199,6 +195,10 @@
             wickDownColor: '#ef5350'
         });
         candlestickSeries.setData(data);
+        // Store last candle for live updates
+        if (data.length > 0) {
+            lastCandleData = data[data.length - 1];
+        }
         chart.timeScale().fitContent();
         return chart;
     }
@@ -231,7 +231,6 @@
                     return;
                 }
                 if (dailyData.length < 2) {
-                    // Add a duplicate point with slight variation
                     var last = dailyData[0];
                     dailyData.push({
                         date: new Date(last.date.getTime() + 86400000),
@@ -260,33 +259,38 @@
             });
     }
 
-    // ===== FETCH LIVE & UPDATE LAST CANDLE =====
+    // ===== FETCH LIVE & UPDATE LAST CANDLE (FIXED) =====
     function fetchLiveRateAndUpdate(pair) {
         fetchLiveRates(pair.base)
             .then(function(rates) {
                 var rate = rates[pair.quote];
                 if (rate && candlestickSeries) {
                     var now = Math.floor(Date.now() / 1000);
-                    var lastData = candlestickSeries.data();
-                    if (lastData && lastData.length > 0) {
-                        var last = lastData[lastData.length - 1];
-                        var timeSinceLast = now - last.time;
+                    // Use the stored last candle instead of calling .data()
+                    if (lastCandleData) {
+                        var timeSinceLast = now - lastCandleData.time;
                         if (timeSinceLast > 60) {
-                            candlestickSeries.update({
+                            // Create a new candle
+                            var newCandle = {
                                 time: now,
-                                open: last.close,
-                                high: Math.max(last.close, rate),
-                                low: Math.min(last.close, rate),
+                                open: lastCandleData.close,
+                                high: Math.max(lastCandleData.close, rate),
+                                low: Math.min(lastCandleData.close, rate),
                                 close: rate
-                            });
+                            };
+                            candlestickSeries.update(newCandle);
+                            lastCandleData = newCandle;
                         } else {
-                            candlestickSeries.update({
-                                time: last.time,
-                                open: last.open,
-                                high: Math.max(last.high, rate),
-                                low: Math.min(last.low, rate),
+                            // Update the existing candle
+                            var updatedCandle = {
+                                time: lastCandleData.time,
+                                open: lastCandleData.open,
+                                high: Math.max(lastCandleData.high, rate),
+                                low: Math.min(lastCandleData.low, rate),
                                 close: rate
-                            });
+                            };
+                            candlestickSeries.update(updatedCandle);
+                            lastCandleData = updatedCandle;
                         }
                     }
                 }
@@ -346,7 +350,7 @@
         setInterval(updatePriceCards, 10000);
     }
 
-    // ===== PAIR SELECTION (Dropdown) =====
+    // ===== PAIR SELECTION =====
     pairSelect.addEventListener('change', function() {
         var pairId = this.value;
         currentPair = pairs.find(function(p) { return p.id === pairId; }) || pairs[0];
@@ -390,7 +394,6 @@
 
     // ===== INIT =====
     function init() {
-        // Populate dropdown
         pairSelect.innerHTML = pairs.map(function(p) {
             return '<option value="' + p.id + '">' + p.id + '</option>';
         }).join('');
