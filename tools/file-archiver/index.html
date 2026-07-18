@@ -104,13 +104,15 @@
                         <div class="field-group">
                             <label>Upload Files</label>
                             <div class="drop-zone" id="dropZone">
-                                <div class="drop-icon">📦</div>
+                                <!-- SVG Icon (Primary Green) -->
+                                <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="16 16 12 12 8 16"/>
+                                    <line x1="12" y1="12" x2="12" y2="21"/>
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
                                 <div class="drop-text"><strong>Drop files or folders here</strong> or click to browse</div>
                                 <input type="file" id="fileInput" multiple />
-                            </div>
-                            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
-                                <button type="button" class="btn btn-secondary" id="browseBtn" style="min-width:auto;padding:6px 16px;font-size:.85rem;">Browse Files</button>
-                                <button type="button" class="btn btn-secondary" id="folderBtn" style="min-width:auto;padding:6px 16px;font-size:.85rem;">Upload Folder</button>
                             </div>
                         </div>
 
