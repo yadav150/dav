@@ -9,8 +9,6 @@
     // ===== DOM REFS =====
     var dropZone = document.getElementById('dropZone');
     var fileInput = document.getElementById('fileInput');
-    var browseBtn = document.getElementById('browseBtn');
-    var folderBtn = document.getElementById('folderBtn');
     var fileListContainer = document.getElementById('fileListContainer');
     var fileList = document.getElementById('fileList');
     var fileCount = document.getElementById('fileCount');
@@ -122,31 +120,8 @@
         fileInput.click();
     });
 
-    // ===== BROWSE FILES =====
-    browseBtn.addEventListener('click', function() {
-        fileInput.click();
-    });
-
+    // ===== FILE INPUT =====
     fileInput.addEventListener('change', function() {
-        if (this.files.length > 0) {
-            addFiles(this.files);
-            this.value = '';
-        }
-    });
-
-    // ===== FOLDER UPLOAD =====
-    var folderInput = document.createElement('input');
-    folderInput.type = 'file';
-    folderInput.webkitdirectory = true;
-    folderInput.multiple = true;
-    folderInput.style.display = 'none';
-    document.body.appendChild(folderInput);
-
-    folderBtn.addEventListener('click', function() {
-        folderInput.click();
-    });
-
-    folderInput.addEventListener('change', function() {
         if (this.files.length > 0) {
             addFiles(this.files);
             this.value = '';
@@ -277,7 +252,6 @@
         createZipBtn.disabled = false;
         hideError();
         fileInput.value = '';
-        folderInput.value = '';
     });
 
     // ===== INIT =====
