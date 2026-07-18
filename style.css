@@ -190,7 +190,7 @@
 .file-item .file-size{font-size:.7rem}
 .file-list-header{font-size:.85rem}
 }
-/* ===== PDF MERGER (Consistent with all tools) ===== */
+/* ===== PDF MERGER – Grid Layout ===== */
 .pdf-merger-form{display:flex;flex-direction:column;gap:18px;margin:6px 0 10px}
 .pdf-merger-form .field-group{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:0}
 .pdf-merger-form label{font-weight:500;min-width:120px}
@@ -204,16 +204,20 @@
 .pdf-merger-form .drop-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer}
 .pdf-merger-form .btn-group{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;padding-top:12px;border-top:1px solid #e6e6e6}
 .pdf-merger-form .btn{min-width:120px;padding:10px 28px;font-size:1rem}
-.file-list-header{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #e6e6e6;margin-bottom:6px}
-.file-list{display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto;padding:2px 0}
-.file-item{display:flex;align-items:center;gap:10px;padding:6px 10px;background:#f8faf9;border-radius:6px;border:1px solid #e6e6e6}
-.file-item .file-name{flex:1;font-size:.85rem;font-weight:500;color:#1e1e1e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.file-item .file-size{font-size:.75rem;color:#4a6b5a;flex-shrink:0}
-.file-item .file-remove{background:transparent;border:none;color:#e74c3c;cursor:pointer;font-size:1rem;padding:0 4px;font-weight:700;flex-shrink:0}
-.file-item .file-remove:hover{color:#c0392b}
-.dark-mode .file-item{background:#1a1a1a;border-color:#3a3a3a}
-.dark-mode .file-item .file-name{color:#eee}
-.dark-mode .file-item .file-size{color:#8a9a8a}
+
+/* --- File Grid --- */
+.file-list-header{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #e6e6e6;margin-bottom:10px}
+.file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;padding:4px 0;min-height:60px}
+.file-card{background:#fff;border:1px solid #e6e6e6;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:grab;transition:border-color .2s,box-shadow .2s;position:relative;min-height:80px}
+.file-card:hover{border-color:#1a5c3a;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.file-card:active{cursor:grabbing}
+.file-card .file-name{font-size:.8rem;font-weight:500;color:#1e1e1e;word-break:break-word;max-width:100%;line-height:1.3}
+.file-card .file-size{font-size:.7rem;color:#4a6b5a;margin-top:2px}
+.file-card .file-remove{position:absolute;top:4px;right:6px;background:transparent;border:none;color:#e74c3c;cursor:pointer;font-size:1rem;padding:0 4px;font-weight:700;line-height:1}
+.file-card .file-remove:hover{color:#c0392b}
+.dark-mode .file-card{background:#2a2a2a;border-color:#3a3a3a}
+.dark-mode .file-card .file-name{color:#eee}
+.dark-mode .file-card .file-size{color:#8a9a8a}
 .dark-mode .pdf-merger-form .drop-zone{background:#2a2a2a;border-color:#3a3a3a}
 .dark-mode .pdf-merger-form .drop-zone:hover{background:#1a3a2a}
 .dark-mode .pdf-merger-form .drop-zone .drop-text{color:#8a9a8a}
@@ -230,8 +234,9 @@
 .pdf-merger-form .drop-zone{min-height:90px;padding:14px 12px}
 .pdf-merger-form .drop-zone .drop-text{font-size:.8rem}
 .pdf-merger-form .drop-zone .drop-icon{width:32px;height:32px}
-.file-item{flex-wrap:wrap;gap:4px}
-.file-item .file-name{font-size:.8rem;white-space:normal}
-.file-item .file-size{font-size:.7rem}
+.file-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
+.file-card{min-height:60px;padding:8px 10px}
+.file-card .file-name{font-size:.75rem}
+.file-card .file-size{font-size:.65rem}
 .file-list-header{font-size:.85rem}
 }
