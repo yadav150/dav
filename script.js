@@ -118,6 +118,16 @@
 
     // ----- Tool List (SVG icons, short names) -----
     var tools = [
+        {
+    name: 'Archive',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5" rx="1" ry="1"/><line x1="10" y1="12" x2="14" y2="12"/></svg>',
+    path: '/dav/tools/file-archiver/index.html'
+},
+{
+    name: 'Merge',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6H6a2 2 0 0 0-2 2z"/><polyline points="14 2 14 8 20 8"/><polyline points="8 13 11 16 8 19"/><polyline points="16 13 13 16 16 19"/></svg>',
+    path: '/dav/tools/pdf-merger/index.html'
+}
     {
         name: 'Access',
         icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
