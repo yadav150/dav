@@ -1,7 +1,6 @@
 // ============================================================
 //  FOREX DASHBOARD – DROPDOWN + RELIABLE DATA
-//  Uses ExchangeRate-API for live rates (key required)
-//  Uses Frankfurter for historical data (no key, no CORS)
+//  Uses ExchangeRate-API for both live and historical rates.
 // ============================================================
 
 (function() {
@@ -87,18 +86,24 @@
             });
     }
 
-    // ===== FETCH HISTORICAL RATES (Frankfurter – no key, no CORS) =====
+    // ===== FETCH HISTORICAL RATES (ExchangeRate-API with CORS proxy) =====
     function fetchHistoricalRates(from, to, startDate, endDate) {
         var startStr = startDate.toISOString().split('T')[0];
         var endStr = endDate.toISOString().split('T')[0];
-        var url = 'https://api.frankfurter.app/' + startStr + '..' + endStr + '?from=' + from + '&to=' + to;
-        return fetch(url)
+
+        // Use CORS proxy to avoid CORS issues
+        var corsProxy = 'https://corsproxy.io/?';
+        var url = 'https://v6.exchangerate-api.com/v6/' + API_KEY + '/history/' + from + '/' + startStr + '/' + endStr;
+        var fullUrl = corsProxy + encodeURIComponent(url);
+
+        return fetch(fullUrl)
             .then(function(response) {
-                if (!response.ok) throw new Error('Frankfurter API error');
+                if (!response.ok) throw new Error('Historical API request failed');
                 return response.json();
             })
             .then(function(data) {
-                var rates = data.rates;
+                if (data.result === 'error') throw new Error(data['error-type']);
+                var rates = data.conversion_rates;
                 var dates = Object.keys(rates).sort();
                 return dates.map(function(date) {
                     return { date: new Date(date), close: rates[date][to] };
