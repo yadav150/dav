@@ -1,7 +1,5 @@
 // ============================================================
-//  PDF MERGER – Yadav Web Tools
-//  Merges multiple PDFs with drag‑and‑drop reordering.
-//  NO COMPRESSION – preserves original quality.
+//  PDF MERGER – Grid + Drag & Drop + CopyPages Fix
 // ============================================================
 
 (function() {
@@ -11,7 +9,7 @@
     var dropZone = document.getElementById('dropZone');
     var fileInput = document.getElementById('fileInput');
     var fileListContainer = document.getElementById('fileListContainer');
-    var fileList = document.getElementById('fileList');
+    var fileGrid = document.getElementById('fileGrid');
     var fileCount = document.getElementById('fileCount');
     var addMoreBtn = document.getElementById('addMoreBtn');
     var outputName = document.getElementById('outputName');
@@ -45,8 +43,8 @@
         return (bytes / 1048576).toFixed(1) + ' MB';
     }
 
-    // ===== UPDATE FILE LIST =====
-    function updateFileList() {
+    // ===== UPDATE FILE GRID =====
+    function updateFileGrid() {
         if (selectedFiles.length === 0) {
             fileListContainer.style.display = 'none';
             if (sortableInstance) {
@@ -60,37 +58,41 @@
 
         var html = '';
         selectedFiles.forEach(function(file, index) {
-            html += '<div class="file-item" data-index="' + index + '">';
-            html += '  <span class="file-name">' + file.name + '</span>';
-            html += '  <span class="file-size">' + formatFileSize(file.size) + '</span>';
+            html += '<div class="file-card" data-index="' + index + '">';
+            html += '  <div class="file-name">' + file.name + '</div>';
+            html += '  <div class="file-size">' + formatFileSize(file.size) + '</div>';
             html += '  <button type="button" class="file-remove" data-index="' + index + '" aria-label="Remove file">✕</button>';
             html += '</div>';
         });
-        fileList.innerHTML = html;
+        fileGrid.innerHTML = html;
 
+        // Remove event listeners
         document.querySelectorAll('.file-remove').forEach(function(btn) {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
                 var index = parseInt(this.dataset.index);
                 selectedFiles.splice(index, 1);
-                updateFileList();
+                updateFileGrid();
                 resetMergeState();
                 hideError();
             });
         });
 
+        // Re-init Sortable
         if (sortableInstance) {
             sortableInstance.destroy();
         }
-        sortableInstance = Sortable.create(fileList, {
+        sortableInstance = Sortable.create(fileGrid, {
             animation: 150,
-            handle: '.file-item',
+            handle: '.file-card',
             onEnd: function(evt) {
                 var oldIndex = evt.oldIndex;
                 var newIndex = evt.newIndex;
                 if (oldIndex !== newIndex) {
                     var moved = selectedFiles.splice(oldIndex, 1)[0];
                     selectedFiles.splice(newIndex, 0, moved);
-                    var items = fileList.querySelectorAll('.file-item');
+                    // Update data-index attributes
+                    var items = fileGrid.querySelectorAll('.file-card');
                     items.forEach(function(item, idx) {
                         item.dataset.index = idx;
                     });
@@ -119,14 +121,14 @@
             selectedFiles.push(files[i]);
         }
         if (valid) {
-            updateFileList();
+            updateFileGrid();
             resetMergeState();
             hideError();
         }
         fileInput.value = '';
     }
 
-    // ===== HANDLE DROP =====
+    // ===== DROP ZONE =====
     dropZone.addEventListener('dragover', function(e) {
         e.preventDefault();
         this.classList.add('dragover');
@@ -161,7 +163,7 @@
         fileInput.click();
     });
 
-    // ===== MERGE PDFS (WITHOUT COMPRESSION) =====
+    // ===== MERGE PDFs (NO COMPRESSION) =====
     mergeBtn.addEventListener('click', function() {
         if (selectedFiles.length === 0) {
             showError('Please add at least one PDF file.');
@@ -186,9 +188,15 @@
         mergeBtn.disabled = true;
         hideError();
 
-        var { PDFDocument } = PDFLib;
-        var mergedPdf = PDFDocument.create();
+        var PDFDocument = window.PDFLib.PDFDocument;
+        if (!PDFDocument) {
+            showError('PDF library not loaded. Please refresh and try again.');
+            mergeBtn.disabled = false;
+            progressContainer.style.display = 'none';
+            return;
+        }
 
+        var mergedPdf = PDFDocument.create();
         var totalFiles = selectedFiles.length;
         var processed = 0;
 
@@ -199,13 +207,14 @@
                 PDFDocument.load(bytes)
                     .then(function(doc) {
                         var pages = doc.getPages();
-                        var copyPromises = pages.map(function(page, pageIndex) {
-                            return mergedPdf.copyPages(doc, [pageIndex])
-                                .then(function(copies) {
-                                    mergedPdf.addPage(copies[0]);
+                        var pageIndices = pages.map(function(_, idx) { return idx; });
+                        // Copy all pages at once
+                        return mergedPdf.copyPages(doc, pageIndices)
+                            .then(function(copies) {
+                                copies.forEach(function(page) {
+                                    mergedPdf.addPage(page);
                                 });
-                        });
-                        return Promise.all(copyPromises);
+                            });
                     })
                     .then(function() {
                         processed++;
@@ -215,7 +224,6 @@
 
                         if (processed === totalFiles) {
                             progressLabel.textContent = 'Generating merged PDF...';
-                            // ===== NO COMPRESSION =====
                             mergedPdf.save({ compress: false })
                                 .then(function(pdfBytes) {
                                     var blob = new Blob([pdfBytes], { type: 'application/pdf' });
@@ -262,7 +270,7 @@
     // ===== RESET =====
     resetBtn.addEventListener('click', function() {
         selectedFiles = [];
-        updateFileList();
+        updateFileGrid();
         resetMergeState();
         outputName.value = 'merged.pdf';
         mergeBtn.disabled = false;
@@ -271,6 +279,6 @@
     });
 
     // ===== INIT =====
-    updateFileList();
+    updateFileGrid();
 
 })();
