@@ -1,29 +1,168 @@
-<!-- ===== CONTROLS ===== -->
-<div class="forex-controls">
-    <div class="field-group" style="flex:1;min-width:180px;margin:0;">
-        <label for="pairSelect" style="min-width:auto;font-weight:500;font-size:.9rem;">Currency Pair</label>
-        <select id="pairSelect" class="resizer-select" style="flex:1;min-width:140px;">
-            <option value="EUR/USD">EUR/USD</option>
-            <option value="GBP/USD">GBP/USD</option>
-            <option value="USD/JPY">USD/JPY</option>
-            <option value="USD/INR">USD/INR</option>
-            <option value="AUD/USD">AUD/USD</option>
-            <option value="USD/CAD">USD/CAD</option>
-        </select>
-    </div>
-    <div class="timeframe-selector" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
-        <button type="button" class="tf-btn" data-period="1D">1D</button>
-        <button type="button" class="tf-btn active" data-period="1W">1W</button>
-        <button type="button" class="tf-btn" data-period="1M">1M</button>
-        <button type="button" class="tf-btn" data-period="3M">3M</button>
-        <button type="button" class="tf-btn" data-period="1Y">1Y</button>
-        <button type="button" class="tf-btn refresh-btn" id="refreshBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;">
-                <polyline points="23 4 23 10 17 10"/>
-                <polyline points="1 20 1 14 7 14"/>
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
-            </svg>
-            Refresh
-        </button>
-    </div>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forex Dashboard · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.0.0/dist/lightweight-charts.standalone.production.js">
+    </script>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="/dav/index.html" class="site-title">Yadav Web Tools</a>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <div class="search-container header-search">
+                    <div class="search-wrapper">
+                        <div class="search-box">
+                            <button class="search-toggle" id="searchToggle" aria-label="Search tools">
+                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            </button>
+                            <input type="text" id="searchInput" placeholder="Search tools..." autocomplete="off" class="search-input-hidden">
+                        </div>
+                        <div class="search-dropdown" id="searchDropdown">
+                            <div class="dropdown-section">
+                                <span class="dropdown-label">Quick Tools</span>
+                                <ul class="dropdown-list" id="quickToolsList">
+                                    <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
+                                    <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
+                                    <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-section">
+                                <span class="dropdown-label">All Tools</span>
+                                <ul class="dropdown-list" id="allToolsList">
+                                    <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
+                                    <li><a href="/dav/tools/sip-calculator/index.html">SIP Calculator</a></li>
+                                    <li><a href="/dav/tools/pdf-editor/index.html">PDF Editor</a></li>
+                                    <li><a href="/dav/tools/image-resizer/index.html">Image Resizer</a></li>
+                                    <li><a href="/dav/tools/text-counter/index.html">Text Counter</a></li>
+                                    <li><a href="/dav/tools/unit-converter/index.html">Unit Converter</a></li>
+                                    <li><a href="/dav/tools/password-generator/index.html">Password Generator</a></li>
+                                    <li><a href="/dav/tools/qr-generator/index.html">QR Generator</a></li>
+                                    <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
+                                    <li><a href="/dav/tools/number-converter/index.html">Number Converter</a></li>
+                                    <li><a href="/dav/tools/percentage-calculator/index.html">Percentage Calculator</a></li>
+                                    <li><a href="/dav/tools/bmi-calculator/index.html">BMI Calculator</a></li>
+                                    <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
+                                    <li><a href="/dav/tools/accessibility-tool/index.html">Accessibility Tool</a></li>
+                                    <li><a href="/dav/tools/currency-converter/index.html">Currency Converter</a></li>
+                                    <li><a href="/dav/tools/forex-dashboard/index.html">Forex Dashboard</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                </button>
+                <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="/dav/index.html">Home</a></li>
+                <li><a href="/dav/about/index.html">About</a></li>
+                <li><a href="/dav/contact/index.html">Contact</a></li>
+                <li><a href="/dav/privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="/dav/disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="/dav/terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">Forex Dashboard</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Live candlestick chart for major currency pairs. Data updates every 10 seconds.
+                    </p>
+
+                    <!-- ===== CONTROLS ===== -->
+                    <div class="forex-controls">
+                        <div class="field-group" style="flex:1;min-width:180px;margin:0;">
+                            <label for="pairSelect" style="min-width:auto;font-weight:500;font-size:.9rem;">Currency Pair</label>
+                            <select id="pairSelect" class="resizer-select" style="flex:1;min-width:140px;">
+                                <option value="EUR/USD">EUR/USD</option>
+                                <option value="GBP/USD">GBP/USD</option>
+                                <option value="USD/JPY">USD/JPY</option>
+                                <option value="USD/INR">USD/INR</option>
+                                <option value="AUD/USD">AUD/USD</option>
+                                <option value="USD/CAD">USD/CAD</option>
+                            </select>
+                        </div>
+                        <div class="timeframe-selector" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
+                            <button type="button" class="tf-btn" data-period="1D">1D</button>
+                            <button type="button" class="tf-btn active" data-period="1W">1W</button>
+                            <button type="button" class="tf-btn" data-period="1M">1M</button>
+                            <button type="button" class="tf-btn" data-period="3M">3M</button>
+                            <button type="button" class="tf-btn" data-period="1Y">1Y</button>
+                            <button type="button" class="tf-btn refresh-btn" id="refreshBtn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;">
+                                    <polyline points="23 4 23 10 17 10"/>
+                                    <polyline points="1 20 1 14 7 14"/>
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                                </svg>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ===== PRICE CARDS ===== -->
+                    <div class="price-cards" id="priceCards">
+                        <!-- Populated by JavaScript -->
+                    </div>
+
+                    <!-- ===== CHART CONTAINER ===== -->
+                    <div class="chart-wrapper">
+                        <div id="forexChart" style="width:100%;height:450px;"></div>
+                    </div>
+
+                    <div class="error-msg" id="errorMsg"></div>
+
+                    <!-- ===== DISCLAIMER ===== -->
+                    <div class="disclaimer-box">
+                        <strong>Disclaimer:</strong> Exchange rates are for informational purposes only. May not be real-time or fully accurate. This is not financial advice. Use at your own risk.
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <div class="spacer"></div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="/dav/about/index.html">About</a>
+                <a href="/dav/contact/index.html">Contact</a>
+                <a href="/dav/privacy-policy/index.html">Privacy</a>
+                <a href="/dav/disclaimer/index.html">Disclaimer</a>
+                <a href="/dav/terms/index.html">Terms</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+    <script src="forex-dashboard.js"></script>
+
+</body>
+</html>
