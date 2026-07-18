@@ -1,8 +1,8 @@
 // ============================================================
-//  FOREX DASHBOARD – USING CHART.JS (No external dependency issues)
-//  Live rates: FreeExchangeRateApi (free, no key)
-//  Chart: Chart.js (line chart, updates live)
-//  Timeframes: 1D, 1W, 1M, 3M, 1Y (simulated historical)
+//  FOREX DASHBOARD – ULTRA-FAST LIVE UPDATES (2s)
+//  Chart updates every 2 seconds with realistic random walk.
+//  Price cards update every 30 seconds (API refresh).
+//  No API key required – uses FreeExchangeRateApi.
 // ============================================================
 
 (function() {
@@ -23,6 +23,9 @@
     var chartInstance = null;
     var rateData = {};
     var liveUpdateInterval = null;
+    var priceUpdateInterval = null;
+    var historicalDataCache = [];
+    var currentRate = 1.0;
 
     // ===== DOM REFS =====
     var chartCanvas = document.getElementById('forexChart');
@@ -57,7 +60,6 @@
             })
             .catch(function(err) {
                 console.warn('API failed, using fallback rates:', err);
-                // Fallback approximate rates (so page still works)
                 rateData = {
                     'USD': 1, 'EUR': 0.92, 'GBP': 0.78, 'JPY': 149, 'INR': 83,
                     'AUD': 1.5, 'CAD': 1.36, 'CHF': 0.88
@@ -77,6 +79,7 @@
             var approx = { 'USD': 1, 'EUR': 0.92, 'GBP': 0.78, 'JPY': 149, 'INR': 83, 'AUD': 1.5, 'CAD': 1.36 };
             baseRate = approx[to] / (approx[from] || 1);
         }
+        currentRate = baseRate;
 
         var data = [];
         var current = baseRate * (0.95 + Math.random() * 0.1);
@@ -117,6 +120,7 @@
         if (days < 2) days = 2;
 
         var data = generateHistoricalData(currentPair, days);
+        historicalDataCache = data;
 
         if (chartInstance) {
             chartInstance.destroy();
@@ -159,17 +163,45 @@
                     y: {
                         grid: { color: 'rgba(0,0,0,0.06)' }
                     }
+                },
+                animation: {
+                    duration: 0 // disable animations for speed
                 }
             }
         });
+    }
 
-        // Update last candle live (simulate by adding a point every update)
-        // We'll use the existing update mechanism.
+    // ===== LIVE CHART UPDATE (every 2 seconds) =====
+    function updateChartLive() {
+        if (!chartInstance || !chartInstance.data || !chartInstance.data.datasets || chartInstance.data.datasets.length === 0) return;
+
+        var dataset = chartInstance.data.datasets[0];
+        var lastPoint = dataset.data[dataset.data.length - 1];
+        var now = new Date();
+
+        // Small random walk for 2-second steps
+        var volatility = 0.0002;
+        var change = (Math.random() - 0.5) * 2 * volatility * currentRate;
+        var newRate = currentRate + change;
+        if (newRate < 0.01) newRate = 0.01;
+        currentRate = newRate;
+
+        if (!lastPoint || (now - lastPoint.x) > 3000) {
+            // Add new point
+            dataset.data.push({ x: now, y: currentRate });
+            // Limit data points to 200 to keep performance
+            if (dataset.data.length > 200) {
+                dataset.data.shift();
+            }
+        } else {
+            // Update last point
+            lastPoint.y = currentRate;
+        }
+        chartInstance.update('none');
     }
 
     // ===== UPDATE PRICE CARDS =====
     function updatePriceCards() {
-        // Use rateData to compute each pair's rate
         pairs.forEach(function(pair) {
             var fromRate = rateData[pair.base] || 1;
             var toRate = rateData[pair.quote] || 1;
@@ -207,41 +239,34 @@
         });
     }
 
-    // ===== LIVE UPDATE LOOP =====
+    // ===== LIVE UPDATE LOOPS =====
     function startLiveUpdates() {
+        // Chart update every 2 seconds
         if (liveUpdateInterval) clearInterval(liveUpdateInterval);
         liveUpdateInterval = setInterval(function() {
+            updateChartLive();
+        }, 2000);
+
+        // Price card update every 30 seconds (to refresh rates from API)
+        if (priceUpdateInterval) clearInterval(priceUpdateInterval);
+        priceUpdateInterval = setInterval(function() {
             fetchLiveRates().then(function() {
                 updatePriceCards();
-                // Update chart with new data point (simulate)
-                if (chartInstance) {
-                    // Add a new point to the chart (simulate live update)
-                    var pair = currentPair;
-                    var fromRate = rateData[pair.base] || 1;
-                    var toRate = rateData[pair.quote] || 1;
-                    var rate = toRate / fromRate;
-                    var now = new Date();
-                    var dataset = chartInstance.data.datasets[0];
-                    // Check if last point is within last minute, update it
-                    var lastPoint = dataset.data[dataset.data.length - 1];
-                    if (lastPoint && (now - lastPoint.x) < 60000) {
-                        // Update last point
-                        lastPoint.y = rate;
-                    } else {
-                        // Add new point
-                        dataset.data.push({ x: now, y: rate });
-                        // Keep data points limited (optional)
-                    }
-                    chartInstance.update('none');
-                }
+                // Update current rate for the chart
+                var fromRate = rateData[currentPair.base] || 1;
+                var toRate = rateData[currentPair.quote] || 1;
+                currentRate = toRate / fromRate;
             });
-        }, 30000); // 30 seconds
+        }, 30000);
     }
 
     // ===== PAIR SELECTION =====
     pairSelect.addEventListener('change', function() {
         var pairId = this.value;
         currentPair = pairs.find(function(p) { return p.id === pairId; }) || pairs[0];
+        var fromRate = rateData[currentPair.base] || 1;
+        var toRate = rateData[currentPair.quote] || 1;
+        currentRate = toRate / fromRate;
         updateChart();
     });
 
@@ -260,6 +285,9 @@
     refreshBtn.addEventListener('click', function() {
         fetchLiveRates().then(function() {
             updatePriceCards();
+            var fromRate = rateData[currentPair.base] || 1;
+            var toRate = rateData[currentPair.quote] || 1;
+            currentRate = toRate / fromRate;
             updateChart();
         });
     });
@@ -273,16 +301,18 @@
 
     // ===== INIT =====
     function init() {
-        // Populate dropdown
         pairSelect.innerHTML = pairs.map(function(p) {
             return '<option value="' + p.id + '">' + p.id + '</option>';
         }).join('');
         var defaultPair = pairs[0];
         pairSelect.value = defaultPair.id;
+        currentPair = defaultPair;
 
         initPriceCards();
-        // Wait for rates to load before chart
         fetchLiveRates().then(function() {
+            var fromRate = rateData[currentPair.base] || 1;
+            var toRate = rateData[currentPair.quote] || 1;
+            currentRate = toRate / fromRate;
             updateChart();
             startLiveUpdates();
         });
