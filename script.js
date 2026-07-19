@@ -481,3 +481,14 @@
     }
 
 })();
+// ===== AUTO-INJECT FAVICON =====
+(function() {
+    var existing = document.querySelector('link[rel="icon"]');
+    if (!existing) {
+        var link = document.createElement('link');
+        link.rel = 'icon';
+        link.type = 'image/svg+xml';
+        link.href = '/dav/favicon.svg';
+        document.head.appendChild(link);
+    }
+})();
