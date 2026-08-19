@@ -1,321 +1,324 @@
 // ============================================================
-//  QR GENERATOR – Yadav Web Tools
-//  Generates QR codes with logo support (rectangle, no compression)
+//  QR Generator · Yadav Web Tools  –  Full Upgrade
 // ============================================================
 
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    // ===== DOM REFS =====
-    var form = document.getElementById('qrForm');
-    var contentType = document.getElementById('contentType');
-    var dynamicFields = document.getElementById('dynamicFields');
-    var fgColor = document.getElementById('fgColor');
-    var bgColor = document.getElementById('bgColor');
-    var logoUpload = document.getElementById('logoUpload');
-    var errorMsg = document.getElementById('errorMsg');
-    var qrResult = document.getElementById('qrResult');
-    var qrCodeContainer = document.getElementById('qrCodeContainer');
-    var qrDetail = document.getElementById('qrDetail');
-    var downloadPngBtn = document.getElementById('downloadPngBtn');
-    var downloadSvgBtn = document.getElementById('downloadSvgBtn');
+  // ---------- DOM refs ----------
+  const form = document.getElementById('qrForm');
+  const contentType = document.getElementById('contentType');
+  const dynamicFields = document.getElementById('dynamicFields');
+  const fgColor = document.getElementById('fgColor');
+  const bgColor = document.getElementById('bgColor');
+  const logoUpload = document.getElementById('logoUpload');
+  const errorMsg = document.getElementById('errorMsg');
+  const qrResult = document.getElementById('qrResult');
+  const qrContainer = document.getElementById('qrCodeContainer');
+  const downloadPngBtn = document.getElementById('downloadPngBtn');
+  const downloadSvgBtn = document.getElementById('downloadSvgBtn');
+  const qrDetail = document.getElementById('qrDetail');
 
-    var currentQR = null;
-    var currentData = '';
-    var qrCanvas = null;
+  // ---------- internal state ----------
+  let currentQRCanvas = null;        // final canvas (with logo if any)
+  let currentRawCanvas = null;      // raw QR canvas from qrcodejs
+  let currentLogoImage = null;      // loaded logo image
+  let qrCodeInstance = null;        // QRCode instance reference
 
-    // ===== TEMPLATES =====
-    var templates = {
-        url: `
-            <div class="field-group">
-                <label for="urlInput">Website URL</label>
-                <input type="url" id="urlInput" placeholder="https://example.com" required />
-                <span class="helper-text">https:// will be added automatically</span>
-            </div>
-        `,
-        text: `
-            <div class="field-group" style="align-items:stretch;">
-                <label for="textInput">Plain Text</label>
-                <textarea id="textInput" rows="4" placeholder="Enter your text, message, or notes..." required></textarea>
-            </div>
-        `,
-        wifi: `
-            <div class="field-group">
-                <label for="ssid">Network Name (SSID)</label>
-                <input type="text" id="ssid" placeholder="e.g. MyWiFi" required />
-            </div>
-            <div class="field-group">
-                <label for="wifiPassword">Password</label>
-                <div style="display:flex;flex:1 1 200px;min-width:160px;gap:8px;">
-                    <input type="password" id="wifiPassword" placeholder="Enter Wi-Fi password" style="flex:1;" />
-                    <button type="button" class="toggle-password-btn" data-target="wifiPassword" style="padding:0 12px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-size:1rem;">👁️</button>
-                </div>
-            </div>
-            <div class="field-group">
-                <label for="wifiSecurity">Network Security</label>
-                <select id="wifiSecurity" class="qr-select">
-                    <option value="WPA">WPA/WPA2</option>
-                    <option value="WEP">WEP</option>
-                    <option value="nopass">Unsecured (Open)</option>
-                </select>
-            </div>
-        `,
-        upi: `
-            <div class="field-group">
-                <label for="upiId">UPI ID</label>
-                <input type="text" id="upiId" placeholder="username@oksbi" required />
-            </div>
-            <div class="field-group">
-                <label for="payeeName">Payee Name</label>
-                <input type="text" id="payeeName" placeholder="Enter payee name" required />
-            </div>
-            <div class="field-group">
-                <label for="upiAmount">Amount (optional)</label>
-                <input type="number" id="upiAmount" step="0.01" min="0" placeholder="e.g. 100.00" />
-                <span class="helper-text">Leave blank for user to enter amount</span>
-            </div>
-        `,
-        contact: `
-            <div class="field-group">
-                <label for="contactName">Full Name</label>
-                <input type="text" id="contactName" placeholder="e.g. John Doe" required />
-            </div>
-            <div class="field-group">
-                <label for="contactPhone">Phone Number</label>
-                <input type="tel" id="contactPhone" placeholder="e.g. +91 9876543210" required />
-            </div>
-            <div class="field-group">
-                <label for="contactEmail">Email</label>
-                <input type="email" id="contactEmail" placeholder="john@example.com" required />
-            </div>
-            <div class="field-group">
-                <label for="contactCompany">Company / Website (optional)</label>
-                <input type="text" id="contactCompany" placeholder="e.g. MyCompany.com" />
-            </div>
-        `
-    };
+  // ---------- field definitions per content type ----------
+  const fieldConfig = {
+    url: {
+      fields: [
+        { id: 'urlInput', label: 'Website URL', type: 'url', placeholder: 'https://example.com', required: true }
+      ],
+      buildContent: (data) => data.urlInput.trim()
+    },
+    text: {
+      fields: [
+        { id: 'textInput', label: 'Plain Text', type: 'textarea', placeholder: 'Enter your text here...', required: true }
+      ],
+      buildContent: (data) => data.textInput.trim()
+    },
+    wifi: {
+      fields: [
+        { id: 'wifiSsid', label: 'Network Name (SSID)', type: 'text', placeholder: 'MyWiFi', required: true },
+        { id: 'wifiPassword', label: 'Password', type: 'password', placeholder: '••••••••', required: true },
+        { id: 'wifiEncryption', label: 'Encryption', type: 'select', options: ['WPA', 'WEP', 'nopass'], default: 'WPA' }
+      ],
+      buildContent: (data) => {
+        const enc = data.wifiEncryption || 'WPA';
+        const ssid = data.wifiSsid.trim();
+        const pwd = data.wifiPassword.trim();
+        if (!ssid) return '';
+        return `WIFI:T:${enc};S:${ssid};P:${pwd};;`;
+      }
+    },
+    upi: {
+      fields: [
+        { id: 'upiPayee', label: 'UPI ID (e.g., example@upi)', type: 'text', placeholder: 'payee@upi', required: true },
+        { id: 'upiName', label: 'Payee Name (optional)', type: 'text', placeholder: 'John Doe' },
+        { id: 'upiAmount', label: 'Amount (optional)', type: 'number', placeholder: '100.00' },
+        { id: 'upiCurrency', label: 'Currency (optional)', type: 'text', placeholder: 'INR', default: 'INR' }
+      ],
+      buildContent: (data) => {
+        const payee = data.upiPayee.trim();
+        if (!payee) return '';
+        let upi = `upi://pay?pa=${encodeURIComponent(payee)}`;
+        if (data.upiName.trim()) upi += `&pn=${encodeURIComponent(data.upiName.trim())}`;
+        if (data.upiAmount.trim()) upi += `&am=${encodeURIComponent(data.upiAmount.trim())}`;
+        if (data.upiCurrency.trim()) upi += `&cu=${encodeURIComponent(data.upiCurrency.trim())}`;
+        return upi;
+      }
+    },
+    contact: {
+      fields: [
+        { id: 'contactName', label: 'Full Name', type: 'text', placeholder: 'John Doe', required: true },
+        { id: 'contactPhone', label: 'Phone Number', type: 'tel', placeholder: '+1234567890' },
+        { id: 'contactEmail', label: 'Email', type: 'email', placeholder: 'john@example.com' }
+      ],
+      buildContent: (data) => {
+        const name = data.contactName.trim();
+        if (!name) return '';
+        const phone = data.contactPhone.trim();
+        const email = data.contactEmail.trim();
+        let vcard = 'BEGIN:VCARD\nVERSION:3.0\n';
+        vcard += `FN:${name}\nN:${name};;;\n`;
+        if (phone) vcard += `TEL:${phone}\n`;
+        if (email) vcard += `EMAIL:${email}\n`;
+        vcard += 'END:VCARD';
+        return vcard;
+      }
+    }
+  };
 
-    // ===== RENDER DYNAMIC FIELDS =====
-    function renderFields(type) {
-        dynamicFields.innerHTML = templates[type] || templates.text;
-        document.querySelectorAll('.toggle-password-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var targetId = this.dataset.target;
-                var input = document.getElementById(targetId);
-                if (input) {
-                    var isPassword = input.type === 'password';
-                    input.type = isPassword ? 'text' : 'password';
-                    this.textContent = isPassword ? '🙈' : '👁️';
-                }
-            });
+  // ---------- helper: render dynamic fields ----------
+  function renderFields(type) {
+    const config = fieldConfig[type];
+    if (!config) return;
+    let html = '';
+    config.fields.forEach(f => {
+      if (f.type === 'textarea') {
+        html += `<div class="field-group"><label for="${f.id}">${f.label}</label><textarea id="${f.id}" placeholder="${f.placeholder || ''}" ${f.required ? 'required' : ''}></textarea></div>`;
+      } else if (f.type === 'select') {
+        html += `<div class="field-group"><label for="${f.id}">${f.label}</label><select id="${f.id}">`;
+        f.options.forEach(opt => {
+          const selected = (opt === f.default) ? ' selected' : '';
+          html += `<option value="${opt}"${selected}>${opt}</option>`;
         });
-    }
-
-    renderFields(contentType.value);
-
-    contentType.addEventListener('change', function() {
-        renderFields(this.value);
-        qrResult.style.display = 'none';
-        hideError();
+        html += `</select></div>`;
+      } else {
+        html += `<div class="field-group"><label for="${f.id}">${f.label}</label><input type="${f.type}" id="${f.id}" placeholder="${f.placeholder || ''}" ${f.required ? 'required' : ''} ${f.default ? `value="${f.default}"` : ''} /></div>`;
+      }
     });
+    dynamicFields.innerHTML = html;
+  }
 
-    // ===== HELPERS =====
-    function showError(msg) {
-        errorMsg.textContent = msg;
-        errorMsg.classList.add('show');
-        qrResult.style.display = 'none';
-    }
+  // ---------- get field values ----------
+  function getFieldValues(type) {
+    const config = fieldConfig[type];
+    if (!config) return {};
+    const data = {};
+    config.fields.forEach(f => {
+      const el = document.getElementById(f.id);
+      if (el) data[f.id] = el.value;
+    });
+    return data;
+  }
 
-    function hideError() {
-        errorMsg.classList.remove('show');
-        errorMsg.textContent = '';
-    }
+  // ---------- show/hide error ----------
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = msg ? 'block' : 'none';
+  }
+  function hideError() { showError(''); }
 
-    function getVal(id) {
-        var el = document.getElementById(id);
-        return el ? el.value : '';
-    }
+  // ---------- reset QR display ----------
+  function resetQR() {
+    qrResult.style.display = 'none';
+    qrContainer.innerHTML = '';
+    currentQRCanvas = null;
+    currentRawCanvas = null;
+    hideError();
+  }
 
-    function buildQRData() {
-        var type = contentType.value;
-        var data = '';
+  // ---------- generate QR code (core) ----------
+  function generateQR(content, fg, bg, logoImg) {
+    return new Promise((resolve, reject) => {
+      if (!content) {
+        reject(new Error('Content is empty'));
+        return;
+      }
 
-        switch (type) {
-            case 'url': {
-                var url = getVal('urlInput').trim();
-                if (!url) return '';
-                if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                    url = 'https://' + url;
-                }
-                data = url;
-                break;
-            }
-            case 'text': {
-                data = getVal('textInput').trim();
-                break;
-            }
-            case 'wifi': {
-                var ssid = getVal('ssid').trim();
-                var password = getVal('wifiPassword').trim();
-                var security = getVal('wifiSecurity');
-                if (!ssid) return '';
-                var enc = security === 'nopass' ? 'nopass' : security;
-                data = 'WIFI:T:' + enc + ';S:' + ssid + ';P:' + password + ';;';
-                break;
-            }
-            case 'upi': {
-                var upiId = getVal('upiId').trim();
-                var name = getVal('payeeName').trim();
-                var amount = getVal('upiAmount').trim();
-                if (!upiId || !name) return '';
-                var upiStr = 'upi://pay?pa=' + upiId + '&pn=' + name;
-                if (amount) {
-                    upiStr += '&am=' + amount;
-                }
-                data = upiStr;
-                break;
-            }
-            case 'contact': {
-                var cName = getVal('contactName').trim();
-                var phone = getVal('contactPhone').trim();
-                var email = getVal('contactEmail').trim();
-                var company = getVal('contactCompany').trim();
-                if (!cName || !phone || !email) return '';
-                data = 'BEGIN:VCARD\nVERSION:3.0\nFN:' + cName + '\nTEL:' + phone + '\nEMAIL:' + email;
-                if (company) data += '\nORG:' + company;
-                data += '\nEND:VCARD';
-                break;
-            }
-            default:
-                data = '';
-        }
-        return data;
-    }
+      qrContainer.innerHTML = '';
+      const qrSize = 300;
 
-    // ===== GENERATE QR =====
-    function generateQR() {
-        hideError();
-        qrResult.style.display = 'none';
+      qrCodeInstance = new QRCode(qrContainer, {
+        text: content,
+        width: qrSize,
+        height: qrSize,
+        colorDark: fg || '#1a5c3a',
+        colorLight: bg || '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
 
-        var data = buildQRData();
-        if (!data) {
-            showError('Please fill in the required fields for the selected content type.');
-            return;
-        }
-
-        currentData = data;
-        qrCodeContainer.innerHTML = '';
-
-        var size = 600;
-
-        try {
-            currentQR = new QRCode(qrCodeContainer, {
-                text: data,
-                width: size,
-                height: size,
-                colorDark: fgColor.value,
-                colorLight: bgColor.value,
-                correctLevel: QRCode.CorrectLevel.H
-            });
-
-            var canvas = qrCodeContainer.querySelector('canvas');
-            if (canvas) {
-                qrCanvas = canvas;
-                var logoFile = logoUpload.files[0];
-                if (logoFile) {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        var img = new Image();
-                        img.onload = function() {
-                            var ctx = canvas.getContext('2d');
-                            var logoSize = canvas.width * 0.25;
-                            var x = (canvas.width - logoSize) / 2;
-                            var y = (canvas.height - logoSize) / 2;
-
-                            ctx.fillStyle = bgColor.value;
-                            ctx.fillRect(x - 4, y - 4, logoSize + 8, logoSize + 8);
-
-                            var imgAspect = img.width / img.height;
-                            var drawW = logoSize;
-                            var drawH = logoSize;
-                            if (imgAspect > 1) {
-                                drawH = logoSize / imgAspect;
-                            } else {
-                                drawW = logoSize * imgAspect;
-                            }
-                            var offsetX = (logoSize - drawW) / 2;
-                            var offsetY = (logoSize - drawH) / 2;
-                            ctx.drawImage(img, x + offsetX, y + offsetY, drawW, drawH);
-                        };
-                        img.src = e.target.result;
-                    };
-                    reader.readAsDataURL(logoFile);
-                }
-            }
-
-            qrResult.style.display = 'block';
-            qrDetail.textContent = 'QR code generated for: ' + data.substring(0, 60) + (data.length > 60 ? '...' : '');
-
-        } catch (err) {
-            showError('Failed to generate QR code. Please check your input.');
-            console.error(err);
-        }
-    }
-
-    // ===== DOWNLOADS =====
-    function getCanvas() {
-        var canvas = qrCodeContainer.querySelector('canvas');
+      setTimeout(() => {
+        const canvas = qrContainer.querySelector('canvas');
         if (!canvas) {
-            showError('Please generate a QR code first.');
-            return null;
+          reject(new Error('QR generation failed – no canvas found'));
+          return;
         }
-        return canvas;
-    }
 
-    function downloadPNG() {
-        var canvas = getCanvas();
-        if (!canvas) return;
-        var link = document.createElement('a');
-        link.download = 'qrcode.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    }
+        currentRawCanvas = canvas;
 
-    function downloadSVG() {
-        var canvas = getCanvas();
-        if (!canvas) return;
-        var dataUrl = canvas.toDataURL('image/png');
-        var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + canvas.width + '" height="' + canvas.height +
-            '"><image href="' + dataUrl + '" width="' + canvas.width + '" height="' + canvas.height + '" /></svg>';
-        var blob = new Blob([svg], { type: 'image/svg+xml' });
-        var link = document.createElement('a');
-        link.download = 'qrcode.svg';
-        link.href = URL.createObjectURL(blob);
-        link.click();
-        URL.revokeObjectURL(link.href);
-    }
+        if (logoImg) {
+          const finalCanvas = document.createElement('canvas');
+          finalCanvas.width = qrSize;
+          finalCanvas.height = qrSize;
+          const ctx = finalCanvas.getContext('2d');
+          ctx.drawImage(canvas, 0, 0);
+          const logoSize = Math.round(qrSize * 0.22);
+          const x = (qrSize - logoSize) / 2;
+          const y = (qrSize - logoSize) / 2;
+          ctx.beginPath();
+          ctx.arc(qrSize/2, qrSize/2, logoSize/2 + 4, 0, 2 * Math.PI);
+          ctx.fillStyle = bg || '#ffffff';
+          ctx.fill();
+          ctx.drawImage(logoImg, x, y, logoSize, logoSize);
+          qrContainer.innerHTML = '';
+          qrContainer.appendChild(finalCanvas);
+          currentQRCanvas = finalCanvas;
+        } else {
+          currentQRCanvas = canvas;
+        }
 
-    // ===== EVENT LISTENERS =====
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        generateQR();
+        qrResult.style.display = 'block';
+        hideError();
+        const detail = content.length > 80 ? content.substring(0, 80) + '…' : content;
+        qrDetail.textContent = `Content: ${detail}`;
+        resolve(currentQRCanvas);
+      }, 100);
     });
+  }
 
-    form.addEventListener('reset', function(e) {
-        setTimeout(function() {
-            renderFields(contentType.value);
-            fgColor.value = '#1a5c3a';
-            bgColor.value = '#ffffff';
-            logoUpload.value = '';
-            qrResult.style.display = 'none';
-            qrCodeContainer.innerHTML = '';
-            hideError();
-        }, 10);
+  // ---------- download PNG (high resolution) ----------
+  function downloadPNG(canvas, scale = 4) {
+    if (!canvas) return;
+    const w = canvas.width * scale;
+    const h = canvas.height * scale;
+    const bigCanvas = document.createElement('canvas');
+    bigCanvas.width = w;
+    bigCanvas.height = h;
+    const ctx = bigCanvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(canvas, 0, 0, w, h);
+    const link = document.createElement('a');
+    link.download = `qrcode_${Date.now()}.png`;
+    link.href = bigCanvas.toDataURL('image/png');
+    link.click();
+  }
+
+  // ---------- download SVG fallback (high-res PNG) ----------
+  function downloadSVG(canvas) {
+    if (!canvas) return;
+    downloadPNG(canvas, 4);
+  }
+
+  // ---------- load image from file ----------
+  function loadImageFromFile(file) {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith('image/')) {
+        reject(new Error('Not an image file'));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Image load error'));
+        img.src = ev.target.result;
+      };
+      reader.onerror = () => reject(new Error('File read error'));
+      reader.readAsDataURL(file);
     });
+  }
 
-    downloadPngBtn.addEventListener('click', downloadPNG);
-    downloadSvgBtn.addEventListener('click', downloadSVG);
+  // ---------- form submit ----------
+  async function onFormSubmit(e) {
+    e.preventDefault();
+    hideError();
+    resetQR();
 
-    dynamicFields.addEventListener('input', hideError);
+    const type = contentType.value;
+    const config = fieldConfig[type];
+    if (!config) {
+      showError('Invalid content type');
+      return;
+    }
+
+    const data = getFieldValues(type);
+    const content = config.buildContent(data);
+    if (!content) {
+      showError('Please fill in all required fields.');
+      return;
+    }
+
+    const fg = fgColor.value;
+    const bg = bgColor.value;
+    let logoImg = null;
+    if (logoUpload.files && logoUpload.files[0]) {
+      try {
+        logoImg = await loadImageFromFile(logoUpload.files[0]);
+      } catch (err) {
+        showError('Logo image could not be loaded. Please try another file.');
+        return;
+      }
+    }
+
+    try {
+      const canvas = await generateQR(content, fg, bg, logoImg);
+      downloadPNG(canvas, 4);  // Auto-download high-res PNG
+    } catch (err) {
+      showError(err.message || 'QR generation failed');
+      console.error(err);
+    }
+  }
+
+  // ---------- event listeners ----------
+  contentType.addEventListener('change', function () {
+    renderFields(this.value);
+    resetQR();
+    hideError();
+  });
+
+  form.addEventListener('submit', onFormSubmit);
+
+  form.addEventListener('reset', function () {
+    setTimeout(() => {
+      logoUpload.value = '';
+      resetQR();
+      hideError();
+      renderFields(contentType.value);
+    }, 10);
+  });
+
+  downloadPngBtn.addEventListener('click', function () {
+    if (currentQRCanvas) downloadPNG(currentQRCanvas, 4);
+    else showError('No QR code to download');
+  });
+
+  downloadSvgBtn.addEventListener('click', function () {
+    if (currentQRCanvas) downloadSVG(currentQRCanvas);
+    else showError('No QR code to download');
+  });
+
+  // ---------- init ----------
+  renderFields(contentType.value);
+  resetQR();
+  hideError();
+
+  logoUpload.addEventListener('change', function () {
+    hideError();
+  });
 
 })();
