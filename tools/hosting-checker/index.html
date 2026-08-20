@@ -5,16 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hosting Checker · Yadav Web Tools</title>
     <link rel="stylesheet" href="../../style.css" />
-    <!-- Page-specific external CSS (only for the custom Check button) -->
+    <!-- NO external CSS needed. All styling comes from style.css -->
 </head>
 <body>
 
-    <!-- ===== HEADER (EXACT SAME STRUCTURE) ===== -->
+    <!-- ===== HEADER (EXACT SAME) ===== -->
 <header class="site-header" role="banner">
     <div class="header-inner">
     <a href="/dav/index.html" class="site-title">Yadav Web Tools</a>
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <!-- SEARCH -->
         <div class="search-container header-search">
             <div class="search-wrapper">
                 <div class="search-box">
@@ -53,7 +52,6 @@
                             <li><a href="/dav/tools/bmi-calculator/index.html">BMI Calculator</a></li>
                             <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
                             <li><a href="/dav/tools/accessibility-tool/index.html">Accessibility Tool</a></li>
-                            <!-- Add your new tool link here -->
                             <li><a href="/dav/tools/hosting-checker/index.html">Hosting Checker</a></li>
                         </ul>
                     </div>
@@ -61,7 +59,6 @@
             </div>
         </div>
 
-        <!-- DARK MODE TOGGLE -->
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
             <svg class="moon-icon" viewBox="0 0 24 24">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
@@ -79,7 +76,6 @@
             </svg>
         </button>
 
-        <!-- HAMBURGER -->
         <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
             <span class="hamburger-line"></span>
             <span class="hamburger-line"></span>
@@ -101,7 +97,6 @@
 
     <!-- ===== MAIN ===== -->
     <main id="main-content">
-
         <section class="section tools-section" aria-labelledby="tool-heading">
             <div class="section-title-bar">
                 <h2 id="tool-heading">Hosting Checker</h2>
@@ -110,29 +105,29 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Check domain DNS records, IP address, hosting provider, ISP, and location details instantly.
+                        Check which hosting provider or CDN a website is using (Cloudflare, AWS, GoDaddy, Hostinger, etc.).
                     </p>
 
                     <form class="number-form" id="hostingForm" novalidate>
 
-                        <!-- ===== DOMAIN INPUT ===== -->
+                        <!-- INPUT -->
                         <div class="field-group">
-                            <label for="domainInput">Domain / Website URL</label>
+                            <label for="domainInput">Domain / Website</label>
                             <div class="input-with-copy">
                                 <input type="text" id="domainInput" placeholder="e.g., example.com" />
                                 <button type="button" class="btn-copy-sm" data-target="domainInput">Copy</button>
                             </div>
-                            <div class="helper-text">Enter a domain (without http://).</div>
+                            <div class="helper-text">Enter domain without http:// (e.g., google.com).</div>
                         </div>
 
-                        <!-- ===== CHECK BUTTON (Styled via external CSS) ===== -->
+                        <!-- CHECK BUTTON (using standard secondary class to avoid extra CSS) -->
                         <div class="btn-group" style="margin-top:8px; margin-bottom:18px;">
-                            <button type="button" class="btn btn-primary" id="checkHostingBtn">
-                                Check Hosting
+                            <button type="button" class="btn btn-secondary" id="checkHostingBtn" style="background:#1a5c3a; color:#fff; border:none; padding:10px 28px; border-radius:6px; font-weight:600; cursor:pointer;">
+                                🔍 Check Hosting
                             </button>
                         </div>
 
-                        <!-- ===== OUTPUT: IP ===== -->
+                        <!-- OUTPUT: IP -->
                         <div class="field-group">
                             <label for="ipOutput">IP Address</label>
                             <div class="input-with-copy">
@@ -141,43 +136,16 @@
                             </div>
                         </div>
 
-                        <!-- ===== OUTPUT: HOSTING PROVIDER / ISP ===== -->
+                        <!-- OUTPUT: HOSTING PROVIDER (SMART MAPPED) -->
                         <div class="field-group">
-                            <label for="ispOutput">Hosting Provider / ISP</label>
+                            <label for="providerOutput">Hosting Provider / Platform</label>
                             <div class="input-with-copy">
-                                <input type="text" id="ispOutput" readonly placeholder="Waiting for check..." />
-                                <button type="button" class="btn-copy-sm" data-target="ispOutput">Copy</button>
+                                <input type="text" id="providerOutput" readonly placeholder="Waiting for check..." />
+                                <button type="button" class="btn-copy-sm" data-target="providerOutput">Copy</button>
                             </div>
                         </div>
 
-                        <!-- ===== OUTPUT: ORGANIZATION ===== -->
-                        <div class="field-group">
-                            <label for="orgOutput">Organization</label>
-                            <div class="input-with-copy">
-                                <input type="text" id="orgOutput" readonly placeholder="Waiting for check..." />
-                                <button type="button" class="btn-copy-sm" data-target="orgOutput">Copy</button>
-                            </div>
-                        </div>
-
-                        <!-- ===== OUTPUT: LOCATION ===== -->
-                        <div class="field-group">
-                            <label for="locationOutput">Location (Country / City / Region)</label>
-                            <div class="input-with-copy">
-                                <input type="text" id="locationOutput" readonly placeholder="Waiting for check..." />
-                                <button type="button" class="btn-copy-sm" data-target="locationOutput">Copy</button>
-                            </div>
-                        </div>
-
-                        <!-- ===== OUTPUT: TIMEZONE ===== -->
-                        <div class="field-group">
-                            <label for="timezoneOutput">Timezone</label>
-                            <div class="input-with-copy">
-                                <input type="text" id="timezoneOutput" readonly placeholder="Waiting for check..." />
-                                <button type="button" class="btn-copy-sm" data-target="timezoneOutput">Copy</button>
-                            </div>
-                        </div>
-
-                        <!-- ===== CLEAR BUTTON (SAME AS ORIGINAL) ===== -->
+                        <!-- CLEAR BUTTON -->
                         <div class="btn-group" style="margin-top:14px;border-top:1px solid #e6e6e6;padding-top:14px;">
                             <button type="button" class="btn btn-secondary" id="clearFieldsBtn">Clear All Fields</button>
                         </div>
@@ -189,28 +157,27 @@
                 </div>
             </div>
         </section>
-
         <div class="spacer"></div>
-
     </main>
 
-    <!-- ===== FOOTER (EXACT SAME) ===== -->
+    <!-- ===== FOOTER ===== -->
     <footer class="site-footer" role="contentinfo">
         <div class="footer-inner">
             <div class="footer-links">
-    <a href="/dav/about/index.html">About</a>
-    <a href="/dav/contact/index.html">Contact</a>
-    <a href="/dav/privacy-policy/index.html">Privacy</a>
-    <a href="/dav/disclaimer/index.html">Disclaimer</a>
-    <a href="/dav/terms/index.html">Terms</a>
-</div>
+                <a href="/dav/about/index.html">About</a>
+                <a href="/dav/contact/index.html">Contact</a>
+                <a href="/dav/privacy-policy/index.html">Privacy</a>
+                <a href="/dav/disclaimer/index.html">Disclaimer</a>
+                <a href="/dav/terms/index.html">Terms</a>
+            </div>
             <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
         </div>
     </footer>
 
     <!-- ===== GLOBAL SCRIPTS ===== -->
     <script src="../../script.js"></script>
-        <!-- ===== TOOL-SPECIFIC SCRIPT (UPDATED WITH WORKING API) ===== -->
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT (FULLY WORKING) ===== -->
     <script>
         (function() {
             'use strict';
@@ -219,14 +186,39 @@
             const domainInput = document.getElementById('domainInput');
             const checkBtn = document.getElementById('checkHostingBtn');
             const ipOutput = document.getElementById('ipOutput');
-            const ispOutput = document.getElementById('ispOutput');
-            const orgOutput = document.getElementById('orgOutput');
-            const locationOutput = document.getElementById('locationOutput');
-            const timezoneOutput = document.getElementById('timezoneOutput');
+            const providerOutput = document.getElementById('providerOutput');
             const clearFieldsBtn = document.getElementById('clearFieldsBtn');
             const errorMsg = document.getElementById('errorMsg');
 
-            // ===== HELPER: CLEAN DOMAIN =====
+            // ===== SMART PROVIDER MAPPER =====
+            function getCleanProvider(org, isp, asn) {
+                const combined = (org + ' ' + isp + ' ' + asn).toUpperCase();
+
+                if (combined.includes('CLOUDFLARE')) return '☁️ Cloudflare (CDN / Proxy)';
+                if (combined.includes('AMAZON') || combined.includes('AWS')) return '☁️ Amazon Web Services (AWS)';
+                if (combined.includes('GOOGLE') || combined.includes('GCP')) return '☁️ Google Cloud Platform';
+                if (combined.includes('MICROSOFT') || combined.includes('AZURE')) return '☁️ Microsoft Azure';
+                if (combined.includes('GODADDY')) return '🏠 GoDaddy';
+                if (combined.includes('WIX')) return '🌐 Wix';
+                if (combined.includes('WORDPRESS')) return '🌐 WordPress.com';
+                if (combined.includes('SHOPIFY')) return '🛒 Shopify';
+                if (combined.includes('HOSTINGER')) return '🏠 Hostinger';
+                if (combined.includes('BLUEHOST')) return '🏠 Bluehost';
+                if (combined.includes('DREAMHOST')) return '🏠 DreamHost';
+                if (combined.includes('SITEGROUND')) return '🏠 SiteGround';
+                if (combined.includes('NAME CHEAP') || combined.includes('NAMECHEAP')) return '🏠 Namecheap';
+                if (combined.includes('OVH')) return '🏠 OVHcloud';
+                if (combined.includes('DIGITALOCEAN')) return '☁️ DigitalOcean';
+                if (combined.includes('LINODE')) return '☁️ Linode';
+                if (combined.includes('VULTR')) return '☁️ Vultr';
+                if (combined.includes('AKAMAI')) return '☁️ Akamai (CDN)';
+                if (combined.includes('FASTLY')) return '⚡ Fastly (CDN)';
+                
+                // If no match, return the original ISP or Org
+                return isp || org || 'Unknown Provider';
+            }
+
+            // ===== HELPERS =====
             function cleanDomain(input) {
                 let domain = input.trim().toLowerCase();
                 domain = domain.replace(/(https?:\/\/|ftp:\/\/)/, '');
@@ -236,7 +228,6 @@
                 return domain;
             }
 
-            // ===== SHOW/HIDE ERROR =====
             function showError(msg) {
                 errorMsg.textContent = msg;
                 errorMsg.classList.add('show');
@@ -246,7 +237,7 @@
                 errorMsg.textContent = '';
             }
 
-            // ===== MAIN CHECK FUNCTION (UPDATED API) =====
+            // ===== MAIN CHECK FUNCTION =====
             function checkHosting() {
                 const raw = domainInput.value;
                 if (!raw) {
@@ -261,16 +252,12 @@
                     return;
                 }
 
-                // Reset outputs
-                ipOutput.value = 'Checking DNS...';
-                ispOutput.value = '';
-                orgOutput.value = '';
-                locationOutput.value = '';
-                timezoneOutput.value = '';
+                ipOutput.value = 'Resolving DNS...';
+                providerOutput.value = 'Checking...';
                 checkBtn.disabled = true;
                 checkBtn.textContent = 'Checking...';
 
-                // STEP 1: Get IP via Google DNS over HTTPS
+                // STEP 1: Get IP from Google DNS
                 fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`)
                     .then(res => {
                         if (!res.ok) throw new Error('DNS query failed (HTTP ' + res.status + ')');
@@ -285,36 +272,33 @@
                         const ipAddress = ip.data;
                         ipOutput.value = ipAddress;
 
-                        // STEP 2: Get hosting info via ipapi.co (CORS friendly, no key needed)
-                        return fetch(`https://ipapi.co/${ipAddress}/json/`);
+                        // STEP 2: Get Hosting/ISP info from ipwhois.app (CORS friendly)
+                        return fetch(`https://ipwhois.app/json/${ipAddress}`);
                     })
                     .then(res => {
-                        if (!res.ok) throw new Error('IP lookup failed (HTTP ' + res.status + ')');
+                        if (!res.ok) throw new Error('Lookup failed (HTTP ' + res.status + ')');
                         return res.json();
                     })
                     .then(data => {
-                        // ipapi.co returns { "error": true, "reason": "..." } if something fails
-                        if (data.error) {
-                            throw new Error(data.reason || 'Could not fetch location details.');
+                        if (data.success === false || data.error) {
+                            throw new Error(data.message || data.error || 'Unknown error from IP service.');
                         }
 
-                        // Populate the fields
-                        ispOutput.value = data.org || data.asn || 'N/A';
-                        orgOutput.value = data.org || data.asn || 'N/A';
-                        const location = [data.city, data.region, data.country_name].filter(Boolean).join(', ');
-                        locationOutput.value = location || 'N/A';
-                        timezoneOutput.value = data.timezone || 'N/A';
+                        // Extract raw data
+                        const org = data.org || '';
+                        const isp = data.isp || '';
+                        const asn = data.asn || '';
+
+                        // Map to clean, readable provider name
+                        const provider = getCleanProvider(org, isp, asn);
+                        providerOutput.value = provider;
 
                         hideError();
                     })
                     .catch(err => {
-                        // If the second API fails, we still keep the IP
-                        if (ipOutput.value && ipOutput.value !== 'Checking DNS...') {
-                            ispOutput.value = 'Lookup failed';
-                            orgOutput.value = 'Lookup failed';
-                            locationOutput.value = 'Lookup failed';
-                            timezoneOutput.value = 'Lookup failed';
-                            showError('IP found, but hosting details could not be retrieved: ' + err.message);
+                        if (ipOutput.value && ipOutput.value !== 'Resolving DNS...') {
+                            providerOutput.value = 'Lookup failed';
+                            showError('IP found, but provider details could not be retrieved: ' + err.message);
                         } else {
                             ipOutput.value = 'Failed';
                             showError('Error: ' + err.message);
@@ -335,7 +319,7 @@
                 }
             });
 
-            // ===== COPY BUTTONS (SAME AS ORIGINAL) =====
+            // ===== COPY BUTTONS =====
             function setupCopyButtons() {
                 document.querySelectorAll('.btn-copy-sm').forEach(function(btn) {
                     btn.addEventListener('click', function() {
@@ -343,8 +327,8 @@
                         const input = document.getElementById(targetId);
                         if (!input) return;
                         const text = input.value;
-                        if (!text || text === 'Waiting for check...' || text === 'Checking DNS...' || text ===
-                            'Failed' || text === 'Lookup failed' || text === 'N/A') {
+                        if (!text || text === 'Waiting for check...' || text === 'Resolving DNS...' || text ===
+                            'Checking...' || text === 'Lookup failed' || text === 'Failed') {
                             showError('Nothing meaningful to copy.');
                             return;
                         }
@@ -380,21 +364,15 @@
             clearFieldsBtn.addEventListener('click', function() {
                 domainInput.value = '';
                 ipOutput.value = 'Waiting for check...';
-                ispOutput.value = 'Waiting for check...';
-                orgOutput.value = 'Waiting for check...';
-                locationOutput.value = 'Waiting for check...';
-                timezoneOutput.value = 'Waiting for check...';
+                providerOutput.value = 'Waiting for check...';
                 checkBtn.disabled = false;
                 checkBtn.textContent = 'Check Hosting';
                 hideError();
             });
 
-            // Set initial placeholder state
+            // ===== INITIAL PLACEHOLDER =====
             ipOutput.value = 'Waiting for check...';
-            ispOutput.value = 'Waiting for check...';
-            orgOutput.value = 'Waiting for check...';
-            locationOutput.value = 'Waiting for check...';
-            timezoneOutput.value = 'Waiting for check...';
+            providerOutput.value = 'Waiting for check...';
 
         })();
     </script>
