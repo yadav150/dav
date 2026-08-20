@@ -211,8 +211,7 @@
 
     <!-- ===== GLOBAL SCRIPTS ===== -->
     <script src="../../script.js"></script>
-
-    <!-- ===== TOOL-SPECIFIC SCRIPT (FULLY FUNCTIONAL) ===== -->
+        <!-- ===== TOOL-SPECIFIC SCRIPT (UPDATED WITH WORKING API) ===== -->
     <script>
         (function() {
             'use strict';
@@ -231,13 +230,9 @@
             // ===== HELPER: CLEAN DOMAIN =====
             function cleanDomain(input) {
                 let domain = input.trim().toLowerCase();
-                // Remove http://, https://, ftp://
                 domain = domain.replace(/(https?:\/\/|ftp:\/\/)/, '');
-                // Remove www.
                 domain = domain.replace(/^www\./, '');
-                // Remove trailing slash and path
                 domain = domain.split('/')[0];
-                // Remove port if any
                 domain = domain.split(':')[0];
                 return domain;
             }
@@ -252,7 +247,7 @@
                 errorMsg.textContent = '';
             }
 
-            // ===== MAIN CHECK FUNCTION =====
+            // ===== MAIN CHECK FUNCTION (UPDATED API) =====
             function checkHosting() {
                 const raw = domainInput.value;
                 if (!raw) {
@@ -276,7 +271,7 @@
                 checkBtn.disabled = true;
                 checkBtn.textContent = 'Checking...';
 
-                // STEP 1: Get IP via Google DNS over HTTPS (works client-side)
+                // STEP 1: Get IP via Google DNS over HTTPS
                 fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`)
                     .then(res => {
                         if (!res.ok) throw new Error('DNS query failed (HTTP ' + res.status + ')');
@@ -286,28 +281,28 @@
                         if (!data.Answer || data.Answer.length === 0) {
                             throw new Error('No A record found for this domain.');
                         }
-                        // Get the first IPv4 address
                         const ip = data.Answer.find(record => record.type === 1);
                         if (!ip) throw new Error('No IPv4 address found.');
                         const ipAddress = ip.data;
                         ipOutput.value = ipAddress;
 
-                        // STEP 2: Get hosting info via ip-api.com (free, no API key, CORS friendly)
-                        return fetch(`https://ip-api.com/json/${ipAddress}?fields=status,message,country,city,region,org,isp,timezone`);
+                        // STEP 2: Get hosting info via ipapi.co (CORS friendly, no key needed)
+                        return fetch(`https://ipapi.co/${ipAddress}/json/`);
                     })
                     .then(res => {
                         if (!res.ok) throw new Error('IP lookup failed (HTTP ' + res.status + ')');
                         return res.json();
                     })
                     .then(data => {
-                        if (data.status === 'fail') {
-                            throw new Error(data.message || 'Could not fetch location details.');
+                        // ipapi.co returns { "error": true, "reason": "..." } if something fails
+                        if (data.error) {
+                            throw new Error(data.reason || 'Could not fetch location details.');
                         }
 
                         // Populate the fields
-                        ispOutput.value = data.isp || 'N/A';
-                        orgOutput.value = data.org || 'N/A';
-                        const location = [data.city, data.region, data.country].filter(Boolean).join(', ');
+                        ispOutput.value = data.org || data.asn || 'N/A';
+                        orgOutput.value = data.org || data.asn || 'N/A';
+                        const location = [data.city, data.region, data.country_name].filter(Boolean).join(', ');
                         locationOutput.value = location || 'N/A';
                         timezoneOutput.value = data.timezone || 'N/A';
 
@@ -316,14 +311,12 @@
                     .catch(err => {
                         // If the second API fails, we still keep the IP
                         if (ipOutput.value && ipOutput.value !== 'Checking DNS...') {
-                            // Partial success
                             ispOutput.value = 'Lookup failed';
                             orgOutput.value = 'Lookup failed';
                             locationOutput.value = 'Lookup failed';
                             timezoneOutput.value = 'Lookup failed';
                             showError('IP found, but hosting details could not be retrieved: ' + err.message);
                         } else {
-                            // Complete failure
                             ipOutput.value = 'Failed';
                             showError('Error: ' + err.message);
                         }
@@ -384,7 +377,7 @@
             }
             setupCopyButtons();
 
-            // ===== CLEAR FIELDS (SAME AS ORIGINAL) =====
+            // ===== CLEAR FIELDS =====
             clearFieldsBtn.addEventListener('click', function() {
                 domainInput.value = '';
                 ipOutput.value = 'Waiting for check...';
