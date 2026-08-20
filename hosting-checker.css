@@ -1,0 +1,39 @@
+/* ===== HOSTING CHECKER - PAGE SPECIFIC ===== */
+/* Only styles the custom "Check Hosting" button. 
+   Everything else inherits from the global style.css */
+
+.btn-primary {
+    background: #1a5c3a;
+    color: #fff;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-primary:hover {
+    background: #0f4028;
+}
+
+.btn-primary:active {
+    transform: scale(0.97);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: scale(1);
+}
+
+/* Slight spacing for the form group containing the button */
+.btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
