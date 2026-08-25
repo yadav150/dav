@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSON Editor · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+    <style>
+        /* ===== JSON Editor specific overrides ===== */
+        .json-editor-form .field-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            transition: border-color 0.2s;
+            background: #fff;
+            min-height: 220px;
+            line-height: 1.6;
+            tab-size: 2;
+        }
+        .json-editor-form .field-group textarea:focus {
+            border-color: #1a5c3a;
+            outline: 0;
+        }
+        .dark-mode .json-editor-form .field-group textarea {
+            background: #2a2a2a;
+            color: #eee;
+            border-color: #3a3a3a;
+        }
+
+        .status-box {
+            display: none;
+            margin: 12px 0 0;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .status-box.show {
+            display: block;
+        }
+        .status-box.success {
+            background: #eafaf1;
+            border: 1px solid #27ae60;
+            color: #1a6e3a;
+        }
+        .status-box.error {
+            background: #fef6f6;
+            border: 1px solid #e74c3c;
+            color: #b33a2c;
+        }
+        .dark-mode .status-box.success {
+            background: #1a2a1a;
+            border-color: #27ae60;
+            color: #8fde9f;
+        }
+        .dark-mode .status-box.error {
+            background: #2a1a1a;
+            border-color: #c0392b;
+            color: #e67e7e;
+        }
+
+        .json-output-box {
+            display: none;
+            margin-top: 16px;
+            padding: 16px 18px;
+            background: #f4f8f6;
+            border: 1px solid #d4e4dc;
+            border-radius: 8px;
+            overflow: auto;
+            max-height: 350px;
+        }
+        .json-output-box.show {
+            display: block;
+        }
+        .json-output-box pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #1e1e1e;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .dark-mode .json-output-box {
+            background: #1a1a1a;
+            border-color: #3a3a3a;
+        }
+        .dark-mode .json-output-box pre {
+            color: #eee;
+        }
+
+        .editor-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 6px 0 4px;
+            font-size: 0.8rem;
+            color: #4a6b5a;
+        }
+        .dark-mode .editor-stats {
+            color: #8a9a8a;
+        }
+
+        .btn-download {
+            background: #1a5c3a;
+        }
+        .btn-download:hover {
+            background: #13482e;
+        }
+        .btn-validate {
+            background: #2980b9;
+        }
+        .btn-validate:hover {
+            background: #1f6a9a;
+        }
+        .btn-format {
+            background: #8e44ad;
+        }
+        .btn-format:hover {
+            background: #703688;
+        }
+        .btn-minify {
+            background: #d35400;
+        }
+        .btn-minify:hover {
+            background: #a04000;
+        }
+        .btn-clear-json {
+            background: #5f7a6b;
+        }
+        .btn-clear-json:hover {
+            background: #4a6558;
+        }
+
+        .action-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 4px;
+        }
+        .action-group .btn {
+            min-width: 110px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            justify-content: center;
+        }
+
+        @media (max-width: 640px) {
+            .action-group .btn {
+                min-width: 100%;
+                justify-content: center;
+            }
+            .json-editor-form .field-group textarea {
+                min-height: 160px;
+                font-size: 0.85rem;
+                padding: 10px 12px;
+            }
+            .json-output-box {
+                max-height: 240px;
+                padding: 12px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="site-header" role="banner">
+        <div class="header-inner">
+            <a href="/dav/index.html" class="site-title">Yadav Web Tools</a>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <!-- SEARCH -->
+                <div class="search-container header-search">
+                    <div class="search-wrapper">
+                        <div class="search-box">
+                            <button class="search-toggle" id="searchToggle" aria-label="Search tools">
+                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                </svg>
+                            </button>
+                            <input type="text" id="searchInput" placeholder="Search tools..." autocomplete="off" class="search-input-hidden">
+                        </div>
+                        <div class="search-dropdown" id="searchDropdown">
+                            <div class="dropdown-section">
+                                <span class="dropdown-label">Quick Tools</span>
+                                <ul class="dropdown-list" id="quickToolsList">
+                                    <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
+                                    <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
+                                    <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-section">
+                                <span class="dropdown-label">All Tools</span>
+                                <ul class="dropdown-list" id="allToolsList">
+                                    <li><a href="/dav/tools/age-calculator/index.html">Age Calculator</a></li>
+                                    <li><a href="/dav/tools/sip-calculator/index.html">SIP Calculator</a></li>
+                                    <li><a href="/dav/tools/pdf-editor/index.html">PDF Editor</a></li>
+                                    <li><a href="/dav/tools/image-resizer/index.html">Image Resizer</a></li>
+                                    <li><a href="/dav/tools/text-counter/index.html">Text Counter</a></li>
+                                    <li><a href="/dav/tools/unit-converter/index.html">Unit Converter</a></li>
+                                    <li><a href="/dav/tools/password-generator/index.html">Password Generator</a></li>
+                                    <li><a href="/dav/tools/qr-generator/index.html">QR Generator</a></li>
+                                    <li><a href="/dav/tools/gst-calculator/index.html">GST Calculator</a></li>
+                                    <li><a href="/dav/tools/number-converter/index.html">Number Converter</a></li>
+                                    <li><a href="/dav/tools/percentage-calculator/index.html">Percentage Calculator</a></li>
+                                    <li><a href="/dav/tools/bmi-calculator/index.html">BMI Calculator</a></li>
+                                    <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
+                                    <li><a href="/dav/tools/accessibility-tool/index.html">Accessibility Tool</a></li>
+                                    <li><a href="/dav/tools/json-editor/index.html">JSON Editor</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DARK MODE -->
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <svg class="moon-icon" viewBox="0 0 24 24">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                    <svg class="sun-icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
+                </button>
+
+                <!-- HAMBURGER -->
+                <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </div>
+        <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+            <ul class="nav-list">
+                <li><a href="/dav/index.html">Home</a></li>
+                <li><a href="/dav/about/index.html">About</a></li>
+                <li><a href="/dav/contact/index.html">Contact</a></li>
+                <li><a href="/dav/privacy-policy/index.html">Privacy Policy</a></li>
+                <li><a href="/dav/disclaimer/index.html">Disclaimer</a></li>
+                <li><a href="/dav/terms/index.html">Terms</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">JSON Code Editor</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Write, validate, format, or minify your JSON data. Download your final JSON as a <code>.json</code> file instantly.
+                    </p>
+
+                    <div class="json-editor-form">
+
+                        <!-- ===== TEXTAREA ===== -->
+                        <div class="field-group">
+                            <label for="jsonInput">Paste or write your JSON code</label>
+                            <textarea id="jsonInput" placeholder='{ "example": "Hello, world!" }' spellcheck="false"></textarea>
+                        </div>
+
+                        <!-- ===== STATS ===== -->
+                        <div class="editor-stats">
+                            <span id="charCount">Characters: 0</span>
+                            <span id="lineCount">Lines: 0</span>
+                            <span id="sizeInfo">Size: 0 B</span>
+                        </div>
+
+                        <!-- ===== STATUS MESSAGE ===== -->
+                        <div class="status-box" id="statusBox"></div>
+
+                        <!-- ===== ACTION BUTTONS (Row 1) ===== -->
+                        <div class="action-group">
+                            <button class="btn btn-validate" id="validateBtn">✓ Validate</button>
+                            <button class="btn btn-format" id="formatBtn">✦ Format</button>
+                            <button class="btn btn-minify" id="minifyBtn">− Minify</button>
+                        </div>
+
+                        <!-- ===== ACTION BUTTONS (Row 2) ===== -->
+                        <div class="action-group" style="margin-top: 8px;">
+                            <button class="btn btn-download" id="downloadBtn">⬇ Download .json</button>
+                            <button class="btn btn-clear-json" id="clearBtn">✕ Clear</button>
+                        </div>
+
+                        <!-- ===== PRETTY OUTPUT ===== -->
+                        <div class="json-output-box" id="outputBox">
+                            <pre id="outputPre"></pre>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+                <a href="/dav/about/index.html">About</a>
+                <a href="/dav/contact/index.html">Contact</a>
+                <a href="/dav/privacy-policy/index.html">Privacy</a>
+                <a href="/dav/disclaimer/index.html">Disclaimer</a>
+                <a href="/dav/terms/index.html">Terms</a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ===== DOM refs =====
+            var textarea = document.getElementById('jsonInput');
+            var statusBox = document.getElementById('statusBox');
+            var outputBox = document.getElementById('outputBox');
+            var outputPre = document.getElementById('outputPre');
+
+            var validateBtn = document.getElementById('validateBtn');
+            var formatBtn = document.getElementById('formatBtn');
+            var minifyBtn = document.getElementById('minifyBtn');
+            var downloadBtn = document.getElementById('downloadBtn');
+            var clearBtn = document.getElementById('clearBtn');
+
+            var charCount = document.getElementById('charCount');
+            var lineCount = document.getElementById('lineCount');
+            var sizeInfo = document.getElementById('sizeInfo');
+
+            // ===== HELPER: Update stats =====
+            function updateStats() {
+                var val = textarea.value;
+                var chars = val.length;
+                var lines = val === '' ? 0 : val.split('\n').length;
+                var bytes = new Blob([val]).size;
+
+                charCount.textContent = 'Characters: ' + chars.toLocaleString();
+                lineCount.textContent = 'Lines: ' + lines;
+                if (bytes < 1024) {
+                    sizeInfo.textContent = 'Size: ' + bytes + ' B';
+                } else if (bytes < 1048576) {
+                    sizeInfo.textContent = 'Size: ' + (bytes / 1024).toFixed(1) + ' KB';
+                } else {
+                    sizeInfo.textContent = 'Size: ' + (bytes / 1048576).toFixed(1) + ' MB';
+                }
+            }
+
+            // ===== HELPER: Show status =====
+            function showStatus(message, type) {
+                statusBox.textContent = message;
+                statusBox.className = 'status-box show ' + type;
+            }
+
+            function hideStatus() {
+                statusBox.className = 'status-box';
+                statusBox.textContent = '';
+            }
+
+            // ===== HELPER: Show output =====
+            function showOutput(json) {
+                var pretty = JSON.stringify(json, null, 2);
+                outputPre.textContent = pretty;
+                outputBox.classList.add('show');
+            }
+
+            function hideOutput() {
+                outputBox.classList.remove('show');
+                outputPre.textContent = '';
+            }
+
+            // ===== VALIDATE =====
+            function validateJSON() {
+                var raw = textarea.value.trim();
+                if (!raw) {
+                    showStatus('⚠️ Please enter some JSON code to validate.', 'error');
+                    hideOutput();
+                    return false;
+                }
+
+                try {
+                    var parsed = JSON.parse(raw);
+                    showStatus('✅ Valid JSON! ' + Object.keys(parsed).length + ' top-level key(s).', 'success');
+                    showOutput(parsed);
+                    return parsed;
+                } catch (e) {
+                    var msg = e.message;
+                    var match = msg.match(/position (\d+)/);
+                    if (match) {
+                        var pos = parseInt(match[1], 10);
+                        var snippet = raw.substring(Math.max(0, pos - 20), Math.min(raw.length, pos + 20));
+                        msg = msg + ' near: "' + snippet + '"';
+                    }
+                    showStatus('❌ Invalid JSON: ' + msg, 'error');
+                    hideOutput();
+                    return false;
+                }
+            }
+
+            // ===== FORMAT (Prettify) =====
+            function formatJSON() {
+                var raw = textarea.value.trim();
+                if (!raw) {
+                    showStatus('⚠️ Please enter some JSON code to format.', 'error');
+                    return;
+                }
+                try {
+                    var parsed = JSON.parse(raw);
+                    var pretty = JSON.stringify(parsed, null, 2);
+                    textarea.value = pretty;
+                    showStatus('✨ JSON formatted successfully.', 'success');
+                    showOutput(parsed);
+                    updateStats();
+                } catch (e) {
+                    showStatus('❌ Cannot format – invalid JSON: ' + e.message, 'error');
+                    hideOutput();
+                }
+            }
+
+            // ===== MINIFY =====
+            function minifyJSON() {
+                var raw = textarea.value.trim();
+                if (!raw) {
+                    showStatus('⚠️ Please enter some JSON code to minify.', 'error');
+                    return;
+                }
+                try {
+                    var parsed = JSON.parse(raw);
+                    var minified = JSON.stringify(parsed);
+                    textarea.value = minified;
+                    showStatus('⏬ JSON minified successfully.', 'success');
+                    showOutput(parsed);
+                    updateStats();
+                } catch (e) {
+                    showStatus('❌ Cannot minify – invalid JSON: ' + e.message, 'error');
+                    hideOutput();
+                }
+            }
+
+            // ===== DOWNLOAD .json =====
+            function downloadJSON() {
+                var raw = textarea.value.trim();
+                if (!raw) {
+                    showStatus('⚠️ Nothing to download – please enter JSON code.', 'error');
+                    return;
+                }
+
+                // Validate silently before download
+                try {
+                    JSON.parse(raw);
+                } catch (e) {
+                    showStatus('❌ Cannot download – invalid JSON. Please fix errors first.', 'error');
+                    return;
+                }
+
+                var blob = new Blob([raw], { type: 'application/json' });
+                var url = URL.createObjectURL(blob);
+                var link = document.createElement('a');
+                link.href = url;
+                link.download = 'data.json';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+                showStatus('📥 JSON file downloaded successfully!', 'success');
+            }
+
+            // ===== CLEAR =====
+            function clearAll() {
+                textarea.value = '';
+                hideStatus();
+                hideOutput();
+                updateStats();
+                textarea.focus();
+            }
+
+            // ===== LIVE STATS ON INPUT =====
+            textarea.addEventListener('input', function() {
+                updateStats();
+                // Auto-hide previous status on user typing
+                if (statusBox.classList.contains('show')) {
+                    hideStatus();
+                }
+                if (outputBox.classList.contains('show')) {
+                    hideOutput();
+                }
+            });
+
+            // ===== KEYBOARD SHORTCUTS =====
+            textarea.addEventListener('keydown', function(e) {
+                // Ctrl+Enter to validate
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    validateJSON();
+                }
+                // Tab = 2 spaces
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    var start = this.selectionStart;
+                    var end = this.selectionEnd;
+                    this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start + 2;
+                    updateStats();
+                }
+            });
+
+            // ===== BIND BUTTONS =====
+            validateBtn.addEventListener('click', validateJSON);
+            formatBtn.addEventListener('click', formatJSON);
+            minifyBtn.addEventListener('click', minifyJSON);
+            downloadBtn.addEventListener('click', downloadJSON);
+            clearBtn.addEventListener('click', clearAll);
+
+            // ===== INIT =====
+            // Load example on first visit (optional)
+            var example = {
+                "name": "JSON Editor",
+                "version": "1.0.0",
+                "features": ["validate", "format", "minify", "download"],
+                "author": {
+                    "name": "Yadav Web Tools",
+                    "url": "https://yadavwebtools.com"
+                },
+                "active": true
+            };
+            textarea.value = JSON.stringify(example, null, 2);
+            updateStats();
+
+            // Auto-validate and show output initially
+            setTimeout(function() {
+                validateJSON();
+            }, 200);
+
+        })();
+    </script>
+
+</body>
+</html>
