@@ -5,8 +5,174 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Currency Converter · Yadav Web Tools</title>
     <link rel="stylesheet" href="../../style.css" />
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .currency-form .field-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 16px;
+            margin-bottom: 14px;
+        }
+        .currency-form label {
+            font-weight: 500;
+            min-width: 80px;
+        }
+        .currency-form input[type="number"],
+        .currency-form select {
+            padding: 10px 14px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+            flex: 1 1 160px;
+            min-width: 140px;
+            transition: border-color 0.2s;
+        }
+        .currency-form input[type="number"]:focus,
+        .currency-form select:focus {
+            border-color: #1a5c3a;
+            outline: 0;
+        }
+        .dark-mode .currency-form input[type="number"],
+        .dark-mode .currency-form select {
+            background: #2a2a2a;
+            color: #eee;
+            border-color: #3a3a3a;
+        }
+
+        .currency-form select option {
+            padding: 4px 8px;
+        }
+
+        .status-box {
+            display: none;
+            margin: 12px 0 0;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .status-box.show {
+            display: block;
+        }
+        .status-box.valid {
+            background: #eafaf1;
+            border: 1px solid #27ae60;
+            color: #1a6e3a;
+        }
+        .status-box.invalid {
+            background: #fef6f6;
+            border: 1px solid #e74c3c;
+            color: #b33a2c;
+        }
+        .dark-mode .status-box.valid {
+            background: #1a2a1a;
+            border-color: #27ae60;
+            color: #8fde9f;
+        }
+        .dark-mode .status-box.invalid {
+            background: #2a1a1a;
+            border-color: #c0392b;
+            color: #e67e7e;
+        }
+
+        .result-box {
+            display: none;
+            margin-top: 16px;
+            padding: 16px 20px;
+            background: #f4f8f6;
+            border: 1px solid #d4e4dc;
+            border-radius: 8px;
+        }
+        .result-box.show {
+            display: block;
+        }
+        .result-box .result-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a5c3a;
+            word-break: break-all;
+        }
+        .result-box .result-detail {
+            font-size: 0.95rem;
+            color: #3d5a4e;
+            padding-top: 6px;
+            border-top: 1px solid #d4e4dc;
+            margin-top: 6px;
+        }
+        .dark-mode .result-box {
+            background: #1a1a1a;
+            border-color: #3a3a3a;
+        }
+        .dark-mode .result-box .result-amount {
+            color: #4a9a6a;
+        }
+        .dark-mode .result-box .result-detail {
+            color: #8a9a8a;
+            border-top-color: #3a3a3a;
+        }
+
+        .action-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 4px;
+        }
+        .action-group .btn {
+            min-width: 110px;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            justify-content: center;
+        }
+        .action-group .btn-secondary {
+            min-width: 110px;
+        }
+
+        .rate-note {
+            font-size: 0.8rem;
+            color: #4a6b5a;
+            margin-top: 8px;
+            text-align: center;
+        }
+        .dark-mode .rate-note {
+            color: #8a9a8a;
+        }
+
+        .field-group select optgroup {
+            font-weight: 600;
+            color: #1a5c3a;
+        }
+        .dark-mode .field-group select optgroup {
+            color: #4a9a6a;
+        }
+
+        @media (max-width: 640px) {
+            .currency-form .field-group {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px 0;
+            }
+            .currency-form label {
+                min-width: auto;
+                font-size: 0.85rem;
+            }
+            .currency-form input[type="number"],
+            .currency-form select {
+                flex: 0 0 auto;
+                width: 100%;
+                height: 38px;
+                padding: 6px 10px;
+                font-size: 0.85rem;
+            }
+            .action-group .btn {
+                min-width: 100%;
+                justify-content: center;
+            }
+            .result-box .result-amount {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -19,7 +185,10 @@
                     <div class="search-wrapper">
                         <div class="search-box">
                             <button class="search-toggle" id="searchToggle" aria-label="Search tools">
-                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                </svg>
                             </button>
                             <input type="text" id="searchInput" placeholder="Search tools..." autocomplete="off" class="search-input-hidden">
                         </div>
@@ -50,16 +219,31 @@
                                     <li><a href="/dav/tools/bmi-calculator/index.html">BMI Calculator</a></li>
                                     <li><a href="/dav/tools/loan-calculator/index.html">Loan Calculator</a></li>
                                     <li><a href="/dav/tools/accessibility-tool/index.html">Accessibility Tool</a></li>
+                                    <li><a href="/dav/tools/json-editor/index.html">JSON Editor</a></li>
                                     <li><a href="/dav/tools/currency-converter/index.html">Currency Converter</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-                    <svg class="moon-icon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                    <svg class="sun-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                    <svg class="sun-icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="5"/>
+                        <line x1="12" y1="1" x2="12" y2="3"/>
+                        <line x1="12" y1="21" x2="12" y2="23"/>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                        <line x1="1" y1="12" x2="3" y2="12"/>
+                        <line x1="21" y1="12" x2="23" y2="12"/>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
                 </button>
+
                 <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
                     <span class="hamburger-line"></span>
                     <span class="hamburger-line"></span>
@@ -81,6 +265,7 @@
 
     <!-- ===== MAIN ===== -->
     <main id="main-content">
+
         <section class="section tools-section" aria-labelledby="tool-heading">
             <div class="section-title-bar">
                 <h2 id="tool-heading">Currency Converter</h2>
@@ -89,128 +274,129 @@
                 <div class="content-box">
 
                     <p class="tool-intro">
-                        Convert between Global Fiat currencies, Cryptocurrencies, and Precious Metals using live exchange rates.
+                        Convert between fiat currencies and cryptocurrencies using live exchange rates.
                     </p>
 
-                    <form class="currency-form" id="currencyForm" novalidate>
+                    <div class="currency-form">
 
-                        <!-- ===== ASSET CLASS TOGGLE ===== -->
+                        <!-- ===== AMOUNT ===== -->
                         <div class="field-group">
-                            <label>Asset Class</label>
-                            <div class="asset-toggle" id="assetToggle">
-                                <button type="button" class="toggle-btn active" data-asset="fiat">Global Fiat</button>
-                                <button type="button" class="toggle-btn" data-asset="crypto">Cryptocurrency</button>
-                                <button type="button" class="toggle-btn" data-asset="metals">Precious Metals</button>
-                            </div>
+                            <label for="amount">Amount</label>
+                            <input type="number" id="amount" value="1" min="0" step="any" />
                         </div>
 
-                        <!-- ===== TWO COLUMN LAYOUT ===== -->
-                        <div class="converter-grid">
-
-                            <!-- LEFT COLUMN: Source -->
-                            <div class="converter-column">
-                                <div class="field-group">
-                                    <label for="amount">Amount</label>
-                                    <input type="number" id="amount" step="0.01" min="0" value="1.00" />
-                                </div>
-
-                                <div class="field-group">
-                                    <label for="fromCurrency">From</label>
-                                    <div class="currency-select-wrapper">
-                                        <input type="text" id="fromSearch" class="currency-search" placeholder="Search currency..." />
-                                        <select id="fromCurrency" class="currency-select"></select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- ===== SWAP BUTTON ===== -->
-                            <div class="swap-column">
-                                <button type="button" class="swap-btn" id="swapBtn" aria-label="Swap currencies">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="17 1 21 5 17 9"/>
-                                        <polyline points="7 23 3 19 7 15"/>
-                                        <line x1="3" y1="5" x2="21" y2="5"/>
-                                        <line x1="21" y1="19" x2="3" y2="19"/>
-                                    </svg>
-                                </button>
-                            </div>
-
-                            <!-- RIGHT COLUMN: Destination -->
-                            <div class="converter-column">
-                                <div class="field-group">
-                                    <label for="toCurrency">To</label>
-                                    <div class="currency-select-wrapper">
-                                        <input type="text" id="toSearch" class="currency-search" placeholder="Search currency..." />
-                                        <select id="toCurrency" class="currency-select"></select>
-                                    </div>
-                                </div>
-
-                                <div class="field-group">
-                                    <label>Converted Amount</label>
-                                    <div class="result-display" id="resultDisplay">
-                                        <span class="result-value" id="convertedAmount">0.00</span>
-                                        <span class="result-currency" id="convertedCurrency">EUR</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <!-- ===== TIMEFRAME FILTERS ===== -->
+                        <!-- ===== FROM ===== -->
                         <div class="field-group">
-                            <label>Trend Chart</label>
-                            <div class="timeframe-toggle" id="timeframeToggle">
-                                <button type="button" class="timeframe-btn" data-period="1D">1D</button>
-                                <button type="button" class="timeframe-btn active" data-period="1W">1W</button>
-                                <button type="button" class="timeframe-btn" data-period="1M">1M</button>
-                            </div>
+                            <label for="fromCurrency">From</label>
+                            <select id="fromCurrency">
+                                <optgroup label="Fiat">
+                                    <option value="USD">USD - US Dollar</option>
+                                    <option value="EUR">EUR - Euro</option>
+                                    <option value="GBP">GBP - British Pound</option>
+                                    <option value="INR" selected>INR - Indian Rupee</option>
+                                    <option value="JPY">JPY - Japanese Yen</option>
+                                    <option value="CNY">CNY - Chinese Yuan</option>
+                                    <option value="CAD">CAD - Canadian Dollar</option>
+                                    <option value="AUD">AUD - Australian Dollar</option>
+                                    <option value="CHF">CHF - Swiss Franc</option>
+                                    <option value="BRL">BRL - Brazilian Real</option>
+                                    <option value="KRW">KRW - South Korean Won</option>
+                                    <option value="SGD">SGD - Singapore Dollar</option>
+                                </optgroup>
+                                <optgroup label="Cryptocurrency">
+                                    <option value="BTC">BTC - Bitcoin</option>
+                                    <option value="ETH">ETH - Ethereum</option>
+                                    <option value="USDT">USDT - Tether</option>
+                                    <option value="BNB">BNB - Binance Coin</option>
+                                    <option value="SOL">SOL - Solana</option>
+                                    <option value="XRP">XRP - Ripple</option>
+                                    <option value="ADA">ADA - Cardano</option>
+                                    <option value="DOGE">DOGE - Dogecoin</option>
+                                    <option value="DOT">DOT - Polkadot</option>
+                                    <option value="AVAX">AVAX - Avalanche</option>
+                                    <option value="LINK">LINK - Chainlink</option>
+                                    <option value="XLM">XLM - Stellar</option>
+                                    <option value="XMR">XMR - Monero</option>
+                                    <option value="ATOM">ATOM - Cosmos</option>
+                                    <option value="ALGO">ALGO - Algorand</option>
+                                    <option value="FTM">FTM - Fantom</option>
+                                    <option value="MATIC">MATIC - Polygon</option>
+                                    <option value="VET">VET - VeChain</option>
+                                    <option value="ICP">ICP - Internet Computer</option>
+                                    <option value="UNI">UNI - Uniswap</option>
+                                </optgroup>
+                            </select>
                         </div>
 
-                        <!-- ===== ADVANCED FEATURES ===== -->
-                        <div class="advanced-grid">
-                            <div class="field-group" style="flex-wrap:nowrap; gap:8px;">
-                                <label style="min-width:auto; font-weight:400; display:flex; align-items:center; gap:8px;">
-                                    <input type="checkbox" id="autoRefresh" checked />
-                                    Auto-Refresh
-                                </label>
-                            </div>
+                        <!-- ===== TO ===== -->
+                        <div class="field-group">
+                            <label for="toCurrency">To</label>
+                            <select id="toCurrency">
+                                <optgroup label="Fiat">
+                                    <option value="USD" selected>USD - US Dollar</option>
+                                    <option value="EUR">EUR - Euro</option>
+                                    <option value="GBP">GBP - British Pound</option>
+                                    <option value="INR">INR - Indian Rupee</option>
+                                    <option value="JPY">JPY - Japanese Yen</option>
+                                    <option value="CNY">CNY - Chinese Yuan</option>
+                                    <option value="CAD">CAD - Canadian Dollar</option>
+                                    <option value="AUD">AUD - Australian Dollar</option>
+                                    <option value="CHF">CHF - Swiss Franc</option>
+                                    <option value="BRL">BRL - Brazilian Real</option>
+                                    <option value="KRW">KRW - South Korean Won</option>
+                                    <option value="SGD">SGD - Singapore Dollar</option>
+                                </optgroup>
+                                <optgroup label="Cryptocurrency">
+                                    <option value="BTC">BTC - Bitcoin</option>
+                                    <option value="ETH">ETH - Ethereum</option>
+                                    <option value="USDT">USDT - Tether</option>
+                                    <option value="BNB">BNB - Binance Coin</option>
+                                    <option value="SOL">SOL - Solana</option>
+                                    <option value="XRP">XRP - Ripple</option>
+                                    <option value="ADA">ADA - Cardano</option>
+                                    <option value="DOGE">DOGE - Dogecoin</option>
+                                    <option value="DOT">DOT - Polkadot</option>
+                                    <option value="AVAX">AVAX - Avalanche</option>
+                                    <option value="LINK">LINK - Chainlink</option>
+                                    <option value="XLM">XLM - Stellar</option>
+                                    <option value="XMR">XMR - Monero</option>
+                                    <option value="ATOM">ATOM - Cosmos</option>
+                                    <option value="ALGO">ALGO - Algorand</option>
+                                    <option value="FTM">FTM - Fantom</option>
+                                    <option value="MATIC">MATIC - Polygon</option>
+                                    <option value="VET">VET - VeChain</option>
+                                    <option value="ICP">ICP - Internet Computer</option>
+                                    <option value="UNI">UNI - Uniswap</option>
+                                </optgroup>
+                            </select>
+                        </div>
 
-                            <div class="field-group">
-                                <label for="rateAlert">Rate Alert</label>
-                                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;flex:1;">
-                                    <input type="number" id="rateAlert" step="0.0001" min="0" placeholder="Target rate" />
-                                    <button type="button" class="btn btn-secondary" id="setAlertBtn">Set Alert</button>
-                                </div>
-                            </div>
+                        <!-- ===== STATUS ===== -->
+                        <div class="status-box" id="statusBox"></div>
+
+                        <!-- ===== RESULT ===== -->
+                        <div class="result-box" id="resultBox">
+                            <div class="result-amount" id="resultAmount">0.00</div>
+                            <div class="result-detail" id="resultDetail">1 USD = 0.00 EUR</div>
                         </div>
 
                         <!-- ===== BUTTONS ===== -->
-                        <div class="btn-group">
-                            <button type="button" class="btn" id="fetchBtn">Calculate Live Conversion</button>
-                            <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
+                        <div class="action-group">
+                            <button class="btn" id="convertBtn">Convert</button>
+                            <button class="btn btn-secondary" id="swapBtn">Swap</button>
+                            <button class="btn btn-secondary" id="refreshBtn">Refresh Rates</button>
                         </div>
 
-                    </form>
+                        <div class="rate-note" id="rateNote">Rates updated from live sources</div>
 
-                    <div class="error-msg" id="errorMsg"></div>
-
-                    <!-- ===== CHART CONTAINER ===== -->
-                    <div class="chart-container" id="chartContainer">
-                        <div class="chart-loading" id="chartLoading" style="display:none;">
-                            <span>Loading chart data...</span>
-                        </div>
-                        <canvas id="trendChart"></canvas>
-                    </div>
-
-                    <!-- ===== DISCLAIMER ===== -->
-                    <div class="disclaimer-box">
-                        <strong>Disclaimer:</strong> Exchange rates are for informational purposes only. May not be real-time or fully accurate. This is not financial advice. Use at your own risk.
                     </div>
 
                 </div>
             </div>
         </section>
+
         <div class="spacer"></div>
+
     </main>
 
     <!-- ===== FOOTER ===== -->
@@ -223,15 +409,221 @@
                 <a href="/dav/disclaimer/index.html">Disclaimer</a>
                 <a href="/dav/terms/index.html">Terms</a>
             </div>
-            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All Rights Reserved.</p>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
         </div>
     </footer>
 
     <!-- ===== GLOBAL SCRIPTS ===== -->
     <script src="../../script.js"></script>
 
-    <!-- ===== TOOL SCRIPT ===== -->
-    <script src="currency-converter.js"></script>
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script>
+        (function() {
+            'use strict';
+
+            var amountInput = document.getElementById('amount');
+            var fromSelect = document.getElementById('fromCurrency');
+            var toSelect = document.getElementById('toCurrency');
+            var statusBox = document.getElementById('statusBox');
+            var resultBox = document.getElementById('resultBox');
+            var resultAmount = document.getElementById('resultAmount');
+            var resultDetail = document.getElementById('resultDetail');
+            var rateNote = document.getElementById('rateNote');
+
+            var convertBtn = document.getElementById('convertBtn');
+            var swapBtn = document.getElementById('swapBtn');
+            var refreshBtn = document.getElementById('refreshBtn');
+
+            var statusTimeout;
+            var fiatRates = {};
+            var cryptoRates = {};
+
+            // ===== FIAT CURRENCY LIST =====
+            var fiatList = ['USD', 'EUR', 'GBP', 'INR', 'JPY', 'CNY', 'CAD', 'AUD', 'CHF', 'BRL', 'KRW', 'SGD'];
+
+            // ===== CRYPTO MAPPING (ID for CoinGecko) =====
+            var cryptoMap = {
+                'BTC': 'bitcoin',
+                'ETH': 'ethereum',
+                'USDT': 'tether',
+                'BNB': 'binancecoin',
+                'SOL': 'solana',
+                'XRP': 'ripple',
+                'ADA': 'cardano',
+                'DOGE': 'dogecoin',
+                'DOT': 'polkadot',
+                'AVAX': 'avalanche-2',
+                'LINK': 'chainlink',
+                'XLM': 'stellar',
+                'XMR': 'monero',
+                'ATOM': 'cosmos',
+                'ALGO': 'algorand',
+                'FTM': 'fantom',
+                'MATIC': 'matic-network',
+                'VET': 'vechain',
+                'ICP': 'internet-computer',
+                'UNI': 'uniswap'
+            };
+            var cryptoList = Object.keys(cryptoMap);
+
+            // ===== HELPER: Show status =====
+            function showStatus(message, type) {
+                clearTimeout(statusTimeout);
+                statusBox.textContent = message;
+                statusBox.className = 'status-box show ' + type;
+                statusTimeout = setTimeout(function() {
+                    statusBox.className = 'status-box';
+                }, 3000);
+            }
+
+            function hideStatus() {
+                clearTimeout(statusTimeout);
+                statusBox.className = 'status-box';
+                statusBox.textContent = '';
+            }
+
+            // ===== FETCH FIAT RATES =====
+            async function fetchFiatRates() {
+                try {
+                    var response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                    if (!response.ok) throw new Error('Fiat API failed');
+                    var data = await response.json();
+                    fiatRates = data.rates;
+                    return true;
+                } catch (e) {
+                    showStatus('Failed to fetch fiat rates: ' + e.message, 'invalid');
+                    return false;
+                }
+            }
+
+            // ===== FETCH CRYPTO RATES (in USD) =====
+            async function fetchCryptoRates() {
+                try {
+                    var ids = Object.values(cryptoMap).join(',');
+                    var url = 'https://api.coingecko.com/api/v3/simple/price?ids=' + ids + '&vs_currencies=usd';
+                    var response = await fetch(url);
+                    if (!response.ok) throw new Error('Crypto API failed');
+                    var data = await response.json();
+                    cryptoRates = {};
+                    for (var symbol in cryptoMap) {
+                        var id = cryptoMap[symbol];
+                        if (data[id] && data[id].usd) {
+                            cryptoRates[symbol] = data[id].usd;
+                        }
+                    }
+                    return true;
+                } catch (e) {
+                    showStatus('Failed to fetch crypto rates: ' + e.message, 'invalid');
+                    return false;
+                }
+            }
+
+            // ===== FETCH ALL RATES =====
+            async function fetchAllRates() {
+                showStatus('Fetching rates...', 'valid');
+                var fiatOk = await fetchFiatRates();
+                var cryptoOk = await fetchCryptoRates();
+                if (fiatOk && cryptoOk) {
+                    showStatus('Rates updated', 'valid');
+                    rateNote.textContent = 'Rates updated from live sources';
+                    return true;
+                }
+                rateNote.textContent = 'Some rates may be unavailable';
+                return false;
+            }
+
+            // ===== GET RATE FOR A CURRENCY (in USD) =====
+            function getRateInUSD(currency) {
+                if (fiatList.indexOf(currency) !== -1) {
+                    if (fiatRates[currency]) {
+                        return 1 / fiatRates[currency];
+                    }
+                    return null;
+                }
+                if (cryptoList.indexOf(currency) !== -1) {
+                    return cryptoRates[currency] || null;
+                }
+                return null;
+            }
+
+            // ===== CONVERT =====
+            async function convert() {
+                var amount = parseFloat(amountInput.value);
+                if (isNaN(amount) || amount <= 0) {
+                    showStatus('Enter a valid positive amount', 'invalid');
+                    resultBox.classList.remove('show');
+                    return;
+                }
+
+                var from = fromSelect.value;
+                var to = toSelect.value;
+
+                // Ensure rates are loaded
+                if (Object.keys(fiatRates).length === 0 || Object.keys(cryptoRates).length === 0) {
+                    var ok = await fetchAllRates();
+                    if (!ok) {
+                        showStatus('Unable to fetch rates. Please try again.', 'invalid');
+                        return;
+                    }
+                }
+
+                var fromRate = getRateInUSD(from);
+                var toRate = getRateInUSD(to);
+
+                if (fromRate === null || toRate === null) {
+                    showStatus('Rate unavailable for one of the currencies', 'invalid');
+                    resultBox.classList.remove('show');
+                    return;
+                }
+
+                var usdAmount = amount * fromRate;
+                var result = usdAmount / toRate;
+
+                resultAmount.textContent = result.toFixed(8);
+                resultDetail.textContent = amount + ' ' + from + ' = ' + result.toFixed(8) + ' ' + to;
+                resultBox.classList.add('show');
+                hideStatus();
+            }
+
+            // ===== SWAP =====
+            function swap() {
+                var fromVal = fromSelect.value;
+                var toVal = toSelect.value;
+                fromSelect.value = toVal;
+                toSelect.value = fromVal;
+                convert();
+            }
+
+            // ===== REFRESH =====
+            async function refresh() {
+                await fetchAllRates();
+                convert();
+            }
+
+            // ===== EVENT BINDING =====
+            convertBtn.addEventListener('click', convert);
+            swapBtn.addEventListener('click', swap);
+            refreshBtn.addEventListener('click', refresh);
+
+            // Enter key on amount triggers convert
+            amountInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    convert();
+                }
+            });
+
+            // ===== INIT =====
+            async function init() {
+                await fetchAllRates();
+                // Auto-convert on load
+                setTimeout(convert, 300);
+            }
+
+            init();
+
+        })();
+    </script>
 
 </body>
 </html>
