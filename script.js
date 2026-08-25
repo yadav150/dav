@@ -260,7 +260,7 @@
             icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
             path: '/dav/tools/sip-calculator/index.html'
         },
-                {
+                        {
             name: 'Hosting',
             icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.13.12a4 4 0 0 0 5.64 0l.13-.12a4 4 0 0 1 5.64 0l.13.12z"/><path d="M12 12v.01"/></svg>',
             path: '/dav/tools/hosting-checker/index.html'
@@ -269,7 +269,7 @@
             name: 'JSON',
             icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 8 16 13"/><polyline points="8 21 3 16 8 11"/><line x1="16" y1="8" x2="3" y2="8"/><line x1="21" y1="16" x2="8" y2="16"/></svg>',
             path: '/dav/tools/json-editor/index.html'
-        }
+        },
         {
             name: 'Text',
             icon: '<svg viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>',
