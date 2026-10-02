@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Corner Curve · Yadav Web Tools</title>
+    <link rel="stylesheet" href="../../style.css" />
+    <link rel="stylesheet" href="css/image-corner-curve.css" />
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+<header class="site-header" role="banner">
+    <div class="header-inner">
+    <a href="../../index.html" class="site-title">Yadav Web Tools</a>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <!-- SEARCH (Collapsible) -->
+        <div class="search-container header-search">
+            <div class="search-wrapper">
+                <div class="search-box">
+                    <button class="search-toggle" id="searchToggle" aria-label="Search tools">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="searchInput" placeholder="Search tools..." autocomplete="off" class="search-input-hidden">
+                </div>
+                <div class="search-dropdown" id="searchDropdown">
+                    <div class="dropdown-section">
+                        <span class="dropdown-label">Quick Tools</span>
+                        <ul class="dropdown-list" id="quickToolsList">
+                            <li><a href="../age-calculator/index.html">Age Calculator</a></li>
+                            <li><a href="../loan-calculator/index.html">Loan Calculator</a></li>
+                            <li><a href="../gst-calculator/index.html">GST Calculator</a></li>
+                        </ul>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-section">
+                        <span class="dropdown-label">All Tools</span>
+                        <ul class="dropdown-list" id="allToolsList">
+                            <li><a href="../age-calculator/index.html">Age Calculator</a></li>
+                            <li><a href="../sip-calculator/index.html">SIP Calculator</a></li>
+                            <li><a href="../pdf-editor/index.html">PDF Editor</a></li>
+                            <li><a href="../image-resizer/index.html">Image Resizer</a></li>
+                            <li><a href="../image-corner-curve/index.html">Image Corner Curve</a></li>
+                            <li><a href="../text-counter/index.html">Text Counter</a></li>
+                            <li><a href="../unit-converter/index.html">Unit Converter</a></li>
+                            <li><a href="../password-generator/index.html">Password Generator</a></li>
+                            <li><a href="../qr-generator/index.html">QR Generator</a></li>
+                            <li><a href="../gst-calculator/index.html">GST Calculator</a></li>
+                            <li><a href="../number-converter/index.html">Number Converter</a></li>
+                            <li><a href="../percentage-calculator/index.html">Percentage Calculator</a></li>
+                            <li><a href="../bmi-calculator/index.html">BMI Calculator</a></li>
+                            <li><a href="../loan-calculator/index.html">Loan Calculator</a></li>
+                            <li><a href="../accessibility-tool/index.html">Accessibility Tool</a></li>
+                            <li><a href="../json-editor/index.html">JSON Editor</a></li>
+                            <li><a href="../hosting-checker/index.html">Hosting Checker</a></li>
+                            <li><a href="../currency-converter/index.html">Currency Converter</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DARK MODE TOGGLE -->
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+            <svg class="moon-icon" viewBox="0 0 24 24">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+            <svg class="sun-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+        </button>
+
+        <!-- HAMBURGER -->
+        <button class="hamburger" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+    </div>
+</div>
+    <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary navigation">
+        <ul class="nav-list">
+            <li><a href="../../index.html">Home</a></li>
+            <li><a href="../../about/index.html">About</a></li>
+            <li><a href="../../contact/index.html">Contact</a></li>
+            <li><a href="../../privacy-policy/index.html">Privacy Policy</a></li>
+            <li><a href="../../disclaimer/index.html">Disclaimer</a></li>
+            <li><a href="../../terms/index.html">Terms</a></li>
+        </ul>
+    </nav>
+</header>
+
+    <!-- ===== MAIN ===== -->
+    <main id="main-content">
+
+        <section class="section tools-section" aria-labelledby="tool-heading">
+            <div class="section-title-bar">
+                <h2 id="tool-heading">Image Corner Curve</h2>
+            </div>
+            <div class="section-body">
+                <div class="content-box">
+
+                    <p class="tool-intro">
+                        Upload an image and apply a uniform corner radius to all four corners. Original dimensions are preserved.
+                    </p>
+
+                    <div class="corner-curve-form">
+
+                        <!-- ===== UPLOAD ===== -->
+                        <div class="field-group">
+                            <label for="fileInput">Upload Image</label>
+                            <div class="drop-zone" id="dropZone">
+                                <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="#1a5c3a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                    <polyline points="17 8 12 3 7 8"/>
+                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                <span class="drop-text">Click to upload or drag &amp; drop</span>
+                                <span class="helper-text">JPG, PNG, or WebP</span>
+                                <input type="file" id="fileInput" accept="image/jpeg,image/jpg,image/png,image/webp" />
+                            </div>
+                        </div>
+
+                        <!-- ===== PREVIEW ===== -->
+                        <div class="corner-preview-panel" id="previewPanel">
+                            <span class="preview-placeholder" id="previewPlaceholder">No image uploaded yet</span>
+                            <canvas id="previewCanvas" style="display:none;"></canvas>
+                        </div>
+
+                        <!-- ===== CORNER RADIUS ===== -->
+                        <div class="corner-radius-row">
+                            <label for="radiusSlider">Corner Radius</label>
+                            <input type="range" id="radiusSlider" class="corner-radius-range" min="0" max="500" value="0">
+                            <input type="number" id="radiusNumber" class="corner-radius-number" min="0" max="500" value="0">
+                            <span class="corner-radius-value" id="radiusValue">0px</span>
+                            <button type="button" class="btn btn-secondary" id="resetRadius">Reset</button>
+                        </div>
+
+                        <!-- ===== OUTPUT FORMAT ===== -->
+                        <div class="field-group">
+                            <label for="formatSelect">Output Format</label>
+                            <select id="formatSelect" class="corner-curve-select">
+                                <option value="png">PNG (lossless)</option>
+                                <option value="webp">WebP (lossless)</option>
+                                <option value="jpeg">JPG / JPEG (lossy, quality 95%)</option>
+                            </select>
+                        </div>
+
+                        <!-- ===== ACTIONS ===== -->
+                        <div class="btn-group">
+                            <button type="button" class="btn" id="downloadBtn">Download Image</button>
+                            <button type="button" class="btn btn-secondary" id="resetAll">Reset</button>
+                        </div>
+
+                        <!-- ===== ERROR ===== -->
+                        <div class="error-msg" id="errorMsg"></div>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-links">
+    <a href="../../about/index.html">About</a>
+    <a href="../../contact/index.html">Contact</a>
+    <a href="../../privacy-policy/index.html">Privacy</a>
+    <a href="../../disclaimer/index.html">Disclaimer</a>
+    <a href="../../terms/index.html">Terms</a>
+</div>
+            <p class="footer-copy">&copy; 2026 Yadav Web Tools. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ===== GLOBAL SCRIPTS ===== -->
+    <script src="../../script.js"></script>
+
+    <!-- ===== TOOL-SPECIFIC SCRIPT ===== -->
+    <script src="js/image-corner-curve.js"></script>
+
+</body>
+</html>
