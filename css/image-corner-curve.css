@@ -1,0 +1,304 @@
+/* ============================================================
+   IMAGE CORNER CURVE — Tool-specific styles
+   Scoped to .corner-curve-* and .corner-preview-*
+   Reuses universal colors, borders, and dark-mode variables.
+   ============================================================ */
+
+/* ===== FORM WRAPPER ===== */
+.corner-curve-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin: 6px 0 10px;
+}
+.corner-curve-form .field-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    margin: 0;
+}
+.corner-curve-form .field-group label {
+    font-weight: 500;
+    min-width: 120px;
+}
+
+/* ===== DROP ZONE ===== */
+.corner-curve-form .drop-zone {
+    position: relative;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s;
+    background: #fafafa;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex: 1;
+}
+.corner-curve-form .drop-zone:hover {
+    border-color: #1a5c3a;
+    background: #f4f8f6;
+}
+.corner-curve-form .drop-zone.dragover {
+    border-color: #1a5c3a;
+    background: #e8f0ec;
+}
+.corner-curve-form .drop-zone .drop-icon {
+    width: 40px;
+    height: 40px;
+    display: block;
+    stroke: #1a5c3a;
+}
+.corner-curve-form .drop-zone .drop-text {
+    color: #4a6b5a;
+    font-size: 0.95rem;
+}
+.corner-curve-form .drop-zone .helper-text {
+    font-size: 0.8rem;
+    color: #4a6b5a;
+}
+.corner-curve-form .drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* ===== PREVIEW PANEL ===== */
+.corner-preview-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #e6e6e6;
+    border-radius: 8px;
+    padding: 20px;
+    background: #fafafa;
+    min-height: 220px;
+    position: relative;
+    overflow: hidden;
+}
+.corner-preview-panel .preview-placeholder {
+    color: #4a6b5a;
+    font-size: 0.95rem;
+}
+.corner-preview-panel canvas {
+    max-width: 100%;
+    max-height: 300px;
+    display: block;
+    background-image:
+        linear-gradient(45deg, #eaeaea 25%, transparent 25%),
+        linear-gradient(-45deg, #eaeaea 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #eaeaea 75%),
+        linear-gradient(-45deg, transparent 75%, #eaeaea 75%);
+    background-size: 16px 16px;
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+    background-color: #fff;
+}
+
+/* ===== CORNER RADIUS ROW ===== */
+.corner-radius-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+}
+.corner-radius-row label {
+    font-weight: 500;
+    min-width: 120px;
+}
+.corner-radius-range {
+    flex: 2 1 200px;
+    min-width: 120px;
+    height: 6px;
+    cursor: pointer;
+    background: #d4e4dc;
+    border-radius: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    padding: 0;
+}
+.corner-radius-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #1a5c3a;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.corner-radius-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #1a5c3a;
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.corner-radius-number {
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    flex: 1 1 100px;
+    min-width: 90px;
+    width: 100%;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+.corner-radius-number:focus {
+    border-color: #1a5c3a;
+    outline: 0;
+}
+.corner-radius-value {
+    min-width: 60px;
+    font-weight: 600;
+    color: #1a5c3a;
+    font-size: 0.95rem;
+}
+
+/* ===== FORMAT SELECT ===== */
+.corner-curve-select {
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    flex: 1 1 200px;
+    min-width: 140px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+.corner-curve-select:focus {
+    border-color: #1a5c3a;
+    outline: 0;
+}
+
+/* ===== BUTTON GROUP ===== */
+.corner-curve-form .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #e6e6e6;
+}
+.corner-curve-form .btn {
+    min-width: 120px;
+    padding: 10px 28px;
+    font-size: 1rem;
+}
+.corner-curve-form .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.corner-curve-form .btn:disabled:hover {
+    background: #1a5c3a;
+}
+.corner-curve-form .btn-secondary:disabled:hover {
+    background: #5f7a6b;
+}
+
+/* ===== DARK MODE ===== */
+.dark-mode .corner-curve-form .drop-zone {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+}
+.dark-mode .corner-curve-form .drop-zone:hover {
+    background: #1a3a2a;
+}
+.dark-mode .corner-curve-form .drop-zone .drop-text,
+.dark-mode .corner-curve-form .drop-zone .helper-text {
+    color: #8a9a8a;
+}
+.dark-mode .corner-curve-form .drop-zone .drop-icon {
+    stroke: #4a9a6a;
+}
+.dark-mode .corner-preview-panel {
+    background: #1a1a1a;
+    border-color: #3a3a3a;
+}
+.dark-mode .corner-preview-panel .preview-placeholder {
+    color: #8a9a8a;
+}
+.dark-mode .corner-preview-panel canvas {
+    background-color: #121212;
+    background-image:
+        linear-gradient(45deg, #2a2a2a 25%, transparent 25%),
+        linear-gradient(-45deg, #2a2a2a 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #2a2a2a 75%),
+        linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
+}
+.dark-mode .corner-radius-range {
+    background: #3a3a3a;
+}
+.dark-mode .corner-radius-number,
+.dark-mode .corner-curve-select {
+    background: #2a2a2a;
+    color: #eee;
+    border-color: #3a3a3a;
+}
+.dark-mode .corner-curve-form .btn-group {
+    border-top-color: #3a3a3a;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 640px) {
+    .corner-curve-form .field-group {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px 0;
+    }
+    .corner-curve-form .field-group label,
+    .corner-radius-row label {
+        min-width: auto;
+        font-size: 0.85rem;
+    }
+    .corner-radius-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px 0;
+    }
+    .corner-radius-range {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+    .corner-radius-number,
+    .corner-curve-select {
+        flex: 1 1 auto;
+        width: 100%;
+        height: 38px;
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+    .corner-radius-value {
+        text-align: center;
+    }
+    .corner-curve-form .btn-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .corner-curve-form .btn {
+        width: 100%;
+        min-width: 0;
+        justify-content: center;
+    }
+    .corner-preview-panel {
+        min-height: 160px;
+        padding: 12px;
+    }
+    .corner-preview-panel canvas {
+        max-height: 160px;
+    }
+}
